@@ -15,6 +15,7 @@ import lombok.Setter;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Data
 public class User {
+
   @Id
   @Column(name = "id")
   @Setter(AccessLevel.NONE)

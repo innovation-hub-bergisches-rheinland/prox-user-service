@@ -165,7 +165,10 @@ class OrganizationTest {
 
     // When
     // Then
-    assertThrows(IllegalArgumentException.class, () -> new Organization(name, owner));
+    assertThrows(
+      IllegalArgumentException.class,
+      () -> new Organization(name, owner)
+    );
   }
 
   @DisplayName("Should throw Exception when creating orga with blank name")
@@ -177,7 +180,10 @@ class OrganizationTest {
 
     // When
     // Then
-    assertThrows(IllegalArgumentException.class, () -> new Organization(name, owner));
+    assertThrows(
+      IllegalArgumentException.class,
+      () -> new Organization(name, owner)
+    );
   }
 
   @DisplayName("Should throw Exception when setting too long name")
@@ -205,6 +211,4 @@ class OrganizationTest {
     // Then
     assertThrows(IllegalArgumentException.class, () -> org.setName(name));
   }
-
-
 }

@@ -9,5 +9,4 @@ public class ProxUserServiceApplication {
   public static void main(String[] args) {
     SpringApplication.run(ProxUserServiceApplication.class, args);
   }
-
 }
