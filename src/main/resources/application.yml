@@ -5,6 +5,8 @@ eureka:
 server:
   port: 9007
 spring:
+  application:
+    name: prox-user-service
   security:
     oauth2:
       resourceserver:
