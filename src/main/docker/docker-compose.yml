@@ -12,7 +12,7 @@ services:
   user-service-db:
     image: postgres:11.3-alpine
     volumes:
-      - user-service-db-db-data:/var/lib/postgresql/data
+      - user-service-db-data:/var/lib/postgresql/data
     environment:
       - POSTGRES_USER=user-service
       - POSTGRES_PASSWORD=user-service
