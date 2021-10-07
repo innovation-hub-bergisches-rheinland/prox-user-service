@@ -38,9 +38,10 @@ class OrganizationServiceTest {
     var organizationDto = new OrganizationPostDto("Musterfirma GmbH & Co. KG");
     when(userService.getOrCreateAuthenticatedUser()).thenReturn(Mono.empty());
 
-    StepVerifier.create(organizationService.createOrganization(organizationDto))
-        .expectError()
-        .verify();
+    StepVerifier
+      .create(organizationService.createOrganization(organizationDto))
+      .expectError()
+      .verify();
 
     verify(userService).getOrCreateAuthenticatedUser();
   }
@@ -49,16 +50,19 @@ class OrganizationServiceTest {
   void given_user_when_createOrganization_should_create() {
     var organizationDto = new OrganizationPostDto("Musterfirma GmbH & Co. KG");
     var user = new User(UUID.randomUUID());
-    when(userService.getOrCreateAuthenticatedUser()).thenReturn(Mono.just(user));
-    when(organizationRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
+    when(userService.getOrCreateAuthenticatedUser())
+      .thenReturn(Mono.just(user));
+    when(organizationRepository.save(any()))
+      .thenAnswer(invocation -> invocation.getArgument(0));
 
-    StepVerifier.create(organizationService.createOrganization(organizationDto))
-        .assertNext(next -> {
-          assertThat(next.name()).isEqualTo("Musterfirma GmbH & Co. KG");
-          assertThat(next.id()).isNotNull();
-        })
-        .expectComplete()
-        .verify();
+    StepVerifier
+      .create(organizationService.createOrganization(organizationDto))
+      .assertNext(next -> {
+        assertThat(next.name()).isEqualTo("Musterfirma GmbH & Co. KG");
+        assertThat(next.id()).isNotNull();
+      })
+      .expectComplete()
+      .verify();
 
     verify(userService).getOrCreateAuthenticatedUser();
     verify(organizationRepository).save(any());
@@ -68,15 +72,17 @@ class OrganizationServiceTest {
   void given_organization_when_getOrganization_should_find() {
     var user = new User(UUID.randomUUID());
     var organization = new Organization("Musterfirma GmbH & Co. KG", user);
-    when(organizationRepository.findById(eq(organization.getId()))).thenReturn(Optional.of(organization));
+    when(organizationRepository.findById(eq(organization.getId())))
+      .thenReturn(Optional.of(organization));
 
-    StepVerifier.create(organizationService.getOrganizationWithId(organization.getId()))
-        .assertNext(next -> {
-          assertThat(next.name()).isEqualTo("Musterfirma GmbH & Co. KG");
-          assertThat(next.id()).isEqualTo(organization.getId());
-        })
-        .expectComplete()
-        .verify();
+    StepVerifier
+      .create(organizationService.getOrganizationWithId(organization.getId()))
+      .assertNext(next -> {
+        assertThat(next.name()).isEqualTo("Musterfirma GmbH & Co. KG");
+        assertThat(next.id()).isEqualTo(organization.getId());
+      })
+      .expectComplete()
+      .verify();
 
     verify(organizationRepository).findById(eq(organization.getId()));
   }
@@ -84,11 +90,13 @@ class OrganizationServiceTest {
   @Test
   void given_noOrganization_when_getOrganization_should_empty() {
     var orgId = UUID.randomUUID();
-    when(organizationRepository.findById(eq(orgId))).thenReturn(Optional.empty());
+    when(organizationRepository.findById(eq(orgId)))
+      .thenReturn(Optional.empty());
 
-    StepVerifier.create(organizationService.getOrganizationWithId(orgId))
-        .expectComplete()
-        .verify();
+    StepVerifier
+      .create(organizationService.getOrganizationWithId(orgId))
+      .expectComplete()
+      .verify();
 
     verify(organizationRepository).findById(eq(orgId));
   }

@@ -30,9 +30,10 @@ class UserServiceTest {
 
   @Test
   void given_unauthenticatedUser_when_getOrCreateAuthenticatedUser_should_throw() {
-    StepVerifier.create(userService.getOrCreateAuthenticatedUser())
-        .expectError()
-        .verify();
+    StepVerifier
+      .create(userService.getOrCreateAuthenticatedUser())
+      .expectError()
+      .verify();
 
     verify(userRepository, times(0)).save(any());
   }
@@ -40,9 +41,10 @@ class UserServiceTest {
   @Test
   @WithMockUser(username = "null")
   void given_authenticatedUserNotUUID_when_getOrCreateAuthenticatedUser_should_throw() {
-    StepVerifier.create(userService.getOrCreateAuthenticatedUser())
-        .expectError()
-        .verify();
+    StepVerifier
+      .create(userService.getOrCreateAuthenticatedUser())
+      .expectError()
+      .verify();
 
     verify(userRepository, times(0)).save(any());
   }
@@ -50,16 +52,20 @@ class UserServiceTest {
   @Test
   @WithMockUser(username = "402da44c-f686-4f65-b27a-ff4866c7aef9")
   void given_authenticatedUserUUID_when_getOrCreateAuthenticatedUser_should_create() {
-    var user = new User(UUID.fromString("402da44c-f686-4f65-b27a-ff4866c7aef9"));
+    var user = new User(
+      UUID.fromString("402da44c-f686-4f65-b27a-ff4866c7aef9")
+    );
     when(userRepository.save(eq(user))).thenReturn(user);
-    when(userRepository.findById(eq(user.getId()))).thenReturn(Optional.empty());
+    when(userRepository.findById(eq(user.getId())))
+      .thenReturn(Optional.empty());
 
-    StepVerifier.create(userService.getOrCreateAuthenticatedUser())
-        .assertNext(next -> {
-          assertThat(next).isEqualTo(user);
-        })
-        .expectComplete()
-        .verify();
+    StepVerifier
+      .create(userService.getOrCreateAuthenticatedUser())
+      .assertNext(next -> {
+        assertThat(next).isEqualTo(user);
+      })
+      .expectComplete()
+      .verify();
 
     verify(userRepository, times(1)).findById(eq(user.getId()));
     verify(userRepository, times(1)).save(eq(user));
@@ -68,15 +74,19 @@ class UserServiceTest {
   @Test
   @WithMockUser(username = "402da44c-f686-4f65-b27a-ff4866c7aef9")
   void given_authenticatedUserUUID_when_getOrCreateAuthenticatedUser_should_find() {
-    var user = new User(UUID.fromString("402da44c-f686-4f65-b27a-ff4866c7aef9"));
-    when(userRepository.findById(eq(user.getId()))).thenReturn(Optional.of(user));
+    var user = new User(
+      UUID.fromString("402da44c-f686-4f65-b27a-ff4866c7aef9")
+    );
+    when(userRepository.findById(eq(user.getId())))
+      .thenReturn(Optional.of(user));
 
-    StepVerifier.create(userService.getOrCreateAuthenticatedUser())
-        .assertNext(next -> {
-          assertThat(next).isEqualTo(user);
-        })
-        .expectComplete()
-        .verify();
+    StepVerifier
+      .create(userService.getOrCreateAuthenticatedUser())
+      .assertNext(next -> {
+        assertThat(next).isEqualTo(user);
+      })
+      .expectComplete()
+      .verify();
 
     verify(userRepository, times(1)).findById(eq(user.getId()));
     verify(userRepository, times(0)).save(eq(user));

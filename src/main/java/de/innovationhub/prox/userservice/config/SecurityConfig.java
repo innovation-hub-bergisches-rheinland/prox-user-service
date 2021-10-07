@@ -22,15 +22,25 @@ public class SecurityConfig {
 
   @Bean
   public SecurityWebFilterChain securityWebFilterChain() {
-    return http.csrf().disable()
-        .formLogin().disable()
-        .httpBasic().disable()
-        .logout().disable()
-        .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> Customizer.withDefaults()))
-        .authorizeExchange(exchange -> exchange
-            .pathMatchers(HttpMethod.GET, "/orgs/{id}").permitAll()
-            .pathMatchers(HttpMethod.POST, "/orgs").authenticated()
-        )
-        .build();
+    return http
+      .csrf()
+      .disable()
+      .formLogin()
+      .disable()
+      .httpBasic()
+      .disable()
+      .logout()
+      .disable()
+      .oauth2ResourceServer(oauth2 ->
+        oauth2.jwt(jwt -> Customizer.withDefaults())
+      )
+      .authorizeExchange(exchange ->
+        exchange
+          .pathMatchers(HttpMethod.GET, "/orgs/{id}")
+          .permitAll()
+          .pathMatchers(HttpMethod.POST, "/orgs")
+          .authenticated()
+      )
+      .build();
   }
 }

@@ -24,20 +24,24 @@ public class UserService {
 
   // Intentionally package-private so that it is not callable from controller
   Mono<User> getOrCreateAuthenticatedUser() {
-    return ReactiveSecurityContextHolder.getContext()
-        .map(ctx -> ctx.getAuthentication())
-        .switchIfEmpty(Mono.error(new RuntimeException("Unauthenticated")))
-        .map(auth -> UUID.fromString(auth.getName()))
-        .flatMap(this::getOrCreateUserWithId);
+    return ReactiveSecurityContextHolder
+      .getContext()
+      .map(ctx -> ctx.getAuthentication())
+      .switchIfEmpty(Mono.error(new RuntimeException("Unauthenticated")))
+      .map(auth -> UUID.fromString(auth.getName()))
+      .flatMap(this::getOrCreateUserWithId);
   }
 
   @Transactional(TxType.REQUIRED)
   protected Mono<User> getOrCreateUserWithId(UUID id) {
-    return Mono.fromCallable(() -> this.userRepository.findById(id))
-        .subscribeOn(Schedulers.boundedElastic())
-        .flatMap(opt -> opt.map(Mono::just).orElseGet(Mono::empty))
-        .switchIfEmpty(
-            Mono.fromCallable(() -> this.userRepository.save(new User(id)))
-                .subscribeOn(Schedulers.boundedElastic()));
+    return Mono
+      .fromCallable(() -> this.userRepository.findById(id))
+      .subscribeOn(Schedulers.boundedElastic())
+      .flatMap(opt -> opt.map(Mono::just).orElseGet(Mono::empty))
+      .switchIfEmpty(
+        Mono
+          .fromCallable(() -> this.userRepository.save(new User(id)))
+          .subscribeOn(Schedulers.boundedElastic())
+      );
   }
 }
