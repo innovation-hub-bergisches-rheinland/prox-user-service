@@ -14,8 +14,7 @@ spring:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
       ddl-auto: validate
-    properties:
-      hibernate:
-        jdbc:
-          lob:
-            non_contextual_creation: true
+  datasource:
+    password: user-service
+    url: jdbc:postgresql://user-service-db:5432/user-service-db
+    username: user-service
