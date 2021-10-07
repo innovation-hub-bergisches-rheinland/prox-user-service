@@ -4,6 +4,8 @@ import de.innovationhub.prox.userservice.domain.user.User;
 import de.innovationhub.prox.userservice.domain.user.UserRepository;
 import de.innovationhub.prox.userservice.domain.user.dto.UserGetDto;
 import java.util.UUID;
+import javax.transaction.Transactional;
+import javax.transaction.Transactional.TxType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.ReactiveSecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -29,8 +31,8 @@ public class UserService {
         .flatMap(this::getOrCreateUserWithId);
   }
 
-  // Intentionally package-private so that it is not callable from controller
-  Mono<User> getOrCreateUserWithId(UUID id) {
+  @Transactional(TxType.REQUIRED)
+  protected Mono<User> getOrCreateUserWithId(UUID id) {
     return Mono.fromCallable(() -> this.userRepository.findById(id))
         .subscribeOn(Schedulers.boundedElastic())
         .flatMap(opt -> opt.map(Mono::just).orElseGet(Mono::empty))

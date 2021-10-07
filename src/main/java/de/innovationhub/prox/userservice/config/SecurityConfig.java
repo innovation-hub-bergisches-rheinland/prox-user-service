@@ -28,7 +28,7 @@ public class SecurityConfig {
         .logout().disable()
         .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> Customizer.withDefaults()))
         .authorizeExchange(exchange -> exchange
-            .pathMatchers(HttpMethod.GET, "/orgs/**").permitAll()
+            .pathMatchers(HttpMethod.GET, "/orgs/{id}").permitAll()
             .pathMatchers(HttpMethod.POST, "/orgs").authenticated()
         )
         .build();

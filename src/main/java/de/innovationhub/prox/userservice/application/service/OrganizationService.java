@@ -6,6 +6,8 @@ import de.innovationhub.prox.userservice.domain.organization.dto.OrganizationPos
 import de.innovationhub.prox.userservice.domain.organization.OrganizationRepository;
 import de.innovationhub.prox.userservice.domain.user.User;
 import java.util.UUID;
+import javax.transaction.Transactional;
+import javax.transaction.Transactional.TxType;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
@@ -30,6 +32,7 @@ public class OrganizationService {
         .map(this::mapOrgToGetDto);
   }
 
+  @Transactional(TxType.REQUIRED)
   public Mono<OrganizationGetDto> createOrganization(OrganizationPostDto org) {
     return userService.getOrCreateAuthenticatedUser()
         .switchIfEmpty(Mono.error(new RuntimeException("Could not retrieve authenticated user")))
