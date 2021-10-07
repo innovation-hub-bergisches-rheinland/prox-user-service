@@ -41,7 +41,7 @@ node {
         changelist = tagPrefix + '-' + env.BUILD_NUMBER
         tag = revision + changelist
 
-        docker.image('adoptopenjdk:11.0.5_10-jdk-openj9-0.17.0').inside {
+        docker.image('eclipse-temurin:17-jdk').inside {
             writeFile file: 'settings.xml',
                     text: """
                           <settings>
