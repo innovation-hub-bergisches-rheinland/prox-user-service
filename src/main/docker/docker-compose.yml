@@ -1,0 +1,30 @@
+version: "3.7"
+
+services:
+  user-service:
+    image: ${REPOSITORY}/${IMAGE}:${TAG}
+    depends_on:
+      - user-service-db
+    networks:
+      - prox
+      - user-service-db
+
+  user-service-db:
+    image: postgres:11.3-alpine
+    volumes:
+      - user-service-db-db-data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=user-service
+      - POSTGRES_PASSWORD=user-service
+      - POSTGRES_DB=user-service-db
+      - PGDATA=/var/lib/postgresql/data/pgdata
+    networks:
+      - user-service-db
+
+volumes:
+  user-service-db-data:
+
+networks:
+  prox:
+    external: true
+  user-service-db:

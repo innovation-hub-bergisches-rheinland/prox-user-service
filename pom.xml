@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
+
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
@@ -8,16 +9,22 @@
     <relativePath></relativePath>
     <!-- lookup parent from repository -->
   </parent>
+
   <groupId>de.innovation-hub.prox</groupId>
   <artifactId>prox-user-service</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>${revision}${changelist}</version>
   <name>prox-user-service</name>
   <description>prox-user-service</description>
+
   <properties>
+    <changelist>-SNAPSHOT</changelist>
+    <docker.image.prefix>docker.nexus.archi-lab.io/ihbr</docker.image.prefix>
+    <revision>0.1.0</revision>
     <java.version>17</java.version>
     <spring-cloud.version>2020.0.4</spring-cloud.version>
     <spotless.version>2.17.0</spotless.version>
   </properties>
+
   <dependencyManagement>
     <dependencies>
       <dependency>
@@ -111,6 +118,9 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
         <configuration>
+          <image>
+            <name>${docker.image.prefix}/${project.artifactId}:${project.version}</name>
+          </image>
           <excludes>
             <exclude>
               <groupId>org.projectlombok</groupId>
@@ -118,6 +128,13 @@
             </exclude>
           </excludes>
         </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>build-image</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
       <plugin>
         <groupId>com.diffplug.spotless</groupId>
@@ -171,5 +188,31 @@
       </plugin>
     </plugins>
   </build>
+
+  <profiles>
+    <profile>
+      <id>ci</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-maven-plugin</artifactId>
+            <configuration>
+              <image>
+                <publish>true</publish>
+              </image>
+              <docker>
+                <publishRegistry>
+                  <username>${env.DOCKER_REGISTRY_USER}</username>
+                  <password>${env.DOCKER_REGISTRY_PASSWORD}</password>
+                  <url>${env.DOCKER_REGISTRY}</url>
+                </publishRegistry>
+              </docker>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 
 </project>
