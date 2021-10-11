@@ -6,17 +6,18 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 /**
  * Represents an Organization in PROX, examples are
@@ -43,28 +44,13 @@ public class Organization {
   private String name;
 
   /**
-   * Owners of the org
-   */
-  @ManyToMany
-  @JoinTable(
-    name = "organization_owners",
-    joinColumns = @JoinColumn(name = "organization_id"),
-    inverseJoinColumns = @JoinColumn(name = "user_id")
-  )
-  @Setter(AccessLevel.NONE)
-  private Set<User> owners;
-
-  /**
    * Members of the org
    */
-  @ManyToMany
-  @JoinTable(
-    name = "organization_members",
-    joinColumns = @JoinColumn(name = "organization_id"),
-    inverseJoinColumns = @JoinColumn(name = "user_id")
-  )
+  @OneToMany(mappedBy = "organization", cascade = CascadeType.ALL)
   @Setter(AccessLevel.NONE)
-  private Set<User> members;
+  @EqualsAndHashCode.Exclude
+  @ToString.Exclude
+  private Set<Membership> members;
 
   public Organization(String name, User owner) {
     Objects.requireNonNull(name);
@@ -76,34 +62,8 @@ public class Organization {
     }
     this.id = UUID.randomUUID();
     this.name = name;
-    this.owners = new HashSet<>(Collections.singletonList(owner));
-    this.members = new HashSet<>(Collections.singletonList(owner));
-  }
-
-  /**
-   * Adds an owner to the company
-   * @param member member of the organization which should become an owner
-   * @throws RuntimeException if provided user is not a member of the org
-   */
-  public void addOwner(User member) {
-    if (!members.contains(member)) {
-      throw new RuntimeException("Not a member of the organization");
-    }
-    this.owners.add(member);
-  }
-
-  /**
-   * Removes an owner of the org
-   * @param owner owner of the organization which should be removed
-   * @throws RuntimeException if the owner is the last one present in the org
-   */
-  public void removeOwner(User owner) {
-    if (owners.contains(owner)) {
-      if (owners.size() == 1) {
-        throw new RuntimeException("Cannot remove last owner");
-      }
-      this.owners.remove(owner);
-    }
+    var membership = new Membership(owner, this, MembershipType.OWNER);
+    this.members = new HashSet<>(Collections.singletonList(membership));
   }
 
   /**
@@ -111,19 +71,32 @@ public class Organization {
    * @param user user which should become a member
    */
   public void addMember(User user) {
-    this.members.add(user);
+    this.members.add(new Membership(user, this));
   }
 
   /**
    * Removes a member from the org
    * @param member member to remove
-   * @throws RuntimeException if member is a owner
+   * @throws RuntimeException if member was the last owner
    */
   public void removeMember(User member) {
-    if (owners.contains(member)) {
-      throw new RuntimeException("Cannot remove owner from members");
+    var optMember = members
+      .stream()
+      .filter(m -> m.getUser().equals(member))
+      .findFirst();
+
+    if (optMember.isPresent()) {
+      if (
+        !members
+          .stream()
+          .anyMatch(m ->
+            !m.getUser().equals(member) && m.getType() == MembershipType.OWNER
+          )
+      ) {
+        throw new RuntimeException("Cannot remove last owner");
+      }
+      this.members.remove(optMember.get());
     }
-    this.members.remove(member);
   }
 
   public void setName(String name) {

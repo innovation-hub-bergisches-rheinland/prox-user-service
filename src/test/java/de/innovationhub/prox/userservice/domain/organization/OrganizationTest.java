@@ -21,59 +21,16 @@ class OrganizationTest {
     var org = new Organization("Organization 123", user);
 
     // Then
-    assertThat(org.getOwners()).hasSize(1);
-    assertThat(org.getOwners()).contains(user);
-  }
-
-  @DisplayName("Should be the only member When new Organization is created")
-  @Test
-  void newOrganization_userIsMember() {
-    // Given
-    var user = new User(UUID.randomUUID());
-
-    // When
-    var org = new Organization("Organization 123", user);
-
-    // Then
     assertThat(org.getMembers()).hasSize(1);
-    assertThat(org.getMembers()).contains(user);
-  }
-
-  @DisplayName("Should throw exception When adding owner who is not a member")
-  @Test
-  void shouldThrowException_WhenAddingOwner() {
-    // Given
-    var owner = new User(UUID.randomUUID());
-    var org = new Organization("Organization 123", owner);
-    var user = new User(UUID.randomUUID());
-
-    // When
-    // Then
-    assertThrows(RuntimeException.class, () -> org.addOwner(user));
-    assertThat(org.getOwners()).hasSize(1);
-    assertThat(org.getOwners()).contains(owner);
-  }
-
-  @DisplayName("Should add owner When adding member")
-  @Test
-  void shouldAddOwner_WhenAddingMember() {
-    // Given
-    var owner = new User(UUID.randomUUID());
-    var org = new Organization("Organization 123", owner);
-    var user = new User(UUID.randomUUID());
-    org.addMember(user);
-
-    // When
-    org.addOwner(user);
-
-    // Then
-    assertThat(org.getOwners()).hasSize(2);
-    assertThat(org.getOwners()).contains(user, owner);
+    assertThat(org.getMembers())
+      .allMatch(m ->
+        m.getUser().equals(user) && m.getType() == MembershipType.OWNER
+      );
   }
 
   @DisplayName("Should add member When adding member")
   @Test
-  void shouldAddMember_WhenAddingMember() {
+  void shouldAddOwner_WhenAddingMember() {
     // Given
     var owner = new User(UUID.randomUUID());
     var org = new Organization("Organization 123", owner);
@@ -84,7 +41,10 @@ class OrganizationTest {
 
     // Then
     assertThat(org.getMembers()).hasSize(2);
-    assertThat(org.getMembers()).contains(user, owner);
+    assertThat(org.getMembers())
+      .anyMatch(m ->
+        m.getType() == MembershipType.MEMBER && m.getUser().equals(user)
+      );
   }
 
   @DisplayName("Should remove owner When removing secondary owner")
@@ -95,15 +55,22 @@ class OrganizationTest {
     var org = new Organization("Organization 123", owner);
     var user = new User(UUID.randomUUID());
     org.addMember(user);
-    org.addOwner(user);
+    var membership = org
+      .getMembers()
+      .stream()
+      .filter(m -> m.getUser() == user)
+      .findFirst();
+    membership.get().setType(MembershipType.OWNER);
 
     // When
-    org.removeOwner(owner);
+    org.removeMember(owner);
 
     // Then
-    assertThat(org.getOwners()).hasSize(1);
-    assertThat(org.getOwners()).contains(user);
-    assertThat(org.getOwners()).doesNotContain(owner);
+    assertThat(org.getMembers()).hasSize(1);
+    assertThat(org.getMembers())
+      .anyMatch(m ->
+        m.getType() == MembershipType.OWNER && m.getUser().equals(user)
+      );
   }
 
   @DisplayName("Should throw Exception when removing last owner")
@@ -115,10 +82,13 @@ class OrganizationTest {
 
     // When
     // Then
-    assertThrows(RuntimeException.class, () -> org.removeOwner(owner));
+    assertThrows(RuntimeException.class, () -> org.removeMember(owner));
 
-    assertThat(org.getOwners()).hasSize(1);
-    assertThat(org.getOwners()).contains(owner);
+    assertThat(org.getMembers()).hasSize(1);
+    assertThat(org.getMembers())
+      .anyMatch(m ->
+        m.getType() == MembershipType.OWNER && m.getUser().equals(owner)
+      );
   }
 
   @DisplayName("Should remove member When removing member")
@@ -135,25 +105,7 @@ class OrganizationTest {
 
     // Then
     assertThat(org.getMembers()).hasSize(1);
-    assertThat(org.getMembers()).doesNotContain(user);
-  }
-
-  @DisplayName("Should throw Exception when removing member who is owner")
-  @Test
-  void shouldThrowException_WhenRemovingMemberWhoIsOwner() {
-    // Given
-    var owner = new User(UUID.randomUUID());
-    var org = new Organization("Organization 123", owner);
-    var user = new User(UUID.randomUUID());
-    org.addMember(user);
-    org.addOwner(user);
-
-    // When
-    // Then
-    assertThrows(RuntimeException.class, () -> org.removeMember(user));
-
-    assertThat(org.getOwners()).hasSize(2);
-    assertThat(org.getOwners()).contains(user, user);
+    assertThat(org.getMembers()).noneMatch(m -> m.getUser().equals(user));
   }
 
   @DisplayName("Should throw Exception when creating orga with too long name")
