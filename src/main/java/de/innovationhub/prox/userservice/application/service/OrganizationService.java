@@ -6,6 +6,7 @@ import de.innovationhub.prox.userservice.domain.organization.dto.OrganizationGet
 import de.innovationhub.prox.userservice.domain.organization.dto.OrganizationMapper;
 import de.innovationhub.prox.userservice.domain.organization.dto.OrganizationPostDto;
 import de.innovationhub.prox.userservice.domain.user.User;
+import java.util.Objects;
 import java.util.UUID;
 import javax.transaction.Transactional;
 import javax.transaction.Transactional.TxType;
@@ -17,16 +18,13 @@ import reactor.core.scheduler.Schedulers;
 public class OrganizationService {
 
   private final OrganizationRepository organizationRepository;
-  private final UserService userService;
   private final OrganizationMapper organizationMapper;
 
   public OrganizationService(
     OrganizationRepository organizationRepository,
-    UserService userService,
     OrganizationMapper organizationMapper
   ) {
     this.organizationRepository = organizationRepository;
-    this.userService = userService;
     this.organizationMapper = organizationMapper;
   }
 
@@ -39,18 +37,15 @@ public class OrganizationService {
   }
 
   @Transactional(TxType.REQUIRED)
-  public Mono<OrganizationGetDto> createOrganization(OrganizationPostDto org) {
-    return userService
-      .getOrCreateAuthenticatedUser()
-      .switchIfEmpty(
-        Mono.error(
-          new RuntimeException("Could not retrieve authenticated user")
-        )
-      )
-      .flatMap(user ->
-        Mono.fromCallable(() ->
-          organizationRepository.save(mapOrgPostDtoToEntity(org, user))
-        )
+  public Mono<OrganizationGetDto> createOrganization(
+    OrganizationPostDto org,
+    User owner
+  ) {
+    Objects.requireNonNull(org);
+    Objects.requireNonNull(owner);
+    return Mono
+      .fromCallable(() ->
+        organizationRepository.save(mapOrgPostDtoToEntity(org, owner))
       )
       .subscribeOn(Schedulers.boundedElastic())
       .map(this.organizationMapper::organizationToGetDto);

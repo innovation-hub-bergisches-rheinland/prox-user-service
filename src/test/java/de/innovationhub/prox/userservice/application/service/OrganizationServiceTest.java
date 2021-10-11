@@ -1,13 +1,12 @@
 package de.innovationhub.prox.userservice.application.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import de.innovationhub.prox.userservice.application.service.OrganizationService;
-import de.innovationhub.prox.userservice.application.service.UserService;
 import de.innovationhub.prox.userservice.domain.organization.Organization;
 import de.innovationhub.prox.userservice.domain.organization.OrganizationRepository;
 import de.innovationhub.prox.userservice.domain.organization.dto.OrganizationPostDto;
@@ -18,7 +17,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 @SpringBootTest
@@ -27,36 +25,28 @@ class OrganizationServiceTest {
   @MockBean
   OrganizationRepository organizationRepository;
 
-  @MockBean
-  UserService userService;
-
   @Autowired
   OrganizationService organizationService;
 
   @Test
   void given_emptyUser_when_createOrganization_should_throw() {
     var organizationDto = new OrganizationPostDto("Musterfirma GmbH & Co. KG");
-    when(userService.getOrCreateAuthenticatedUser()).thenReturn(Mono.empty());
 
-    StepVerifier
-      .create(organizationService.createOrganization(organizationDto))
-      .expectError()
-      .verify();
-
-    verify(userService).getOrCreateAuthenticatedUser();
+    assertThrows(
+      NullPointerException.class,
+      () -> organizationService.createOrganization(organizationDto, null)
+    );
   }
 
   @Test
   void given_user_when_createOrganization_should_create() {
     var organizationDto = new OrganizationPostDto("Musterfirma GmbH & Co. KG");
     var user = new User(UUID.randomUUID());
-    when(userService.getOrCreateAuthenticatedUser())
-      .thenReturn(Mono.just(user));
     when(organizationRepository.save(any()))
       .thenAnswer(invocation -> invocation.getArgument(0));
 
     StepVerifier
-      .create(organizationService.createOrganization(organizationDto))
+      .create(organizationService.createOrganization(organizationDto, user))
       .assertNext(next -> {
         assertThat(next.name()).isEqualTo("Musterfirma GmbH & Co. KG");
         assertThat(next.id()).isNotNull();
@@ -64,7 +54,6 @@ class OrganizationServiceTest {
       .expectComplete()
       .verify();
 
-    verify(userService).getOrCreateAuthenticatedUser();
     verify(organizationRepository).save(any());
   }
 

@@ -16,7 +16,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Mono;
 
-@SpringBootTest(classes = { OrganizationController.class })
+@SpringBootTest
 class OrganizationControllerTest {
 
   @Autowired
@@ -84,7 +84,7 @@ class OrganizationControllerTest {
       UUID.randomUUID(),
       "Musterfirma GmbH & Co. KG"
     );
-    when(organizationService.createOrganization(eq(orgPostDto)))
+    when(organizationService.createOrganization(eq(orgPostDto), any()))
       .thenReturn(Mono.just(orgGetDto));
 
     // formatter:off
@@ -98,6 +98,6 @@ class OrganizationControllerTest {
       .isCreated();
     // formatter:on
 
-    verify(organizationService).createOrganization(eq(orgPostDto));
+    verify(organizationService).createOrganization(eq(orgPostDto), any());
   }
 }
