@@ -2,7 +2,7 @@ package de.innovationhub.prox.userservice.application.service;
 
 import de.innovationhub.prox.userservice.domain.user.User;
 import de.innovationhub.prox.userservice.domain.user.UserRepository;
-import de.innovationhub.prox.userservice.domain.user.dto.UserGetDto;
+import de.innovationhub.prox.userservice.domain.user.dto.UserMapper;
 import java.util.UUID;
 import javax.transaction.Transactional;
 import javax.transaction.Transactional.TxType;
@@ -16,10 +16,12 @@ import reactor.core.scheduler.Schedulers;
 public class UserService {
 
   private final UserRepository userRepository;
+  private final UserMapper userMapper;
 
   @Autowired
-  public UserService(UserRepository userRepository) {
+  public UserService(UserRepository userRepository, UserMapper userMapper) {
     this.userRepository = userRepository;
+    this.userMapper = userMapper;
   }
 
   // Intentionally package-private so that it is not callable from controller
