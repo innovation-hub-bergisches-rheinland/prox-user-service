@@ -47,7 +47,7 @@ public class SecurityConfig {
           .pathMatchers(HttpMethod.GET, "/orgs/{id}")
           .permitAll()
           .pathMatchers(HttpMethod.POST, "/orgs")
-          .authenticated()
+          .hasRole("organization_administrator")
       )
       .build();
   }

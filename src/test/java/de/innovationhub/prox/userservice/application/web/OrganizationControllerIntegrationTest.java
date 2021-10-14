@@ -55,7 +55,9 @@ public class OrganizationControllerIntegrationTest {
               .claim("iss", "https://login.archi-lab.io/auth/realms/archilab")
               .claim("sub", userId)
           )
-          .authorities(new SimpleGrantedAuthority("SCOPE_organization:create"))
+          .authorities(
+            new SimpleGrantedAuthority("ROLE_organization_administrator")
+          )
       )
       .post()
       .uri("/orgs")
@@ -102,7 +104,9 @@ public class OrganizationControllerIntegrationTest {
               .claim("iss", "https://login.archi-lab.io/auth/realms/archilab")
               .claim("sub", userId)
           )
-          .authorities(new SimpleGrantedAuthority("SCOPE_organization:create"))
+          .authorities(
+            new SimpleGrantedAuthority("ROLE_organization_administrator")
+          )
       )
       .post()
       .uri("/orgs")
