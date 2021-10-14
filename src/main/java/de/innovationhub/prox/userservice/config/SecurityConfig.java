@@ -44,8 +44,10 @@ public class SecurityConfig {
       )
       .authorizeExchange(exchange ->
         exchange
-          .pathMatchers(HttpMethod.GET, "/orgs/{id}")
+          .pathMatchers(HttpMethod.GET, "/orgs/{id}", "/orgs/{id}/memberships")
           .permitAll()
+          .pathMatchers(HttpMethod.GET, "/user/**")
+          .authenticated()
           .pathMatchers(HttpMethod.POST, "/orgs")
           .hasRole("organization_administrator")
       )

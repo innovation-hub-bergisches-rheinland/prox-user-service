@@ -4,8 +4,12 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 import de.innovationhub.prox.userservice.application.service.OrganizationService;
+import de.innovationhub.prox.userservice.domain.organization.MembershipType;
+import de.innovationhub.prox.userservice.domain.organization.dto.MembershipOmitOrganizationGetDto;
 import de.innovationhub.prox.userservice.domain.organization.dto.OrganizationGetDto;
 import de.innovationhub.prox.userservice.domain.organization.dto.OrganizationPostDto;
+import de.innovationhub.prox.userservice.domain.user.dto.UserGetDto;
+import java.util.Set;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,6 +18,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @SpringBootTest
@@ -99,5 +104,30 @@ class OrganizationControllerTest {
     // formatter:on
 
     verify(organizationService).createOrganization(eq(orgPostDto), any());
+  }
+
+  @Test
+  void given_organizationMembership_should_return_ok() {
+    // Given
+    var memberships = Set.of(
+      new MembershipOmitOrganizationGetDto(
+        new UserGetDto(UUID.randomUUID()),
+        MembershipType.OWNER
+      )
+    );
+    var orgId = UUID.randomUUID();
+    when(this.organizationService.findOrganizationMemberships(eq(orgId)))
+      .thenReturn(Flux.fromIterable(memberships));
+
+    // formatter:off
+    this.webTestClient.get()
+      .uri("/orgs/{id}/memberships", orgId.toString())
+      .accept(MediaType.APPLICATION_JSON)
+      .exchange()
+      .expectStatus()
+      .isOk();
+    // formatter:on
+
+    verify(organizationService).findOrganizationMemberships(eq(orgId));
   }
 }

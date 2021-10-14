@@ -1,14 +1,12 @@
 package de.innovationhub.prox.userservice.application.service;
 
-import de.innovationhub.prox.userservice.domain.user.User;
+import de.innovationhub.prox.userservice.domain.organization.dto.MembershipMapper;
+import de.innovationhub.prox.userservice.domain.organization.dto.MembershipOmitUserGetDto;
 import de.innovationhub.prox.userservice.domain.user.UserRepository;
-import de.innovationhub.prox.userservice.domain.user.dto.UserMapper;
 import java.util.UUID;
-import javax.transaction.Transactional;
-import javax.transaction.Transactional.TxType;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.ReactiveSecurityContextHolder;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
@@ -16,11 +14,26 @@ import reactor.core.scheduler.Schedulers;
 public class UserService {
 
   private final UserRepository userRepository;
-  private final UserMapper userMapper;
+  private final MembershipMapper membershipMapper;
 
   @Autowired
-  public UserService(UserRepository userRepository, UserMapper userMapper) {
+  public UserService(
+    UserRepository userRepository,
+    MembershipMapper membershipMapper
+  ) {
     this.userRepository = userRepository;
-    this.userMapper = userMapper;
+    this.membershipMapper = membershipMapper;
+  }
+
+  public Flux<MembershipOmitUserGetDto> findMembershipsOfUserWithId(
+    UUID userId
+  ) {
+    return Mono
+      .fromCallable(() -> userRepository.findById(userId))
+      .subscribeOn(Schedulers.boundedElastic())
+      .flatMap(optional -> optional.map(Mono::just).orElseGet(Mono::empty))
+      .flatMapIterable(user -> user.getMembers())
+      .map(membership -> membershipMapper.membershipToOmitUserGetDto(membership)
+      );
   }
 }

@@ -3,9 +3,13 @@ package de.innovationhub.prox.userservice.application.web;
 import static org.assertj.core.api.Assertions.*;
 import static org.springframework.security.test.web.reactive.server.SecurityMockServerConfigurers.mockJwt;
 
+import de.innovationhub.prox.userservice.domain.organization.MembershipType;
+import de.innovationhub.prox.userservice.domain.organization.Organization;
 import de.innovationhub.prox.userservice.domain.organization.OrganizationRepository;
+import de.innovationhub.prox.userservice.domain.organization.dto.MembershipOmitOrganizationGetDto;
 import de.innovationhub.prox.userservice.domain.user.User;
 import de.innovationhub.prox.userservice.domain.user.UserRepository;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -130,5 +134,42 @@ public class OrganizationControllerIntegrationTest {
       .isEqualTo("Musterfirma GmbH & Co. KG");
 
     assertThat(this.userRepository.existsById(userId)).isTrue();
+  }
+
+  @Test
+  @Transactional(TxType.NOT_SUPPORTED) // TODO
+  void given_OrganizationMemberships_when_GetOrganizationMemberships_should_GetMemberships() {
+    var owner = new User(UUID.randomUUID());
+    var member = new User(UUID.randomUUID());
+    userRepository.save(owner);
+    userRepository.save(member);
+    var organization = new Organization("Musterfirma GmbH & Co. KG", owner);
+    organization.addMember(member);
+    organizationRepository.save(organization);
+
+    webTestClient
+      .get()
+      .uri("/orgs/{id}/memberships", organization.getId().toString())
+      .accept(MediaType.APPLICATION_JSON)
+      .exchange()
+      .expectStatus()
+      .isOk()
+      .expectBodyList(MembershipOmitOrganizationGetDto.class)
+      .value(members -> {
+        assertThat(members)
+          .extracting("user.id", "type")
+          .containsExactlyInAnyOrder(
+            tuple(owner.getId(), MembershipType.OWNER),
+            tuple(member.getId(), MembershipType.MEMBER)
+          );
+      });
+
+    var savedOrg = organizationRepository.findById(organization.getId()).get();
+    assertThat(savedOrg.getMembers())
+      .extracting("user.id", "type")
+      .containsExactlyInAnyOrder(
+        tuple(owner.getId(), MembershipType.OWNER),
+        tuple(member.getId(), MembershipType.MEMBER)
+      );
   }
 }
