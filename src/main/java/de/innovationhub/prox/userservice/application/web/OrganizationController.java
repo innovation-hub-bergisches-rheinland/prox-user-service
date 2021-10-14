@@ -12,6 +12,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -26,14 +28,17 @@ public class OrganizationController {
 
   private final OrganizationService organizationService;
   private final ConversionService conversionService;
+  private final SecurityWebFilterChain securityWebFilterChain;
 
   @Autowired
   public OrganizationController(
     OrganizationService organizationService,
-    ConversionService conversionService
+    ConversionService conversionService,
+    SecurityWebFilterChain securityWebFilterChain
   ) {
     this.organizationService = organizationService;
     this.conversionService = conversionService;
+    this.securityWebFilterChain = securityWebFilterChain;
   }
 
   @GetMapping(value = "{id}", produces = MediaType.APPLICATION_JSON_VALUE)

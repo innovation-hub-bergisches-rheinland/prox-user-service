@@ -6,6 +6,8 @@ import static org.springframework.security.test.web.reactive.server.SecurityMock
 import de.innovationhub.prox.userservice.domain.organization.OrganizationRepository;
 import de.innovationhub.prox.userservice.domain.user.User;
 import de.innovationhub.prox.userservice.domain.user.UserRepository;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import javax.transaction.Transactional;
 import javax.transaction.Transactional.TxType;
@@ -15,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 @SpringBootTest
@@ -52,6 +55,7 @@ public class OrganizationControllerIntegrationTest {
               .claim("iss", "https://login.archi-lab.io/auth/realms/archilab")
               .claim("sub", userId)
           )
+          .authorities(new SimpleGrantedAuthority("SCOPE_organization:create"))
       )
       .post()
       .uri("/orgs")
@@ -98,6 +102,7 @@ public class OrganizationControllerIntegrationTest {
               .claim("iss", "https://login.archi-lab.io/auth/realms/archilab")
               .claim("sub", userId)
           )
+          .authorities(new SimpleGrantedAuthority("SCOPE_organization:create"))
       )
       .post()
       .uri("/orgs")
