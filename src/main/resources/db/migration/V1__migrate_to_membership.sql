@@ -8,10 +8,10 @@ create table organization_memberships(
 );
 
 insert into organization_memberships(user_id, organization_id, type)
-    SELECT user_id, organization_id, true from organization_owners;
+    SELECT user_id, organization_id, 0 from organization_owners;
 
 insert into organization_memberships(user_id, organization_id, type)
-    SELECT user_id, organization_id, false from organization_members;
+    SELECT user_id, organization_id, 1 from organization_members;
 
 drop table organization_owners;
 drop table organization_members;
