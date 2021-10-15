@@ -5,10 +5,11 @@ import static org.mockito.Mockito.*;
 
 import de.innovationhub.prox.userservice.application.service.OrganizationService;
 import de.innovationhub.prox.userservice.domain.organization.MembershipType;
-import de.innovationhub.prox.userservice.domain.organization.dto.MembershipOmitOrganizationGetDto;
-import de.innovationhub.prox.userservice.domain.organization.dto.OrganizationGetDto;
-import de.innovationhub.prox.userservice.domain.organization.dto.OrganizationPostDto;
-import de.innovationhub.prox.userservice.domain.user.dto.UserGetDto;
+import de.innovationhub.prox.userservice.domain.organization.dto.GetOrganizationResponse;
+import de.innovationhub.prox.userservice.domain.organization.dto.GetUserMembershipResponse;
+import de.innovationhub.prox.userservice.domain.organization.dto.PostOrganizationRequest;
+import de.innovationhub.prox.userservice.domain.organization.dto.PostOrganizationResponse;
+import de.innovationhub.prox.userservice.domain.user.dto.GetUserResponse;
 import java.util.Set;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
@@ -40,7 +41,7 @@ class OrganizationControllerTest {
 
   @Test
   void given_organization_when_get_organizationWithId_should_return_organization() {
-    var org = new OrganizationGetDto(
+    var org = new GetOrganizationResponse(
       UUID.randomUUID(),
       "Musterfirma GmbH & Co. KG"
     );
@@ -84,8 +85,8 @@ class OrganizationControllerTest {
 
   @Test
   void given_orgDto_when_post_organization_should_return_created() {
-    var orgPostDto = new OrganizationPostDto("Musterfirma GmbH & Co. KG");
-    var orgGetDto = new OrganizationGetDto(
+    var orgPostDto = new PostOrganizationRequest("Musterfirma GmbH & Co. KG");
+    var orgGetDto = new PostOrganizationResponse(
       UUID.randomUUID(),
       "Musterfirma GmbH & Co. KG"
     );
@@ -110,8 +111,8 @@ class OrganizationControllerTest {
   void given_organizationMembership_should_return_ok() {
     // Given
     var memberships = Set.of(
-      new MembershipOmitOrganizationGetDto(
-        new UserGetDto(UUID.randomUUID()),
+      new GetUserMembershipResponse(
+        new GetUserResponse(UUID.randomUUID()),
         MembershipType.OWNER
       )
     );

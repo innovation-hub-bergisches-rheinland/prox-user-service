@@ -6,8 +6,10 @@ import org.mapstruct.Mapper;
 
 @Mapper(uses = { OrganizationMapper.class, UserMapper.class })
 public interface MembershipMapper {
-  MembershipOmitUserGetDto membershipToOmitUserGetDto(Membership membership);
-  MembershipOmitOrganizationGetDto membershipToOmitOrganizationGetDto(
+  GetOrganizationMembershipResponse membershipToOmitUserGetDto(
+    Membership membership
+  );
+  GetUserMembershipResponse membershipToOmitOrganizationGetDto(
     Membership membership
   );
 }

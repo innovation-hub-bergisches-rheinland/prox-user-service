@@ -1,14 +1,14 @@
 package de.innovationhub.prox.userservice.application.web;
 
 import de.innovationhub.prox.userservice.application.service.OrganizationService;
-import de.innovationhub.prox.userservice.domain.organization.dto.MembershipOmitOrganizationGetDto;
-import de.innovationhub.prox.userservice.domain.organization.dto.OrganizationGetDto;
-import de.innovationhub.prox.userservice.domain.organization.dto.OrganizationPostDto;
+import de.innovationhub.prox.userservice.domain.organization.dto.GetOrganizationResponse;
+import de.innovationhub.prox.userservice.domain.organization.dto.GetUserMembershipResponse;
+import de.innovationhub.prox.userservice.domain.organization.dto.PostOrganizationRequest;
+import de.innovationhub.prox.userservice.domain.organization.dto.PostOrganizationResponse;
 import de.innovationhub.prox.userservice.domain.user.User;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
-import javax.ws.rs.Path;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.http.HttpStatus;
@@ -16,7 +16,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -42,7 +41,7 @@ public class OrganizationController {
   }
 
   @GetMapping(value = "{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-  public Mono<ResponseEntity<OrganizationGetDto>> getOrganizationById(
+  public Mono<ResponseEntity<GetOrganizationResponse>> getOrganizationById(
     @PathVariable UUID id
   ) {
     return organizationService
@@ -57,8 +56,8 @@ public class OrganizationController {
     produces = MediaType.APPLICATION_JSON_VALUE,
     consumes = MediaType.APPLICATION_JSON_VALUE
   )
-  public Mono<ResponseEntity<OrganizationGetDto>> postOrganization(
-    @RequestBody OrganizationPostDto org,
+  public Mono<ResponseEntity<PostOrganizationResponse>> postOrganization(
+    @RequestBody PostOrganizationRequest org,
     @AuthenticationPrincipal Authentication authentication
   ) {
     // Get authenticated user as entity
@@ -74,7 +73,7 @@ public class OrganizationController {
     value = "{id}/memberships",
     produces = MediaType.APPLICATION_JSON_VALUE
   )
-  public Mono<ResponseEntity<Set<MembershipOmitOrganizationGetDto>>> getOrganizationMemberships(
+  public Mono<ResponseEntity<Set<GetUserMembershipResponse>>> getOrganizationMemberships(
     @PathVariable UUID id
   ) {
     return this.organizationService.findOrganizationMemberships(id)

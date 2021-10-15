@@ -6,12 +6,9 @@ import static org.springframework.security.test.web.reactive.server.SecurityMock
 import de.innovationhub.prox.userservice.domain.organization.MembershipType;
 import de.innovationhub.prox.userservice.domain.organization.Organization;
 import de.innovationhub.prox.userservice.domain.organization.OrganizationRepository;
-import de.innovationhub.prox.userservice.domain.organization.dto.MembershipOmitOrganizationGetDto;
+import de.innovationhub.prox.userservice.domain.organization.dto.GetUserMembershipResponse;
 import de.innovationhub.prox.userservice.domain.user.User;
 import de.innovationhub.prox.userservice.domain.user.UserRepository;
-import java.nio.charset.StandardCharsets;
-import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 import javax.transaction.Transactional;
 import javax.transaction.Transactional.TxType;
@@ -154,7 +151,7 @@ public class OrganizationControllerIntegrationTest {
       .exchange()
       .expectStatus()
       .isOk()
-      .expectBodyList(MembershipOmitOrganizationGetDto.class)
+      .expectBodyList(GetUserMembershipResponse.class)
       .value(members -> {
         assertThat(members)
           .extracting("user.id", "type")

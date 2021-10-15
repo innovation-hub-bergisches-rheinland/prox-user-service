@@ -5,6 +5,7 @@ import org.mapstruct.Mapper;
 
 @Mapper
 public interface OrganizationMapper {
-  OrganizationGetDto organizationToGetDto(Organization organization);
+  GetOrganizationResponse organizationToGetDto(Organization organization);
+  PostOrganizationResponse organizationToPostDto(Organization organization);
   //Organization organizationPostDtoToOrganization(OrganizationPostDto postDto);
 }

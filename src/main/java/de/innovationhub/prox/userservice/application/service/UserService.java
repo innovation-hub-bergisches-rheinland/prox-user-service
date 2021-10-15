@@ -1,7 +1,7 @@
 package de.innovationhub.prox.userservice.application.service;
 
+import de.innovationhub.prox.userservice.domain.organization.dto.GetOrganizationMembershipResponse;
 import de.innovationhub.prox.userservice.domain.organization.dto.MembershipMapper;
-import de.innovationhub.prox.userservice.domain.organization.dto.MembershipOmitUserGetDto;
 import de.innovationhub.prox.userservice.domain.user.UserRepository;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +25,7 @@ public class UserService {
     this.membershipMapper = membershipMapper;
   }
 
-  public Flux<MembershipOmitUserGetDto> findMembershipsOfUserWithId(
+  public Flux<GetOrganizationMembershipResponse> findMembershipsOfUserWithId(
     UUID userId
   ) {
     return Mono

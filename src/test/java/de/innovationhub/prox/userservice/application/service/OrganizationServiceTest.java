@@ -11,7 +11,7 @@ import static org.mockito.Mockito.when;
 import de.innovationhub.prox.userservice.domain.organization.MembershipType;
 import de.innovationhub.prox.userservice.domain.organization.Organization;
 import de.innovationhub.prox.userservice.domain.organization.OrganizationRepository;
-import de.innovationhub.prox.userservice.domain.organization.dto.OrganizationPostDto;
+import de.innovationhub.prox.userservice.domain.organization.dto.PostOrganizationRequest;
 import de.innovationhub.prox.userservice.domain.user.User;
 import java.util.HashSet;
 import java.util.Optional;
@@ -33,7 +33,9 @@ class OrganizationServiceTest {
 
   @Test
   void given_emptyUser_when_createOrganization_should_throw() {
-    var organizationDto = new OrganizationPostDto("Musterfirma GmbH & Co. KG");
+    var organizationDto = new PostOrganizationRequest(
+      "Musterfirma GmbH & Co. KG"
+    );
 
     assertThrows(
       NullPointerException.class,
@@ -43,7 +45,9 @@ class OrganizationServiceTest {
 
   @Test
   void given_user_when_createOrganization_should_create() {
-    var organizationDto = new OrganizationPostDto("Musterfirma GmbH & Co. KG");
+    var organizationDto = new PostOrganizationRequest(
+      "Musterfirma GmbH & Co. KG"
+    );
     var user = new User(UUID.randomUUID());
     when(organizationRepository.save(any()))
       .thenAnswer(invocation -> invocation.getArgument(0));

@@ -5,5 +5,5 @@ import org.mapstruct.Mapper;
 
 @Mapper
 public interface UserMapper {
-  UserGetDto userToUserGetDto(User user);
+  GetUserResponse userToUserGetDto(User user);
 }

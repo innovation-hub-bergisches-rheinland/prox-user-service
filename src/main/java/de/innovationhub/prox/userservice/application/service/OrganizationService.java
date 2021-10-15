@@ -2,11 +2,12 @@ package de.innovationhub.prox.userservice.application.service;
 
 import de.innovationhub.prox.userservice.domain.organization.Organization;
 import de.innovationhub.prox.userservice.domain.organization.OrganizationRepository;
+import de.innovationhub.prox.userservice.domain.organization.dto.GetOrganizationResponse;
+import de.innovationhub.prox.userservice.domain.organization.dto.GetUserMembershipResponse;
 import de.innovationhub.prox.userservice.domain.organization.dto.MembershipMapper;
-import de.innovationhub.prox.userservice.domain.organization.dto.MembershipOmitOrganizationGetDto;
-import de.innovationhub.prox.userservice.domain.organization.dto.OrganizationGetDto;
 import de.innovationhub.prox.userservice.domain.organization.dto.OrganizationMapper;
-import de.innovationhub.prox.userservice.domain.organization.dto.OrganizationPostDto;
+import de.innovationhub.prox.userservice.domain.organization.dto.PostOrganizationRequest;
+import de.innovationhub.prox.userservice.domain.organization.dto.PostOrganizationResponse;
 import de.innovationhub.prox.userservice.domain.user.User;
 import java.util.Objects;
 import java.util.UUID;
@@ -41,14 +42,12 @@ public class OrganizationService {
       .flatMap(optional -> optional.map(Mono::just).orElseGet(Mono::empty));
   }
 
-  public Mono<OrganizationGetDto> getOrganizationWithId(UUID id) {
+  public Mono<GetOrganizationResponse> getOrganizationWithId(UUID id) {
     return this.getOrganizationEntityWithId(id)
       .map(this.organizationMapper::organizationToGetDto);
   }
 
-  public Flux<MembershipOmitOrganizationGetDto> findOrganizationMemberships(
-    UUID id
-  ) {
+  public Flux<GetUserMembershipResponse> findOrganizationMemberships(UUID id) {
     return this.getOrganizationEntityWithId(id)
       .flatMapIterable(org -> org.getMembers())
       .map(member ->
@@ -57,8 +56,8 @@ public class OrganizationService {
   }
 
   @Transactional(TxType.REQUIRED)
-  public Mono<OrganizationGetDto> createOrganization(
-    OrganizationPostDto org,
+  public Mono<PostOrganizationResponse> createOrganization(
+    PostOrganizationRequest org,
     User owner
   ) {
     Objects.requireNonNull(org);
@@ -68,11 +67,11 @@ public class OrganizationService {
         organizationRepository.save(mapOrgPostDtoToEntity(org, owner))
       )
       .subscribeOn(Schedulers.boundedElastic())
-      .map(this.organizationMapper::organizationToGetDto);
+      .map(this.organizationMapper::organizationToPostDto);
   }
 
   private Organization mapOrgPostDtoToEntity(
-    OrganizationPostDto org,
+    PostOrganizationRequest org,
     User owner
   ) {
     return new Organization(org.name(), owner);
