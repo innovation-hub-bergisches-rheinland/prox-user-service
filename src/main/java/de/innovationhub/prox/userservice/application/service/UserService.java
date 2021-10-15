@@ -5,6 +5,7 @@ import de.innovationhub.prox.userservice.domain.organization.dto.MembershipMappe
 import de.innovationhub.prox.userservice.domain.user.UserRepository;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -25,6 +26,14 @@ public class UserService {
     this.membershipMapper = membershipMapper;
   }
 
+  public Flux<GetOrganizationMembershipResponse> findMembershipsOfAuthenticatedUser(
+    Authentication authentication
+  ) {
+    return this.findMembershipsOfUserWithId(
+        extractUUIDFromAuthentication(authentication)
+      );
+  }
+
   public Flux<GetOrganizationMembershipResponse> findMembershipsOfUserWithId(
     UUID userId
   ) {
@@ -35,5 +44,9 @@ public class UserService {
       .flatMapIterable(user -> user.getMembers())
       .map(membership -> membershipMapper.membershipToOmitUserGetDto(membership)
       );
+  }
+
+  private UUID extractUUIDFromAuthentication(Authentication authentication) {
+    return UUID.fromString(authentication.getName());
   }
 }
