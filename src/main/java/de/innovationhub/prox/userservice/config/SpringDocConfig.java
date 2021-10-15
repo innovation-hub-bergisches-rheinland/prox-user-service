@@ -25,7 +25,9 @@ public class SpringDocConfig {
           .url("https://dev.api.prox.innovation-hub.de")
           .description("PROX Development API")
       )
-      .info(new Info().title("PROX User Service"))
+      .info(
+        new Info().title("PROX User Service").version("0.1.0") // TODO
+      )
       .components(
         new Components()
           .addSecuritySchemes(
