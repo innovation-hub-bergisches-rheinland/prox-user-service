@@ -6,6 +6,7 @@ import de.innovationhub.prox.userservice.domain.organization.dto.GetUserMembersh
 import de.innovationhub.prox.userservice.domain.organization.dto.PostOrganizationRequest;
 import de.innovationhub.prox.userservice.domain.organization.dto.PostOrganizationResponse;
 import de.innovationhub.prox.userservice.domain.user.User;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -55,6 +56,10 @@ public class OrganizationController {
   @PostMapping(
     produces = MediaType.APPLICATION_JSON_VALUE,
     consumes = MediaType.APPLICATION_JSON_VALUE
+  )
+  @SecurityRequirement(
+    name = "Bearer",
+    scopes = "ROLE_organization_administrator"
   )
   public Mono<ResponseEntity<PostOrganizationResponse>> postOrganization(
     @RequestBody PostOrganizationRequest org,

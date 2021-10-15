@@ -25,6 +25,7 @@
     <spotless.version>2.17.0</spotless.version>
     <org.mapstruct.version>1.4.2.Final</org.mapstruct.version>
     <lombok.version>1.18.22</lombok.version>
+    <springdoc.version>1.5.11</springdoc.version>
   </properties>
 
   <dependencyManagement>
@@ -118,6 +119,16 @@
       <groupId>org.springframework.security</groupId>
       <artifactId>spring-security-test</artifactId>
       <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springdoc</groupId>
+      <artifactId>springdoc-openapi-webflux-ui</artifactId>
+      <version>${springdoc.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springdoc</groupId>
+      <artifactId>springdoc-openapi-security</artifactId>
+      <version>${springdoc.version}</version>
     </dependency>
   </dependencies>
 

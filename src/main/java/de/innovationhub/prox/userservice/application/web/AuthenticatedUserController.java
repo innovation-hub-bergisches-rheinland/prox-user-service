@@ -2,6 +2,7 @@ package de.innovationhub.prox.userservice.application.web;
 
 import de.innovationhub.prox.userservice.application.service.UserService;
 import de.innovationhub.prox.userservice.domain.organization.dto.GetOrganizationMembershipResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -21,6 +22,7 @@ import reactor.core.publisher.Mono;
 @RestController
 @RequestMapping("user")
 @Slf4j
+@SecurityRequirement(name = "Bearer")
 public class AuthenticatedUserController {
 
   private final UserService userService;

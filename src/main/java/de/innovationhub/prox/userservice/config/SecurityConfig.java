@@ -20,6 +20,13 @@ import reactor.core.publisher.Mono;
 public class SecurityConfig {
 
   private final ServerHttpSecurity http;
+  private final String[] OPENAPI_PATHS = new String[] {
+    "/swagger-ui.html",
+    "/v3/api-docs",
+    "/v3/api-docs.yaml",
+    "/v3/api-docs/swagger-config",
+    "/webjars/swagger-ui/**",
+  };
 
   @Autowired
   public SecurityConfig(ServerHttpSecurity security) {
@@ -44,6 +51,8 @@ public class SecurityConfig {
       )
       .authorizeExchange(exchange ->
         exchange
+          .pathMatchers(HttpMethod.GET, OPENAPI_PATHS)
+          .permitAll()
           .pathMatchers(HttpMethod.GET, "/orgs/{id}", "/orgs/{id}/memberships")
           .permitAll()
           .pathMatchers(HttpMethod.GET, "/user/**")
