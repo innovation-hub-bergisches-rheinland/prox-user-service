@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.http.HttpStatus;
@@ -62,7 +63,7 @@ public class OrganizationController {
     scopes = "ROLE_organization_administrator"
   )
   public Mono<ResponseEntity<PostOrganizationResponse>> postOrganization(
-    @RequestBody PostOrganizationRequest org,
+    @RequestBody @Valid PostOrganizationRequest org,
     @AuthenticationPrincipal Authentication authentication
   ) {
     // Get authenticated user as entity
