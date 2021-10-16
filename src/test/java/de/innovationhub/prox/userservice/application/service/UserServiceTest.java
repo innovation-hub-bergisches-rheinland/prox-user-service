@@ -14,6 +14,7 @@ import de.innovationhub.prox.userservice.domain.organization.MembershipType;
 import de.innovationhub.prox.userservice.domain.organization.Organization;
 import de.innovationhub.prox.userservice.domain.user.User;
 import de.innovationhub.prox.userservice.domain.user.UserRepository;
+import java.util.Collections;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -44,7 +45,8 @@ class UserServiceTest {
     // Given
     var userId = UUID.randomUUID();
     var user = new User(userId);
-    when(userRepository.findById(eq(userId))).thenReturn(Optional.of(user));
+    when(userRepository.findMembershipsOfUserWithId(eq(userId)))
+      .thenReturn(Collections.emptySet());
 
     // When
     StepVerifier

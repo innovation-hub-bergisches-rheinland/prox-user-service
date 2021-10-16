@@ -41,10 +41,9 @@ public class UserService {
     UUID userId
   ) {
     return Mono
-      .fromCallable(() -> userRepository.findById(userId))
+      .fromCallable(() -> userRepository.findMembershipsOfUserWithId(userId))
       .subscribeOn(Schedulers.boundedElastic())
-      .flatMap(optional -> optional.map(Mono::just).orElseGet(Mono::empty))
-      .flatMapIterable(user -> user.getMembers())
+      .flatMapIterable(res -> res)
       .map(membership -> membershipMapper.membershipToOmitUserGetDto(membership)
       );
   }
