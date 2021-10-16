@@ -4,6 +4,7 @@ import de.innovationhub.prox.userservice.domain.organization.dto.GetOrganization
 import de.innovationhub.prox.userservice.domain.organization.dto.MembershipMapper;
 import de.innovationhub.prox.userservice.domain.user.UserRepository;
 import java.util.UUID;
+import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
@@ -26,6 +27,7 @@ public class UserService {
     this.membershipMapper = membershipMapper;
   }
 
+  @Transactional
   public Flux<GetOrganizationMembershipResponse> findMembershipsOfAuthenticatedUser(
     Authentication authentication
   ) {
@@ -34,6 +36,7 @@ public class UserService {
       );
   }
 
+  @Transactional
   public Flux<GetOrganizationMembershipResponse> findMembershipsOfUserWithId(
     UUID userId
   ) {
