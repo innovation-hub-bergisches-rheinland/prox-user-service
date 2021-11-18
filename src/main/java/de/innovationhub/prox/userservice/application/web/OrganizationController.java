@@ -1,5 +1,6 @@
 package de.innovationhub.prox.userservice.application.web;
 
+
 import de.innovationhub.prox.userservice.application.service.OrganizationService;
 import de.innovationhub.prox.userservice.domain.organization.dto.OrganizationGetDto;
 import de.innovationhub.prox.userservice.domain.organization.dto.OrganizationPostDto;
@@ -22,24 +23,25 @@ public class OrganizationController {
   private final OrganizationService organizationService;
 
   @Autowired
-  public OrganizationController(
-      OrganizationService organizationService) {
+  public OrganizationController(OrganizationService organizationService) {
     this.organizationService = organizationService;
   }
 
   @GetMapping(value = "{id}", produces = MediaType.APPLICATION_JSON_VALUE)
   public Mono<ResponseEntity<OrganizationGetDto>> getOrganizationById(@PathVariable UUID id) {
-    return organizationService.getOrganizationWithId(id)
+    return organizationService
+        .getOrganizationWithId(id)
         .map(ResponseEntity::ok)
         .switchIfEmpty(Mono.just(ResponseEntity.status(HttpStatus.NOT_FOUND).build()));
-
   }
 
-  @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+  @PostMapping(
+      produces = MediaType.APPLICATION_JSON_VALUE,
+      consumes = MediaType.APPLICATION_JSON_VALUE)
   public Mono<ResponseEntity<OrganizationGetDto>> postOrganization(
-      @RequestBody OrganizationPostDto org
-  ) {
-    return organizationService.createOrganization(org)
+      @RequestBody OrganizationPostDto org) {
+    return organizationService
+        .createOrganization(org)
         .map(createdOrg -> ResponseEntity.status(HttpStatus.CREATED).body(createdOrg));
   }
 }

@@ -1,9 +1,10 @@
 package de.innovationhub.prox.userservice.application.service;
 
+
 import de.innovationhub.prox.userservice.domain.organization.Organization;
+import de.innovationhub.prox.userservice.domain.organization.OrganizationRepository;
 import de.innovationhub.prox.userservice.domain.organization.dto.OrganizationGetDto;
 import de.innovationhub.prox.userservice.domain.organization.dto.OrganizationPostDto;
-import de.innovationhub.prox.userservice.domain.organization.OrganizationRepository;
 import de.innovationhub.prox.userservice.domain.user.User;
 import java.util.UUID;
 import javax.transaction.Transactional;
@@ -19,8 +20,7 @@ public class OrganizationService {
   private final UserService userService;
 
   public OrganizationService(
-      OrganizationRepository organizationRepository,
-      UserService userService) {
+      OrganizationRepository organizationRepository, UserService userService) {
     this.organizationRepository = organizationRepository;
     this.userService = userService;
   }
@@ -34,10 +34,13 @@ public class OrganizationService {
 
   @Transactional(TxType.REQUIRED)
   public Mono<OrganizationGetDto> createOrganization(OrganizationPostDto org) {
-    return userService.getOrCreateAuthenticatedUser()
+    return userService
+        .getOrCreateAuthenticatedUser()
         .switchIfEmpty(Mono.error(new RuntimeException("Could not retrieve authenticated user")))
-        .flatMap(user -> Mono.fromCallable(
-            () -> organizationRepository.save(mapOrgPostDtoToEntity(org, user))))
+        .flatMap(
+            user ->
+                Mono.fromCallable(
+                    () -> organizationRepository.save(mapOrgPostDtoToEntity(org, user))))
         .subscribeOn(Schedulers.boundedElastic())
         .map(this::mapOrgToGetDto);
   }

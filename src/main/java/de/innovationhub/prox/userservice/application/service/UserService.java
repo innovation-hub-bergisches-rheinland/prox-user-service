@@ -1,8 +1,8 @@
 package de.innovationhub.prox.userservice.application.service;
 
+
 import de.innovationhub.prox.userservice.domain.user.User;
 import de.innovationhub.prox.userservice.domain.user.UserRepository;
-import de.innovationhub.prox.userservice.domain.user.dto.UserGetDto;
 import java.util.UUID;
 import javax.transaction.Transactional;
 import javax.transaction.Transactional.TxType;

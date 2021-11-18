@@ -7,7 +7,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import de.innovationhub.prox.userservice.application.service.UserService;
 import de.innovationhub.prox.userservice.domain.user.User;
 import de.innovationhub.prox.userservice.domain.user.UserRepository;
 import java.util.Optional;
@@ -22,17 +21,13 @@ import reactor.test.StepVerifier;
 @SpringBootTest
 class UserServiceTest {
 
-  @MockBean
-  UserRepository userRepository;
+  @MockBean UserRepository userRepository;
 
-  @Autowired
-  UserService userService;
+  @Autowired UserService userService;
 
   @Test
   void given_unauthenticatedUser_when_getOrCreateAuthenticatedUser_should_throw() {
-    StepVerifier.create(userService.getOrCreateAuthenticatedUser())
-        .expectError()
-        .verify();
+    StepVerifier.create(userService.getOrCreateAuthenticatedUser()).expectError().verify();
 
     verify(userRepository, times(0)).save(any());
   }
@@ -40,9 +35,7 @@ class UserServiceTest {
   @Test
   @WithMockUser(username = "null")
   void given_authenticatedUserNotUUID_when_getOrCreateAuthenticatedUser_should_throw() {
-    StepVerifier.create(userService.getOrCreateAuthenticatedUser())
-        .expectError()
-        .verify();
+    StepVerifier.create(userService.getOrCreateAuthenticatedUser()).expectError().verify();
 
     verify(userRepository, times(0)).save(any());
   }
@@ -55,9 +48,10 @@ class UserServiceTest {
     when(userRepository.findById(eq(user.getId()))).thenReturn(Optional.empty());
 
     StepVerifier.create(userService.getOrCreateAuthenticatedUser())
-        .assertNext(next -> {
-          assertThat(next).isEqualTo(user);
-        })
+        .assertNext(
+            next -> {
+              assertThat(next).isEqualTo(user);
+            })
         .expectComplete()
         .verify();
 
@@ -72,9 +66,10 @@ class UserServiceTest {
     when(userRepository.findById(eq(user.getId()))).thenReturn(Optional.of(user));
 
     StepVerifier.create(userService.getOrCreateAuthenticatedUser())
-        .assertNext(next -> {
-          assertThat(next).isEqualTo(user);
-        })
+        .assertNext(
+            next -> {
+              assertThat(next).isEqualTo(user);
+            })
         .expectComplete()
         .verify();
 

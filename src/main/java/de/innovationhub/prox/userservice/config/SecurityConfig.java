@@ -1,5 +1,6 @@
 package de.innovationhub.prox.userservice.config;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,15 +23,22 @@ public class SecurityConfig {
 
   @Bean
   public SecurityWebFilterChain securityWebFilterChain() {
-    return http.csrf().disable()
-        .formLogin().disable()
-        .httpBasic().disable()
-        .logout().disable()
+    return http.csrf()
+        .disable()
+        .formLogin()
+        .disable()
+        .httpBasic()
+        .disable()
+        .logout()
+        .disable()
         .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> Customizer.withDefaults()))
-        .authorizeExchange(exchange -> exchange
-            .pathMatchers(HttpMethod.GET, "/orgs/{id}").permitAll()
-            .pathMatchers(HttpMethod.POST, "/orgs").authenticated()
-        )
+        .authorizeExchange(
+            exchange ->
+                exchange
+                    .pathMatchers(HttpMethod.GET, "/orgs/{id}")
+                    .permitAll()
+                    .pathMatchers(HttpMethod.POST, "/orgs")
+                    .authenticated())
         .build();
   }
 }

@@ -6,8 +6,6 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import de.innovationhub.prox.userservice.application.service.OrganizationService;
-import de.innovationhub.prox.userservice.application.service.UserService;
 import de.innovationhub.prox.userservice.domain.organization.Organization;
 import de.innovationhub.prox.userservice.domain.organization.OrganizationRepository;
 import de.innovationhub.prox.userservice.domain.organization.dto.OrganizationPostDto;
@@ -24,14 +22,11 @@ import reactor.test.StepVerifier;
 @SpringBootTest
 class OrganizationServiceTest {
 
-  @MockBean
-  OrganizationRepository organizationRepository;
+  @MockBean OrganizationRepository organizationRepository;
 
-  @MockBean
-  UserService userService;
+  @MockBean UserService userService;
 
-  @Autowired
-  OrganizationService organizationService;
+  @Autowired OrganizationService organizationService;
 
   @Test
   void given_emptyUser_when_createOrganization_should_throw() {
@@ -53,10 +48,11 @@ class OrganizationServiceTest {
     when(organizationRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
     StepVerifier.create(organizationService.createOrganization(organizationDto))
-        .assertNext(next -> {
-          assertThat(next.name()).isEqualTo("Musterfirma GmbH & Co. KG");
-          assertThat(next.id()).isNotNull();
-        })
+        .assertNext(
+            next -> {
+              assertThat(next.name()).isEqualTo("Musterfirma GmbH & Co. KG");
+              assertThat(next.id()).isNotNull();
+            })
         .expectComplete()
         .verify();
 
@@ -68,13 +64,15 @@ class OrganizationServiceTest {
   void given_organization_when_getOrganization_should_find() {
     var user = new User(UUID.randomUUID());
     var organization = new Organization("Musterfirma GmbH & Co. KG", user);
-    when(organizationRepository.findById(eq(organization.getId()))).thenReturn(Optional.of(organization));
+    when(organizationRepository.findById(eq(organization.getId())))
+        .thenReturn(Optional.of(organization));
 
     StepVerifier.create(organizationService.getOrganizationWithId(organization.getId()))
-        .assertNext(next -> {
-          assertThat(next.name()).isEqualTo("Musterfirma GmbH & Co. KG");
-          assertThat(next.id()).isEqualTo(organization.getId());
-        })
+        .assertNext(
+            next -> {
+              assertThat(next.name()).isEqualTo("Musterfirma GmbH & Co. KG");
+              assertThat(next.id()).isEqualTo(organization.getId());
+            })
         .expectComplete()
         .verify();
 
@@ -86,9 +84,7 @@ class OrganizationServiceTest {
     var orgId = UUID.randomUUID();
     when(organizationRepository.findById(eq(orgId))).thenReturn(Optional.empty());
 
-    StepVerifier.create(organizationService.getOrganizationWithId(orgId))
-        .expectComplete()
-        .verify();
+    StepVerifier.create(organizationService.getOrganizationWithId(orgId)).expectComplete().verify();
 
     verify(organizationRepository).findById(eq(orgId));
   }

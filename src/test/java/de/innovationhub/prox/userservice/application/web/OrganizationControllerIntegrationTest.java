@@ -21,18 +21,14 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 @AutoConfigureWebTestClient
 @Transactional
 public class OrganizationControllerIntegrationTest {
-  @Autowired
-  OrganizationRepository organizationRepository;
+  @Autowired OrganizationRepository organizationRepository;
 
-  @Autowired
-  UserRepository userRepository;
+  @Autowired UserRepository userRepository;
 
-  @Autowired
-  WebTestClient webTestClient;
+  @Autowired WebTestClient webTestClient;
 
   @BeforeEach
-  void setup() {
-  }
+  void setup() {}
 
   @Test
   void given_JSONandToken_when_PostOrganization_should_createOrganizationAndUser() {
@@ -44,22 +40,31 @@ public class OrganizationControllerIntegrationTest {
     var userId = UUID.randomUUID();
 
     webTestClient
-        .mutateWith(mockJwt()
-            .jwt(jwt -> jwt.claim("iss", "https://login.archi-lab.io/auth/realms/archilab")
-                .claim("sub", userId)))
+        .mutateWith(
+            mockJwt()
+                .jwt(
+                    jwt ->
+                        jwt.claim("iss", "https://login.archi-lab.io/auth/realms/archilab")
+                            .claim("sub", userId)))
         .post()
         .uri("/orgs")
         .contentType(MediaType.APPLICATION_JSON)
         .accept(MediaType.APPLICATION_JSON)
         .bodyValue(orgJson)
         .exchange()
-        .expectStatus().isCreated()
+        .expectStatus()
+        .isCreated()
         .expectBody()
-        .jsonPath("$.id").isNotEmpty()
-        .jsonPath("$.id").value(id -> {
-          assertThat(this.organizationRepository.existsById(UUID.fromString((String) id))).isTrue();
-        })
-        .jsonPath("$.name").isEqualTo("Musterfirma GmbH & Co. KG");
+        .jsonPath("$.id")
+        .isNotEmpty()
+        .jsonPath("$.id")
+        .value(
+            id -> {
+              assertThat(this.organizationRepository.existsById(UUID.fromString((String) id)))
+                  .isTrue();
+            })
+        .jsonPath("$.name")
+        .isEqualTo("Musterfirma GmbH & Co. KG");
 
     assertThat(this.userRepository.existsById(userId)).isTrue();
   }
@@ -77,22 +82,31 @@ public class OrganizationControllerIntegrationTest {
     this.userRepository.save(user);
 
     webTestClient
-        .mutateWith(mockJwt()
-            .jwt(jwt -> jwt.claim("iss", "https://login.archi-lab.io/auth/realms/archilab")
-                .claim("sub", userId)))
+        .mutateWith(
+            mockJwt()
+                .jwt(
+                    jwt ->
+                        jwt.claim("iss", "https://login.archi-lab.io/auth/realms/archilab")
+                            .claim("sub", userId)))
         .post()
         .uri("/orgs")
         .contentType(MediaType.APPLICATION_JSON)
         .accept(MediaType.APPLICATION_JSON)
         .bodyValue(orgJson)
         .exchange()
-        .expectStatus().isCreated()
+        .expectStatus()
+        .isCreated()
         .expectBody()
-        .jsonPath("$.id").isNotEmpty()
-        .jsonPath("$.id").value(id -> {
-          assertThat(this.organizationRepository.existsById(UUID.fromString((String) id))).isTrue();
-        })
-        .jsonPath("$.name").isEqualTo("Musterfirma GmbH & Co. KG");
+        .jsonPath("$.id")
+        .isNotEmpty()
+        .jsonPath("$.id")
+        .value(
+            id -> {
+              assertThat(this.organizationRepository.existsById(UUID.fromString((String) id)))
+                  .isTrue();
+            })
+        .jsonPath("$.name")
+        .isEqualTo("Musterfirma GmbH & Co. KG");
 
     assertThat(this.userRepository.existsById(userId)).isTrue();
   }

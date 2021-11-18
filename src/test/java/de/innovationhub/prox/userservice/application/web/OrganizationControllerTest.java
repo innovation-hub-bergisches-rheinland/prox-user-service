@@ -18,19 +18,15 @@ import reactor.core.publisher.Mono;
 
 @SpringBootTest(classes = {OrganizationController.class})
 class OrganizationControllerTest {
-  @Autowired
-  OrganizationController organizationController;
+  @Autowired OrganizationController organizationController;
 
   WebTestClient webTestClient;
 
-  @MockBean
-  OrganizationService organizationService;
+  @MockBean OrganizationService organizationService;
 
   @BeforeEach
   void setup() {
-    webTestClient = WebTestClient
-        .bindToController(organizationController)
-        .build();
+    webTestClient = WebTestClient.bindToController(organizationController).build();
   }
 
   @Test
@@ -39,14 +35,18 @@ class OrganizationControllerTest {
     when(organizationService.getOrganizationWithId(org.id())).thenReturn(Mono.just(org));
 
     // formatter:off
-    this.webTestClient.get()
+    this.webTestClient
+        .get()
         .uri("/orgs/{id}", org.id().toString())
         .accept(MediaType.APPLICATION_JSON)
         .exchange()
-        .expectStatus().isOk()
+        .expectStatus()
+        .isOk()
         .expectBody()
-        .jsonPath("$.id").isEqualTo(org.id().toString())
-        .jsonPath("$.name").isEqualTo(org.name());
+        .jsonPath("$.id")
+        .isEqualTo(org.id().toString())
+        .jsonPath("$.name")
+        .isEqualTo(org.name());
     // formatter:on
 
     verify(organizationService).getOrganizationWithId(eq(org.id()));
@@ -58,7 +58,8 @@ class OrganizationControllerTest {
     when(organizationService.getOrganizationWithId(eq(orgId))).thenReturn(Mono.empty());
 
     // formatter:off
-    this.webTestClient.get()
+    this.webTestClient
+        .get()
         .uri("/orgs/{id}", orgId.toString())
         .accept(MediaType.APPLICATION_JSON)
         .exchange()
@@ -76,7 +77,8 @@ class OrganizationControllerTest {
     when(organizationService.createOrganization(eq(orgPostDto))).thenReturn(Mono.just(orgGetDto));
 
     // formatter:off
-    this.webTestClient.post()
+    this.webTestClient
+        .post()
         .uri("/orgs")
         .accept(MediaType.APPLICATION_JSON)
         .contentType(MediaType.APPLICATION_JSON)

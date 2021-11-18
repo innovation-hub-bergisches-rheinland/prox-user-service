@@ -3,7 +3,6 @@ package de.innovationhub.prox.userservice.domain.organization;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-import de.innovationhub.prox.userservice.domain.organization.Organization;
 import de.innovationhub.prox.userservice.domain.user.User;
 import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
@@ -165,10 +164,7 @@ class OrganizationTest {
 
     // When
     // Then
-    assertThrows(
-      IllegalArgumentException.class,
-      () -> new Organization(name, owner)
-    );
+    assertThrows(IllegalArgumentException.class, () -> new Organization(name, owner));
   }
 
   @DisplayName("Should throw Exception when creating orga with blank name")
@@ -180,10 +176,7 @@ class OrganizationTest {
 
     // When
     // Then
-    assertThrows(
-      IllegalArgumentException.class,
-      () -> new Organization(name, owner)
-    );
+    assertThrows(IllegalArgumentException.class, () -> new Organization(name, owner));
   }
 
   @DisplayName("Should throw Exception when setting too long name")

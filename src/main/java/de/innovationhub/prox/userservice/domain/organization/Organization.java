@@ -1,5 +1,6 @@
 package de.innovationhub.prox.userservice.domain.organization;
 
+
 import de.innovationhub.prox.userservice.domain.user.User;
 import java.util.Collections;
 import java.util.HashSet;
@@ -19,8 +20,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
- * Represents an Organization in PROX, examples are
- * companies, laboratories, institutes or other organizations
+ * Represents an Organization in PROX, examples are companies, laboratories, institutes or other
+ * organizations
  */
 @Entity
 @Table(name = "organizations")
@@ -28,41 +29,31 @@ import lombok.Setter;
 @Data
 public class Organization {
 
-  /**
-   * Identifier
-   */
+  /** Identifier */
   @Id
   @Column(name = "id")
   @Setter(AccessLevel.NONE)
   private UUID id;
 
-  /**
-   * Name of the org
-   */
+  /** Name of the org */
   @Column(name = "name", nullable = false)
   private String name;
 
-  /**
-   * Owners of the org
-   */
+  /** Owners of the org */
   @ManyToMany
   @JoinTable(
-    name = "organization_owners",
-    joinColumns = @JoinColumn(name = "organization_id"),
-    inverseJoinColumns = @JoinColumn(name = "user_id")
-  )
+      name = "organization_owners",
+      joinColumns = @JoinColumn(name = "organization_id"),
+      inverseJoinColumns = @JoinColumn(name = "user_id"))
   @Setter(AccessLevel.NONE)
   private Set<User> owners;
 
-  /**
-   * Members of the org
-   */
+  /** Members of the org */
   @ManyToMany
   @JoinTable(
-    name = "organization_members",
-    joinColumns = @JoinColumn(name = "organization_id"),
-    inverseJoinColumns = @JoinColumn(name = "user_id")
-  )
+      name = "organization_members",
+      joinColumns = @JoinColumn(name = "organization_id"),
+      inverseJoinColumns = @JoinColumn(name = "user_id"))
   @Setter(AccessLevel.NONE)
   private Set<User> members;
 
@@ -70,9 +61,7 @@ public class Organization {
     Objects.requireNonNull(name);
     Objects.requireNonNull(owner);
     if (name.trim().length() > 255 || name.trim().length() <= 0) {
-      throw new IllegalArgumentException(
-        "Name length must be between 0 and 255"
-      );
+      throw new IllegalArgumentException("Name length must be between 0 and 255");
     }
     this.id = UUID.randomUUID();
     this.name = name;
@@ -82,6 +71,7 @@ public class Organization {
 
   /**
    * Adds an owner to the company
+   *
    * @param member member of the organization which should become an owner
    * @throws RuntimeException if provided user is not a member of the org
    */
@@ -94,6 +84,7 @@ public class Organization {
 
   /**
    * Removes an owner of the org
+   *
    * @param owner owner of the organization which should be removed
    * @throws RuntimeException if the owner is the last one present in the org
    */
@@ -108,6 +99,7 @@ public class Organization {
 
   /**
    * Adds member to the org
+   *
    * @param user user which should become a member
    */
   public void addMember(User user) {
@@ -116,6 +108,7 @@ public class Organization {
 
   /**
    * Removes a member from the org
+   *
    * @param member member to remove
    * @throws RuntimeException if member is a owner
    */
@@ -128,9 +121,7 @@ public class Organization {
 
   public void setName(String name) {
     if (name.trim().length() > 255 || name.trim().length() <= 0) {
-      throw new IllegalArgumentException(
-        "Name length must be between 0 and 255"
-      );
+      throw new IllegalArgumentException("Name length must be between 0 and 255");
     }
     this.name = name;
   }
