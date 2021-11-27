@@ -8,7 +8,6 @@ plugins {
 }
 
 group = 'de.innovation-hub.prox'
-version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '17'
 
 configurations {
