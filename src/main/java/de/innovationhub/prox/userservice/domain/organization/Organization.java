@@ -1,6 +1,5 @@
 package de.innovationhub.prox.userservice.domain.organization;
 
-
 import de.innovationhub.prox.userservice.domain.user.User;
 import java.util.Collections;
 import java.util.HashSet;

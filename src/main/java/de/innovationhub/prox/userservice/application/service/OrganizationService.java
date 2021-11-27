@@ -1,6 +1,5 @@
 package de.innovationhub.prox.userservice.application.service;
 
-
 import de.innovationhub.prox.userservice.domain.organization.Organization;
 import de.innovationhub.prox.userservice.domain.organization.OrganizationRepository;
 import de.innovationhub.prox.userservice.domain.organization.dto.OrganizationGetDto;

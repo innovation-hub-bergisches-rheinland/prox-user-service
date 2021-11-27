@@ -1,6 +1,5 @@
 package de.innovationhub.prox.userservice.domain.user;
 
-
 import java.util.UUID;
 import javax.persistence.Column;
 import javax.persistence.Entity;

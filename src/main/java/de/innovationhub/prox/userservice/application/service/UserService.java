@@ -1,6 +1,5 @@
 package de.innovationhub.prox.userservice.application.service;
 
-
 import de.innovationhub.prox.userservice.domain.user.User;
 import de.innovationhub.prox.userservice.domain.user.UserRepository;
 import java.util.UUID;
