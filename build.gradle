@@ -3,6 +3,7 @@ plugins {
 	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
 	id 'java'
 	id 'com.github.node-gradle.node' version '3.1.1'
+	id 'com.diffplug.spotless' version '6.0.0'
 }
 
 group = 'de.innovation-hub.prox'
@@ -59,4 +60,27 @@ node {
 	version = '16.13.0'
 
 	npmInstallCommand = "ci"
+}
+
+spotless {
+	ratchetFrom 'origin/main'
+	encoding 'UTF-8'
+
+	java {
+		importOrder()
+
+		removeUnusedImports()
+
+		googleJavaFormat('1.13.0')
+	}
+	groovyGradle {
+		target '*.gradle'
+		greclipse('4.21.0')
+	}
+	format 'styling', {
+		target '*.js', '*.ts', '*.css', '*.scss', '*.json', '*.md', '*.html', '*.yml', '*.yaml', '*.sql'
+		prettier('2.5.0').config([
+			'tabWidth': 2
+		])
+	}
 }
