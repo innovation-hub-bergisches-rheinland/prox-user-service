@@ -3,8 +3,7 @@
   "private": true,
   "version": "0.1.0",
   "scripts": {
-    "prepare": "husky install",
-    "lint-staged": "lint-staged"
+    "prepare": "husky install"
   },
   "devDependencies": {
     "husky": "^7.0.4",

@@ -2,7 +2,7 @@
 set -e
 . "$(dirname "$0")/_/husky.sh"
 
-npm run lint-staged
+npx lint-staged
 
 #
 ## A precommit hook that uses spotless to format only staged files
