@@ -4,6 +4,7 @@ plugins {
 	id 'java'
 	id 'com.github.node-gradle.node' version '3.1.1'
 	id 'com.diffplug.spotless' version '6.0.0'
+	id 'jacoco'
 }
 
 group = 'de.innovation-hub.prox'
@@ -52,6 +53,11 @@ dependencyManagement {
 
 test {
 	useJUnitPlatform()
+	finalizedBy jacocoTestReport
+}
+
+jacocoTestReport {
+	dependsOn test
 }
 
 node {
