@@ -62,3 +62,6 @@ jobs:
         run: |
           npm ci
           npx semantic-release
+
+      - name: Stop all running gradle dameons
+        run: ./gradlew --stop
