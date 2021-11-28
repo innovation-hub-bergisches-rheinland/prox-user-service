@@ -26,7 +26,7 @@
       [
         "@semantic-release/commit-analyzer",
         {
-          "preset": "conventionalchangelog"
+          "preset": "conventionalcommits"
         }
       ],
       "@semantic-release/release-notes-generator",
@@ -45,8 +45,8 @@
       [
         "@semantic-release/exec",
         {
-          "verifyConditionsCmd": "./gradlew jibDockerBuild --daemon",
-          "publishCmd": "./gradlew jib --daemon"
+          "verifyConditionsCmd": "./gradlew jibDockerBuild",
+          "publishCmd": "./gradlew jib"
         }
       ]
     ]
