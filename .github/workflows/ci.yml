@@ -27,7 +27,7 @@ jobs:
 
       - uses: gradle/wrapper-validation-action@v1
 
-      - run: ./gradlew build
+      - run: ./gradlew build --daemon
 
       - name: Upload Test Report
         uses: actions/upload-artifact@v2

@@ -104,4 +104,16 @@ jib {
 	}
 }
 
+/*
+ * The gradle-semantic-release-plugin leverages artifact publishing by using the particular
+ * plugin tasks for example the publish task of the Maven Publish Plugin. This task is required
+ * in order to work with the gradle-semantic-release-plugin. However, as of now we do not publish
+ * artifacts (although it might be the cleanest way). We just want the plugin to bump the gradle
+ * version.
+ */
+task publish(type: DefaultTask) {
+	group = 'publish'
+	description = 'Dummy publish to pass the verification phase of the gradle-semantic-release-plugin'
+}
+
 defaultTasks 'spotlessApply', 'build'
