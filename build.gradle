@@ -60,6 +60,9 @@ test {
 }
 
 jacocoTestReport {
+	reports {
+		xml.enabled true
+	}
 	dependsOn test
 }
 
@@ -95,6 +98,10 @@ spotless {
 			'tabWidth': 2
 		])
 	}
+}
+
+tasks.named('sonarqube').configure {
+	dependsOn test
 }
 
 sonarqube {
