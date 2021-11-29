@@ -17,38 +17,5 @@
     "@semantic-release/github": "^8.0.2",
     "gradle-semantic-release-plugin": "^1.6.0",
     "semantic-release": "^18.0.1"
-  },
-  "release": {
-    "branches": [
-      "main"
-    ],
-    "plugins": [
-      [
-        "@semantic-release/commit-analyzer",
-        {
-          "preset": "conventionalcommits"
-        }
-      ],
-      "@semantic-release/release-notes-generator",
-      "@semantic-release/changelog",
-      "@semantic-release/github",
-      "gradle-semantic-release-plugin",
-      [
-        "@semantic-release/git",
-        {
-          "assets": [
-            "gradle.properties",
-            "CHANGELOG.md"
-          ]
-        }
-      ],
-      [
-        "@semantic-release/exec",
-        {
-          "verifyConditionsCmd": "./gradlew jibDockerBuild",
-          "publishCmd": "./gradlew jib"
-        }
-      ]
-    ]
   }
 }
