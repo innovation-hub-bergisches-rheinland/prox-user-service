@@ -133,13 +133,13 @@ publishing {
 			// Provide the credentials using the `githubPackagesUsername` and
 			// `githubPackagesPassword` Properties. The Prefix is inferred by the Repository name
 			// definition
-			name = 'githubPackages'
+			name = 'gpr'
 			credentials(PasswordCredentials)
 		}
 	}
 	publications {
 		gpr(MavenPublication) {
-			from components.java
+			artifact bootJar
 		}
 	}
 }
