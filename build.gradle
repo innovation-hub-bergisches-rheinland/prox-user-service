@@ -8,6 +8,7 @@ plugins {
 	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
 	id 'java'
 	id 'jacoco'
+	id 'maven-publish'
 	id 'org.sonarqube' version '3.3'
 }
 
@@ -122,16 +123,25 @@ jib {
 	}
 }
 
-/*
- * The gradle-semantic-release-plugin leverages artifact publishing by using the particular
- * plugin tasks for example the publish task of the Maven Publish Plugin. This task is required
- * in order to work with the gradle-semantic-release-plugin. However, as of now we do not publish
- * artifacts (although it might be the cleanest way). We just want the plugin to bump the gradle
- * version.
- */
-task publish(type: DefaultTask) {
-	group = 'publish'
-	description = 'Dummy publish to pass the verification phase of the gradle-semantic-release-plugin'
+// Publish Maven Artifact
+publishing {
+	repositories {
+		// Will use GitHub Packages
+		maven {
+			url = uri('https://maven.pkg.github.com/innovation-hub-bergisches-rheinland/prox-user-service')
+
+			// Provide the credentials using the `githubPackagesUsername` and
+			// `githubPackagesPassword` Properties. The Prefix is inferred by the Repository name
+			// definition
+			name = 'githubPackages'
+			credentials(PasswordCredentials)
+		}
+	}
+	publications {
+		gpr(MavenPublication) {
+			from components.java
+		}
+	}
 }
 
 defaultTasks 'spotlessApply', 'build'
