@@ -5,42 +5,49 @@ on:
     branches: [ main ]
   pull_request:
     branches: [ main ]
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+'
 
 env:
   JAVA_VERSION: 17
   NODE_VERSION: 16.x
-  MAVEN_SETTINGS: ./github/settings.xml
 
 jobs:
+  # Basic Gradle wrapper validation. This step is run first, due to security
+  # concerns. Running our whole pipeline with Gradle with a corrupt wrapper,
+  # could expose our secrets, and we definitely want to prevent this.
+  validation:
+    name: Gradle wrapper validation
 
-  build:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
+      - name: Check out repo
+        uses: actions/checkout@v2
+      - name: Validate Gradle wrapper
+        uses: gradle/wrapper-validation-action@v1
 
-      - uses: actions/setup-java@v2
+  build:
+    name: Build and Test
+
+    runs-on: ubuntu-latest
+    needs: [ validation ]
+
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v2
+
+      - name: Set up Java
+        uses: actions/setup-java@v2
         with:
-          distribution: 'temurin'
           java-version: ${{ env.JAVA_VERSION }}
+          distribution: temurin
           cache: 'gradle'
 
-      - name: Cache SonarCloud packages
-        uses: actions/cache@v1
+      - name: Gradle build
+        uses: gradle/gradle-build-action@v2
         with:
-          path: ~/.sonar/cache
-          key: ${{ runner.os }}-sonar
-          restore-keys: ${{ runner.os }}-sonar
-
-      - uses: gradle/wrapper-validation-action@v1
-
-      - name: Build and analyze
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: ./gradlew build sonarqube --info
+          arguments: --refresh-dependencies --stacktrace build
 
       - name: Upload Test Report
         uses: actions/upload-artifact@v2
@@ -49,18 +56,114 @@ jobs:
           name: build reports
           path: build/reports
 
-      - name: Upload Build Artifacts
-        uses: actions/upload-artifact@v2
-        if: always()
-        with:
-          name: Package
-          path: build/libs
+  style:
+    name: Style Check
 
-      - name: Setup Node
-        uses: actions/setup-node@v2
+    runs-on: ubuntu-latest
+
+    needs: [ validation ]
+
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v2
+
+      - name: Set up Java
+        uses: actions/setup-java@v2
         with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: temurin
+          cache: 'gradle'
+
+      - name: Gradle build
+        uses: gradle/gradle-build-action@v2
+        with:
+          arguments: --refresh-dependencies --stacktrace build
+
+      - name: SonarCloud analysis
+        run: ./gradlew spotlessCheck --stacktrace
+
+  sonarcloud:
+    name: SonarCloud analysis
+
+    runs-on: ubuntu-latest
+    needs: [ validation ]
+
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v2
+        with:
+          # Sonar needs the whole Git history for issue assignment
+          fetch-depth: 0
+
+      - name: Set up Java
+        uses: actions/setup-java@v2
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: temurin
+          cache: 'gradle'
+
+      - name: Cache SonarCloud results
+        uses: actions/cache@v2
+        with:
+          path: ~/.sonar/cache/
+          key: ubuntu-sonar
+
+      - name: Gradle build
+        uses: gradle/gradle-build-action@v2
+        with:
+          arguments: --refresh-dependencies --stacktrace build
+
+      - name: SonarCloud analysis
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: ./gradlew jacocoTestReport sonarqube --stacktrace -i
+
+  build-image:
+    name: Build Docker Image
+
+    runs-on: ubuntu-latest
+    needs: [ build ]
+
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v2
+
+      - name: Set up Java
+        uses: actions/setup-java@v2
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: temurin
+          cache: 'gradle'
+
+      - name: Gradle build
+        uses: gradle/gradle-build-action@v2
+        with:
+          arguments: --refresh-dependencies --stacktrace jibDockerBuild
+
+  release:
+    name: Release
+
+    # Only run if a tag is created
+    if: startsWith(github.ref, 'refs/tags/v')
+
+    needs: [ validation, build, build-image ]
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v2
+        with:
+          # Shipkit needs the whole Git history for changelog generation
+          fetch-depth: 0
+
+      - name: Set up Java
+        uses: actions/setup-java@v2
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: temurin
+          cache: 'gradle'
 
       - name: Login to Quay
         uses: docker/login-action@v1
@@ -69,14 +172,9 @@ jobs:
           username: ${{ secrets.QUAY_IO_USERNAME }}
           password: ${{ secrets.QUAY_IO_PASSWORD }}
 
-      - name: Release
+      - name: Perform release
+        uses: gradle/gradle-build-action@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          ORG_GRADLE_PROJECT_gprUsername: ${{ github.actor }}
-          ORG_GRADLE_PROJECT_gprPassword: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          npm ci
-          npx semantic-release
-
-      - name: Stop all running gradle dameons
-        run: ./gradlew --stop
+        with:
+          arguments: jib

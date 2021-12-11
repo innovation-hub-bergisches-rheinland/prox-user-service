@@ -124,25 +124,4 @@ jib {
 	}
 }
 
-// Publish Maven Artifact
-publishing {
-	repositories {
-		// Will use GitHub Packages
-		maven {
-			url = uri('https://maven.pkg.github.com/innovation-hub-bergisches-rheinland/prox-user-service')
-
-			// Provide the credentials using the `gprUsername` and
-			// `gprPassword` Properties. The Prefix is inferred by the Repository name
-			// definition
-			name = 'gpr'
-			credentials(PasswordCredentials)
-		}
-	}
-	publications {
-		gpr(MavenPublication) {
-			artifact bootJar
-		}
-	}
-}
-
 defaultTasks 'spotlessApply', 'build'
