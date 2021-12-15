@@ -1,8 +1,8 @@
 module.exports = {
   bumpFiles: [
     {
-      filename: "version.txt",
-      type: "plain-text",
+      filename: "pom.xml",
+      updater: "./node_modules/standard-version-maven/index.js",
     },
     {
       filename: "package.json",

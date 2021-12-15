@@ -27,3 +27,4 @@ This allows us to review and pull in new features or improvements individually.
 ## Style Guide
 
 All pull requests SHOULD adhere to the [Conventional Commits specification](https://conventionalcommits.org/)
+
