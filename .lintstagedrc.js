@@ -2,8 +2,8 @@ module.exports = {
   // Delegate the whole formatting to spotless
   "*": [
     (resolvedPaths) => {
-      return `./gradlew spotlessApply -PspotlessFiles=${resolvedPaths.join(
-        ","
+      return `./mvnw -Pcheckstyle spotless:apply -X -DspotlessFiles=${resolvedPaths.join(
+          ","
       )}`;
     },
   ],

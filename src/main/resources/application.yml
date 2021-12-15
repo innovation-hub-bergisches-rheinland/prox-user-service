@@ -1,6 +1,0 @@
-spring:
-  security:
-    oauth2:
-      resourceserver:
-        jwt:
-          issuer-uri: https://login.aws.innovation-hub.de/auth/realms/innovation-hub-bergisches-rheinland

@@ -1,8 +1,10 @@
 package de.innovationhub.prox.userservice.domain.organization;
 
+import io.quarkus.hibernate.orm.panache.PanacheRepositoryBase;
 import java.util.UUID;
-import org.springframework.data.repository.CrudRepository;
-import org.springframework.stereotype.Repository;
+import javax.enterprise.context.ApplicationScoped;
 
-@Repository
-public interface OrganizationRepository extends CrudRepository<Organization, UUID> {}
+@ApplicationScoped
+public class OrganizationRepository implements PanacheRepositoryBase<Organization, UUID> {
+
+}

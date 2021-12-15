@@ -2,55 +2,54 @@
 
 The purpose of this service is to provide a service that can handle user-related tasks. One major task is the association of users to orgs.
 
-## Installation
+## Running the application in dev mode
 
-After a `git clone` or download the project the following command must be executed once to initialize the projects.
+You can run your application in dev mode that enables live coding using:
+```shell script
+./mvnw quarkus:dev
+```
+## Packaging and running the application
 
-Windows (CMD/PowerShell)
+The application can be packaged using:
+```shell script
+./mvnw package
+```
+It produces the `quarkus-run.jar` file in the `target/quarkus-app/` directory.
+Be aware that it’s not an _über-jar_ as the dependencies are copied into the `target/quarkus-app/lib/` directory.
 
-```posh
-# Switch to project folder
-cd .\prox-user-service\
-# Execute initial build for git hooks...
-.\mvnw.cmd clean test
+The application is now runnable using `java -jar target/quarkus-app/quarkus-run.jar`.
+
+If you want to build an _über-jar_, execute the following command:
+```shell script
+./mvnw package -Dquarkus.package.type=uber-jar
 ```
 
-Linux/MacOS (Bash/Terminal)
+The application, packaged as an _über-jar_, is now runnable using `java -jar target/*-runner.jar`.
 
-```bash
-# Switch to project folder
-cd prox-user-service/
-# Execute initial build for git hooks...
-./mvnw clean test
+## Packaging and running the application as a docker iamge
+
+You can create a docker image:
+```shell script
+./mvnw package -Dquarkus.container-image.build=true
 ```
 
-Executes the [Maven default lifecycle](https://maven.apache.org/guides/introduction/introduction-to-the-lifecycle.html) up to the `test` phase. During the `package` phase, an executable JAR and the Docker image are created.
+If you want to learn more about building container images, please consult https://quarkus.io/guides/container-image.
 
-## Local usage with docker
+## Creating a native executable
 
-A Docker network named `prox` is required for the communication between services:
-
-```bash
-docker network create prox
+You can create a native executable using:
+```shell script
+./mvnw package -Pnative
 ```
 
-Starts a Docker container based on the compose file and the image.
-
-Powershell
-
-```posh
-$env:IMAGE='prox-user-service'; `
-$env:TAG='latest'; `
-docker-compose -f ./src/main/docker/docker-compose.yml up
+Or, if you don't have GraalVM installed, you can run the native executable build in a container using:
+```shell script
+./mvnw package -Pnative -Dquarkus.native.container-build=true
 ```
 
-Bash/Shell
+You can then execute your native executable with: `./target/prox-user-service-0.0-SNAPSHOT-runner`
 
-```bash
-export IMAGE="prox-user-service" &&
-export TAG="latest" &&
-docker-compose -f ./src/main/docker/docker-compose.yml up
-```
+If you want to learn more about building native executables, please consult https://quarkus.io/guides/maven-tooling.
 
 ## Development
 
