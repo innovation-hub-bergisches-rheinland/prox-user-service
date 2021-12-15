@@ -5,6 +5,6 @@ import java.util.UUID;
 import javax.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
-public class OrganizationRepository implements PanacheRepositoryBase<Organization, UUID> {
+public class OrganizationRepository implements PanacheRepositoryBase<OrganizationJpa, UUID> {
 
 }

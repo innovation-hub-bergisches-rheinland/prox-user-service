@@ -5,4 +5,4 @@ import java.util.UUID;
 import javax.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
-public class UserRepository implements PanacheRepositoryBase<User, UUID> {}
+public class UserRepository implements PanacheRepositoryBase<UserJpa, UUID> {}

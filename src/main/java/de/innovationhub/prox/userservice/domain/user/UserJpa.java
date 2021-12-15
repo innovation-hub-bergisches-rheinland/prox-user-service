@@ -14,14 +14,14 @@ import lombok.Setter;
 @Table(name = "users")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Data
-public class User {
+public class UserJpa {
 
   @Id
   @Column(name = "id")
   @Setter(AccessLevel.NONE)
   private UUID id;
 
-  public User(UUID id) {
+  public UserJpa(UUID id) {
     this.id = id;
   }
 }
