@@ -1,4 +1,4 @@
-package de.innovationhub.prox.userservice.domain.organization;
+package de.innovationhub.prox.userservice.infrastructure.organization.jpa;
 
 import java.io.Serializable;
 import java.util.UUID;

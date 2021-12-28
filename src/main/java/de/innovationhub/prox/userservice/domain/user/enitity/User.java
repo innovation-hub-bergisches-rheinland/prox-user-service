@@ -1,4 +1,4 @@
-package de.innovationhub.prox.userservice.domain.user;
+package de.innovationhub.prox.userservice.domain.user.enitity;
 
 import java.util.UUID;
 import lombok.EqualsAndHashCode;

@@ -1,18 +1,13 @@
-package de.innovationhub.prox.userservice.domain.organization;
+package de.innovationhub.prox.userservice.infrastructure.organization.jpa;
 
-import de.innovationhub.prox.userservice.domain.user.UserJpa;
-import java.util.Set;
 import java.util.UUID;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import lombok.AccessLevel;
-import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
@@ -21,13 +16,15 @@ import lombok.Setter;
  * organizations
  */
 @Entity
+@Getter
+@Setter
 @Table(name = "organizations")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PACKAGE)
 public class OrganizationJpa {
   /** Identifier */
   @Id
   @Column(name = "id")
-  @Setter(AccessLevel.NONE)
   private UUID id;
 
   /** Name of the org */

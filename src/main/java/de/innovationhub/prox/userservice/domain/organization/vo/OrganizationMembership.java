@@ -1,4 +1,4 @@
-package de.innovationhub.prox.userservice.domain.organization;
+package de.innovationhub.prox.userservice.domain.organization.vo;
 
 /**
  * Holds information about the organization membership. At the moment the
