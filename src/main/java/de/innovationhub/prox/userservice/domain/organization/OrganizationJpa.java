@@ -33,9 +33,4 @@ public class OrganizationJpa {
   /** Name of the org */
   @Column(name = "name", nullable = false)
   private String name;
-
-  /** Members of the org */
-  @OneToMany(mappedBy = "organization")
-  @Setter(AccessLevel.NONE)
-  private Set<OrganizationMembershipJpa> members;
 }
