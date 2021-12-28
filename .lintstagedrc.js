@@ -1,8 +1,6 @@
 module.exports = {
   // Delegate the whole formatting to spotless
   "*": [
-    (resolvedPaths) => {
-      return `./gradlew spotlessApply`;
-    },
+    (resolvedPaths) => resolvedPaths.map((filename) => `./gradlew spotlessApply -PspotlessIdeHook="${filename}"`),
   ],
 };
