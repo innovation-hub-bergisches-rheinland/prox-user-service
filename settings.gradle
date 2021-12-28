@@ -1,0 +1,17 @@
+pluginManagement {
+	repositories {
+		mavenLocal()
+		mavenCentral()
+		gradlePluginPortal()
+	}
+	plugins {
+		id "${quarkusPluginId}" version "${quarkusPluginVersion}"
+	}
+}
+
+rootProject.name='prox-user-service'
+
+include 'domain'
+include 'application'
+include 'infrastructure'
+
