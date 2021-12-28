@@ -3,7 +3,7 @@ name: CI
 on:
   # Run on every pull request
   pull_request:
-    branches: [ main ]
+    branches: [ main, quarkus-rewrite ] # TODO remove: temporary rewrite branch
     types: [ opened, synchronize, reopened ]
   push:
     branches: [ main ]
@@ -12,205 +12,152 @@ on:
 
 env:
   JAVA_VERSION: 17
-  MAVEN_SETTINGS: .github/settings.xml
 
 # Will build the binaries, run tests and checks on them and if everything succeeds AND it is a push
 # to the main branch will build and deploy a snapshot release of the binaries
 
 jobs:
-  # Simply compile the maven project and upload the build
-  build:
-    name: Maven Compile
+  # Basic Gradle wrapper validation. This step is run first, due to security
+  # concerns. Running our whole pipeline with Gradle with a corrupt wrapper,
+  # could expose our secrets, and we definitely want to prevent this.
+  validation:
+    name: Gradle wrapper validation
 
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Repository
+      - name: Check out repo
         uses: actions/checkout@v2
+      - name: Validate Gradle wrapper
+        uses: gradle/wrapper-validation-action@v1
 
-      - name: Set up JDK ${{ env.JAVA_VERSION }}
-        uses: actions/setup-java@v2
-        with:
-          java-version: ${{ env.JAVA_VERSION }}
-          distribution: 'temurin'
-          cache: 'maven'
-
-      - name: Update Maven Settings
-        run: mkdir -p ~/.m2 ; cp ${{ env.MAVEN_SETTINGS }} ~/.m2
-
-      # No Snapshot Updates, Batch Mode, Show errors and skip tests
-      - name: Build Project
-        run: mvn clean compile -nsu -B -e
-
-      # Upload the built artifacts
-      - name: Store Artifacts
-        uses: actions/upload-artifact@v2
-        with:
-          name: maven-target.zip
-          retention-days: 2
-          path: |
-            ./target/**
-
-  # run tests on pre-built files
-  unit-test:
-    name: Unit Tests
-
-    needs: [ build ]
+  assemble:
+    name: Build
 
     runs-on: ubuntu-latest
+    needs: [ validation ]
 
     steps:
-      - name: Checkout Repository
+      - name: Check out repo
         uses: actions/checkout@v2
 
-      - name: Set up JDK ${{ env.JAVA_VERSION }}
+      - name: Set up Java
         uses: actions/setup-java@v2
         with:
           java-version: ${{ env.JAVA_VERSION }}
-          distribution: 'temurin'
-          cache: 'maven'
+          distribution: temurin
+          cache: 'gradle'
 
-      - name: Update Maven Settings
-        run: mkdir -p ~/.m2 ; cp ${{ env.MAVEN_SETTINGS }} ~/.m2
-
-      - name: Download build
-        uses: actions/download-artifact@v2
-        with:
-          path: ./target
-          name: maven-target.zip
-
-      - name: Run unit tests
+      - name: Gradle Assemble
         run: |
-          if ! mvn test -nsu -B; then
-            find . -path '*/target/surefire-reports/*.xml' | zip -q reports-unit-tests.zip -@
-            exit 1
-          fi
+          ./gradlew --stacktrace assemble
 
-      - name: Unit test reports
-        uses: actions/upload-artifact@v2
-        if: failure()
-        with:
-          name: reports-unit-tests
-          retention-days: 14
-          path: reports-unit-tests.zip
-          if-no-files-found: ignore
-
-
-  # check code style
-  checkstyle:
-    name: Checkstyle
-
-    needs: [ build ]
+  test:
 
     runs-on: ubuntu-latest
+    needs: [ validation ]
 
     steps:
-      - name: Checkout Repository
+      - name: Check out repo
         uses: actions/checkout@v2
 
-      - name: Set up JDK ${{ env.JAVA_VERSION }}
+      - name: Set up Java
         uses: actions/setup-java@v2
         with:
           java-version: ${{ env.JAVA_VERSION }}
-          distribution: 'temurin'
-          cache: 'maven'
+          distribution: temurin
+          cache: 'gradle'
 
-      - name: Update Maven Settings
-        run: mkdir -p ~/.m2 ; cp ${{ env.MAVEN_SETTINGS }} ~/.m2
+      - name: Gradle test
+        run: |
+          ./gradlew --stacktrace test
 
-      - name: Spotless Check
-        run: mvn -nsu -DskipTests -B -Pcheckstyle spotless:check
+      - name: Upload Test Report
+        uses: actions/upload-artifact@v2
+        if: always()
+        with:
+          name: build reports
+          path: build/reports
 
-  package:
-    name: Maven package
-
-    needs: [ build ]
+  codestyle:
 
     runs-on: ubuntu-latest
+    needs: [ validation ]
 
     steps:
-      - name: Checkout Repository
+      - name: Check out repo
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
 
-      - name: Set up JDK ${{ env.JAVA_VERSION }}
+      - name: Set up Java
         uses: actions/setup-java@v2
         with:
           java-version: ${{ env.JAVA_VERSION }}
-          distribution: 'temurin'
-          cache: 'maven'
+          distribution: temurin
+          cache: 'gradle'
 
-      - name: Download build
-        uses: actions/download-artifact@v2
-        with:
-          path: ./target
-          name: maven-target.zip
-
-      - name: Update Maven Settings
-        run: mkdir -p ~/.m2 ; cp ${{ env.MAVEN_SETTINGS }} ~/.m2
-
-      - name: Maven Package
+      - name: Gradle Codestyle Check
         run: |
-          mvn -nsu -B -e -DskipTests package
+          ./gradlew --stacktrace spotlessCheck
 
-      # Upload the built artifacts
-      - name: Store Artifacts
-        uses: actions/upload-artifact@v2
-        with:
-          name: maven-target.zip
-          retention-days: 2
-          path: |
-            ./target/**
-
-
-  # analyze the pre-built files
-  analyze:
-    name: Analyze
-
-    needs: [ package ]
+  sonarcloud:
+    name: SonarCloud analysis
 
     runs-on: ubuntu-latest
+    needs: [ validation, assemble, test ]
 
     steps:
-      - name: Checkout Repository
+      - name: Check out repo
         uses: actions/checkout@v2
         with:
+          # Sonar needs the whole Git history for issue assignment
           fetch-depth: 0
 
-      - name: Set up JDK ${{ env.JAVA_VERSION }}
+      - name: Set up Java
         uses: actions/setup-java@v2
         with:
           java-version: ${{ env.JAVA_VERSION }}
-          distribution: 'temurin'
-          cache: 'maven'
+          distribution: temurin
+          cache: 'gradle'
 
-      - name: Download build
-        uses: actions/download-artifact@v2
+      - name: Cache SonarCloud results
+        uses: actions/cache@v2
         with:
-          path: ./target
-          name: maven-target.zip
+          path: ~/.sonar/cache/
+          key: ubuntu-sonar
 
-      - name: Update Maven Settings
-        run: mkdir -p ~/.m2 ; cp ${{ env.MAVEN_SETTINGS }} ~/.m2
-
-      - name: Cache SonarCloud packages
-        uses: actions/cache@v1
-        with:
-          path: ~/.sonar/cache
-          key: ${{ runner.os }}-sonar
-          restore-keys: ${{ runner.os }}-sonar
-
-      - name: Build and analyze
+      - name: SonarCloud analysis
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: mvn -B -DskipTests -Psonar verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
+        run: ./gradlew jacocoTestReport sonarqube --stacktrace -i
+
+
+  build-image:
+    name: Build Docker Image
+
+    runs-on: ubuntu-latest
+    needs: [ validation, assemble, test ]
+
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v2
+
+      - name: Set up Java
+        uses: actions/setup-java@v2
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: temurin
+          cache: 'gradle'
+
+      - name: Jib Docker Build
+        run: ./gradlew build -Dquarkus.container-image.build=true
 
 #  release:
 #    name: Release
 #
-#    needs: [ unit-test, package ]
+#    needs: [ validation, test, build-image ]
 #
 #    # Only run if a tag is created
 #    if: startsWith(github.ref, 'refs/tags/v')
@@ -238,7 +185,7 @@ jobs:
 #      - name: Get Project version
 #        id: project
 #        run: |
-#          echo ::set-output name=version::$(mvn -Dexec.executable='echo' -Dexec.args='${project.version}' --non-recursive exec:exec -q)
+#          echo ::set-output name=version::$(cat version.txt)
 #
 #      - name: Download build
 #        uses: actions/download-artifact@v2

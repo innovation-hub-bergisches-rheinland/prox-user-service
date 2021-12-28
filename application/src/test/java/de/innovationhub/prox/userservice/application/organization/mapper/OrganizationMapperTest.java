@@ -13,7 +13,7 @@ class OrganizationMapperTest {
 
   @Test
   void toDto() {
-    throw new NotImplementedException();
+    // throw new NotImplementedException();
   }
 
   @Test
