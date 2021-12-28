@@ -7,11 +7,11 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 @ApplicationScoped
-public class CreateOrganizationService {
+public class OrganizationService {
   private final OrganizationRepository organizationRepository;
 
   @Inject
-  public CreateOrganizationService(
+  public OrganizationService(
       OrganizationRepository organizationRepository) {
     this.organizationRepository = organizationRepository;
   }

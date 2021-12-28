@@ -3,25 +3,25 @@ package de.innovationhub.prox.userservice.application.organization.manager;
 import de.innovationhub.prox.userservice.application.organization.mapper.OrganizationMapper;
 import de.innovationhub.prox.userservice.application.organization.message.request.CreateOrganizationRequest;
 import de.innovationhub.prox.userservice.application.organization.message.response.CreateOrganizationResponse;
-import de.innovationhub.prox.userservice.domain.organization.service.CreateOrganizationService;
+import de.innovationhub.prox.userservice.domain.organization.service.OrganizationService;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 @ApplicationScoped
 public class OrganizationManager {
   private final OrganizationMapper organizationMapper;
-  private final CreateOrganizationService createOrganizationService;
+  private final OrganizationService organizationService;
 
   @Inject
   public OrganizationManager(
       OrganizationMapper organizationMapper,
-      CreateOrganizationService createOrganizationService) {
+      OrganizationService createOrganizationService) {
     this.organizationMapper = organizationMapper;
-    this.createOrganizationService = createOrganizationService;
+    this.organizationService = createOrganizationService;
   }
 
   public CreateOrganizationResponse createOrganization(CreateOrganizationRequest request) {
-    var org = createOrganizationService.create(request.name());
+    var org = organizationService.create(request.name());
     var dto = organizationMapper.toDto(org);
     return organizationMapper.toCreateResponse(dto);
   }
