@@ -9,16 +9,11 @@ create table organizations(
     primary key (id)
 );
 
-create table organization_owners(
-    organization_id uuid not null,
-    user_id uuid not null,
-    foreign key (organization_id) references organizations,
-    foreign key (user_id) references users
-);
-
-create table organization_members(
-    organization_id uuid not null,
-    user_id uuid not null,
+create table organization_memberships(
+    user_id uuid,
+    organization_id uuid,
+    role varchar (25),
+    primary key (user_id, organization_id),
     foreign key (organization_id) references organizations,
     foreign key (user_id) references users
 );

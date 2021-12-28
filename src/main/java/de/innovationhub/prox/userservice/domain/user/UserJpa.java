@@ -13,7 +13,6 @@ import lombok.Setter;
 @Entity
 @Table(name = "users")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Data
 public class UserJpa {
 
   @Id

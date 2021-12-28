@@ -9,6 +9,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Data;
@@ -22,7 +23,6 @@ import lombok.Setter;
 @Entity
 @Table(name = "organizations")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Data
 public class OrganizationJpa {
   /** Identifier */
   @Id
@@ -34,21 +34,8 @@ public class OrganizationJpa {
   @Column(name = "name", nullable = false)
   private String name;
 
-  /** Owners of the org */
-  @ManyToMany
-  @JoinTable(
-      name = "organization_owners",
-      joinColumns = @JoinColumn(name = "organization_id"),
-      inverseJoinColumns = @JoinColumn(name = "user_id"))
-  @Setter(AccessLevel.NONE)
-  private Set<UserJpa> owners;
-
   /** Members of the org */
-  @ManyToMany
-  @JoinTable(
-      name = "organization_members",
-      joinColumns = @JoinColumn(name = "organization_id"),
-      inverseJoinColumns = @JoinColumn(name = "user_id"))
+  @OneToMany(mappedBy = "organization")
   @Setter(AccessLevel.NONE)
-  private Set<UserJpa> members;
+  private Set<OrganizationMembershipJpa> members;
 }
