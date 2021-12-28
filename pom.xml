@@ -21,6 +21,7 @@
     <quarkus.platform.version>2.5.2.Final</quarkus.platform.version>
     <spotless-maven-plugin.version>2.17.4</spotless-maven-plugin.version>
     <surefire-plugin.version>3.0.0-M5</surefire-plugin.version>
+    <org.mapstruct.version>1.4.2.Final</org.mapstruct.version>
   </properties>
   <dependencyManagement>
     <dependencies>
@@ -103,6 +104,18 @@
       <artifactId>assertj-core</artifactId>
       <version>${assertj.version}</version>
       <scope>test</scope>
+    </dependency>
+    <!-- NOTE: Because we use Lombok the Lombok dependency must be defined before the MapStruct processor. -->
+    <dependency>
+      <groupId>org.mapstruct</groupId>
+      <artifactId>mapstruct</artifactId>
+      <version>${org.mapstruct.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.mapstruct</groupId>
+      <artifactId>mapstruct-processor</artifactId>
+      <version>${org.mapstruct.version}</version>
+      <scope>provided</scope>
     </dependency>
   </dependencies>
   <build>
