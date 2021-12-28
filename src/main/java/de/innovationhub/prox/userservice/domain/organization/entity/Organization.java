@@ -29,26 +29,16 @@ public class Organization {
   /** Name of the org */
   private String name;
 
-  /** Members of the org */
-  @Setter(AccessLevel.NONE)
-  @Singular
-  private Map<User, OrganizationMembership> members;
-
-  public Organization(UUID id, String name, Map<User, OrganizationMembership> members) {
+  public Organization(UUID id, String name) {
     Objects.requireNonNull(id);
     Objects.requireNonNull(name);
+
     if (name.trim().length() > 255 || name.trim().length() <= 0) {
       throw new IllegalArgumentException("Name length must be between 0 and 255");
     }
 
-    Objects.requireNonNull(members);
-    if (members.size() == 0 || !members.entrySet().stream().anyMatch(m -> m.getKey() != null && m.getValue().role() == OrganizationRole.OWNER)) {
-      throw new IllegalArgumentException("Must have a valid owner");
-    }
-
     this.id = id;
     this.name = name;
-    this.members = members;
   }
 
   public void setName(String name) {

@@ -2,6 +2,7 @@ package de.innovationhub.prox.userservice.application.organization.mapper;
 
 import de.innovationhub.prox.userservice.application.organization.message.dto.OrganizationDTO;
 import de.innovationhub.prox.userservice.application.organization.message.request.CreateOrganizationRequest;
+import de.innovationhub.prox.userservice.application.organization.message.response.CreateOrganizationResponse;
 import de.innovationhub.prox.userservice.application.organization.message.response.ReadOrganizationResponse;
 import de.innovationhub.prox.userservice.domain.organization.entity.Organization;
 import java.util.Map;
@@ -25,4 +26,8 @@ public interface OrganizationMapper {
   @Mapping(target = "id", source = "id")
   @Mapping(target = "name", source = "name")
   ReadOrganizationResponse toReadResponse(OrganizationDTO dto);
+
+  @Mapping(target = "id", source = "id")
+  @Mapping(target = "name", source = "name")
+  CreateOrganizationResponse toCreateResponse(OrganizationDTO dto);
 }

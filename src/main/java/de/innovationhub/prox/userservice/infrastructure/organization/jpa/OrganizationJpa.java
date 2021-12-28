@@ -1,9 +1,11 @@
 package de.innovationhub.prox.userservice.infrastructure.organization.jpa;
 
+import java.util.Set;
 import java.util.UUID;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -19,15 +21,18 @@ import lombok.Setter;
 @Getter
 @Setter
 @Table(name = "organizations")
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 @AllArgsConstructor(access = AccessLevel.PACKAGE)
 public class OrganizationJpa {
   /** Identifier */
   @Id
-  @Column(name = "id")
+  @Column(name = "id", updatable = false, nullable = false)
   private UUID id;
 
   /** Name of the org */
   @Column(name = "name", nullable = false)
   private String name;
+
+  @OneToMany(mappedBy = "organization")
+  private Set<OrganizationMembershipJpa> members;
 }
