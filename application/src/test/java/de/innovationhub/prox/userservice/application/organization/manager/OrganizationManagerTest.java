@@ -30,16 +30,16 @@ class OrganizationManagerTest {
     // Given
     var request = new CreateOrganizationRequest("Musterfirma GmbH & Co. KG");
     // TODO: Is this mock necessary? Should we maybe use the real service?
-    when(organizationService.create(any())).thenAnswer(invocation ->  new Organization(UUID.randomUUID(), invocation.getArgument(0)));
+    when(organizationService.create(any(), any())).thenAnswer(invocation ->  new Organization(UUID.randomUUID(), invocation.getArgument(0)));
 
     // When
-    var response = organizationManager.createOrganization(request);
+    var response = organizationManager.createOrganization(request, "max-mustermann");
 
     // Then
     assertThat(response).isNotNull();
     assertThat(response.organization()).isNotNull();
     assertThat(response.organization().id()).isNotNull();
     assertThat(response.organization().name()).isEqualTo("Musterfirma GmbH & Co. KG");
-    verify(organizationService).create(eq("Musterfirma GmbH & Co. KG"));
+    verify(organizationService).create(eq("Musterfirma GmbH & Co. KG"), eq("max-mustermann"));
   }
 }

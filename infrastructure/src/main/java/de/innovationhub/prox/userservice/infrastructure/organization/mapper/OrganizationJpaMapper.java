@@ -11,11 +11,11 @@ import org.mapstruct.factory.Mappers;
 public interface OrganizationJpaMapper {
   OrganizationJpaMapper INSTANCE = Mappers.getMapper(OrganizationJpaMapper.class);
 
-  @Mapping(target = "id", source = "id", defaultExpression = "java( UUID.randomUUID() )")
+  @Mapping(target = "id", source = "id")
   @Mapping(target = "name", source = "name")
-  OrganizationJpa toPersistence(Organization organization);
+  Organization toDomain(OrganizationJpa organizationJpa);
 
   @Mapping(target = "id", source = "id")
   @Mapping(target = "name", source = "name")
-  Organization toDomain(OrganizationJpa organization);
+  OrganizationJpa toPersistence(Organization organization);
 }

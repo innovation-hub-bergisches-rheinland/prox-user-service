@@ -1,13 +1,10 @@
 package de.innovationhub.prox.userservice.domain.organization.entity;
 
-import java.util.Objects;
 import java.util.UUID;
-import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
-import lombok.Singular;
 import lombok.ToString;
 
 /**

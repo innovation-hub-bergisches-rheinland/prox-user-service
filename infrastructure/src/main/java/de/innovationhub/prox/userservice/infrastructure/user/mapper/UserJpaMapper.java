@@ -4,20 +4,20 @@ import de.innovationhub.prox.userservice.domain.user.enitity.User;
 import de.innovationhub.prox.userservice.infrastructure.organization.mapper.OrganizationJpaMapper;
 import de.innovationhub.prox.userservice.infrastructure.user.jpa.UserJpa;
 import java.util.UUID;
+import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
 import org.mapstruct.factory.Mappers;
 
-@Mapper(componentModel = "cdi")
+@Mapper(componentModel = "cdi", imports = {UUID.class}, uses = {OrganizationJpaMapper.class}, injectionStrategy = InjectionStrategy.CONSTRUCTOR)
 public interface UserJpaMapper {
   UserJpaMapper INSTANCE = Mappers.getMapper(UserJpaMapper.class);
 
+  @Mapping(target = "id", expression = "java( UUID.randomUUID() )")
   @Mapping(target = "principal", source = "principal")
-  UserJpa toPersistence(User user);
-
-  @Mapping(target = "id", source = "id")
-  UserJpa toPersistence(UUID id, User user);
+  UserJpa createJpaEntity(User user);
 
   @Mapping(target = "principal", source = "principal")
-  User toDomain(UserJpa userJpa);
+  User toDomainEntity(UserJpa userJpa);
 }

@@ -1,16 +1,16 @@
 package de.innovationhub.prox.userservice.infrastructure.user.jpa;
 
-import de.innovationhub.prox.userservice.infrastructure.organization.jpa.OrganizationMembershipJpa;
 import java.util.Set;
 import java.util.UUID;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -23,7 +23,6 @@ import org.hibernate.annotations.NaturalId;
 @Getter
 @Setter
 public class UserJpa {
-
   @Id
   @Column(name = "id", updatable = false, nullable = false)
   private UUID id = UUID.randomUUID();
@@ -32,6 +31,11 @@ public class UserJpa {
   @Column(name = "principal", updatable = false, nullable = false, unique = true)
   private String principal;
 
-  /*@OneToMany(mappedBy = "user")
-  private Set<OrganizationMembershipJpa> memberships;*/
+  /*@OneToMany(cascade = {
+      CascadeType.PERSIST,
+      CascadeType.MERGE,
+      CascadeType.REFRESH
+  })
+  @JoinColumn(name="user_id", updatable = false, nullable = false)
+  private Set<OrganizationMembershipJpa> organizations;*/
 }

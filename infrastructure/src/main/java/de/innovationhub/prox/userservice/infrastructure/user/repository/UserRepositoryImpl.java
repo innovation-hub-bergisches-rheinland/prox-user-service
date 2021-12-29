@@ -4,7 +4,6 @@ import de.innovationhub.prox.userservice.domain.user.enitity.User;
 import de.innovationhub.prox.userservice.domain.user.repository.UserRepository;
 import de.innovationhub.prox.userservice.infrastructure.user.mapper.UserJpaMapper;
 import java.util.Optional;
-import java.util.UUID;
 import javax.enterprise.context.ApplicationScoped;
 import javax.transaction.Transactional;
 
@@ -24,7 +23,7 @@ public class UserRepositoryImpl implements UserRepository {
   @Override
   public Optional<User> findByPrincipalOptional(String principal) {
     return userPanacheRepository.find("principal", principal).firstResultOptional()
-        .map(userJpaMapper::toDomain);
+        .map(userJpaMapper::toDomainEntity);
   }
 
   @Override
@@ -33,18 +32,8 @@ public class UserRepositoryImpl implements UserRepository {
   }
 
   @Override
-  @Transactional
   public void create(User user) {
-    var jpaModel = userJpaMapper.toPersistence(user);
+    var jpaModel = userJpaMapper.createJpaEntity(user);
     userPanacheRepository.persist(jpaModel);
-  }
-
-  @Override
-  @Transactional
-  public void update(String principal, User user) {
-    var jpa = userPanacheRepository.find("principal", principal).firstResultOptional()
-        .map(userJpa -> userJpaMapper.toPersistence(userJpa.getId(), user))
-        .orElseThrow();
-    userPanacheRepository.persist(jpa);
   }
 }

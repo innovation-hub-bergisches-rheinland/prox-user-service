@@ -1,4 +1,4 @@
-package de.innovationhub.prox.userservice.domain.user.vo;
+package de.innovationhub.prox.userservice.domain.membership.vo;
 
 public enum OrganizationRole {
   MEMBER(0),

@@ -1,11 +1,8 @@
 package de.innovationhub.prox.userservice.infrastructure.user.mapper;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.assertj.core.api.Assertions.*;
 
-import de.innovationhub.prox.userservice.domain.organization.entity.Organization;
 import de.innovationhub.prox.userservice.domain.user.enitity.User;
-import de.innovationhub.prox.userservice.infrastructure.organization.jpa.OrganizationJpa;
 import de.innovationhub.prox.userservice.infrastructure.user.jpa.UserJpa;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,27 +24,11 @@ class UserJpaMapperTest {
     var user = new User(principal);
 
     // When
-    var jpa = userJpaMapper.toPersistence(user);
+    var jpa = userJpaMapper.createJpaEntity(user);
 
     // Then
     assertThat(jpa).isNotNull();
     assertThat(jpa.getId()).isNotNull();
-    assertThat(jpa.getPrincipal()).isEqualTo(principal);
-  }
-
-  @Test
-  void should_map_User_to_UserJpa_with_given_id() {
-    // Given
-    var id = UUID.randomUUID();
-    var principal = UUID.randomUUID().toString();
-    var user = new User(principal);
-
-    // When
-    var jpa = userJpaMapper.toPersistence(id, user);
-
-    // Then
-    assertThat(jpa).isNotNull();
-    assertThat(jpa.getId()).isEqualTo(id);
     assertThat(jpa.getPrincipal()).isEqualTo(principal);
   }
 
@@ -61,7 +42,7 @@ class UserJpaMapperTest {
     jpa.setPrincipal(principal);
 
     // When
-    var user = userJpaMapper.toDomain(jpa);
+    var user = userJpaMapper.toDomainEntity(jpa);
 
     // Then
     assertThat(user).isNotNull();

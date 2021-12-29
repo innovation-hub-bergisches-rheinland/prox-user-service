@@ -1,5 +1,6 @@
 create table users(
     id uuid,
+    principal varchar(255) not null unique,
     primary key(id)
 );
 
@@ -10,10 +11,12 @@ create table organizations(
 );
 
 create table organization_memberships(
+    id uuid,
     user_id uuid,
     organization_id uuid,
     role varchar (25),
-    primary key (user_id, organization_id),
+    primary key (id),
+    unique (user_id, organization_id),
     foreign key (organization_id) references organizations,
     foreign key (user_id) references users
 );

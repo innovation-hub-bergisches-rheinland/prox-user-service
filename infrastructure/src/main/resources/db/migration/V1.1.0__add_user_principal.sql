@@ -1,1 +1,0 @@
-alter table users add principal varchar(255) not null unique;

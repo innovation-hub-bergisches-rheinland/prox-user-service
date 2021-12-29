@@ -6,6 +6,7 @@ import de.innovationhub.prox.userservice.application.organization.message.respon
 import de.innovationhub.prox.userservice.domain.organization.service.OrganizationService;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.transaction.Transactional;
 
 @ApplicationScoped
 public class OrganizationManager {
@@ -20,8 +21,9 @@ public class OrganizationManager {
     this.organizationService = createOrganizationService;
   }
 
-  public CreateOrganizationResponse createOrganization(CreateOrganizationRequest request) {
-    var org = organizationService.create(request.name());
+  @Transactional
+  public CreateOrganizationResponse createOrganization(CreateOrganizationRequest request, String ownerPrincipal) {
+    var org = organizationService.create(request.name(), ownerPrincipal);
     var dto = organizationMapper.toDto(org);
     return organizationMapper.toCreateResponse(dto);
   }

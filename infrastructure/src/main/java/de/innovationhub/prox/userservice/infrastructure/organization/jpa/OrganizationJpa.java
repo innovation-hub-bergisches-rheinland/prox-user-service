@@ -1,10 +1,15 @@
 package de.innovationhub.prox.userservice.infrastructure.organization.jpa;
 
+import de.innovationhub.prox.userservice.infrastructure.user.jpa.UserJpa;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.MapKey;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import lombok.AccessLevel;
@@ -33,6 +38,11 @@ public class OrganizationJpa {
   @Column(name = "name", nullable = false)
   private String name;
 
-  /*@OneToMany(mappedBy = "organization")
+  /*@OneToMany(cascade = {
+      CascadeType.PERSIST,
+      CascadeType.MERGE,
+      CascadeType.REFRESH
+  })
+  @JoinColumn(name="organization_id", updatable = false, nullable = false)
   private Set<OrganizationMembershipJpa> members;*/
 }
