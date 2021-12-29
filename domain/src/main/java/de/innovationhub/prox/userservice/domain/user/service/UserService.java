@@ -22,7 +22,7 @@ public class UserService {
     if(userRepository.existByPrincipal(principal)) {
       throw new AmbiguousPrincipalException("Principal %s already exists".formatted(principal));
     }
-    var user = new User(UUID.randomUUID(), principal);
+    var user = new User(principal);
     this.userRepository.save(user);
     return user;
   }

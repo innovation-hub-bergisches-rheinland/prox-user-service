@@ -22,8 +22,8 @@ public class UserRepositoryImpl implements UserRepository {
   }
 
   @Override
-  public Optional<User> findByIdOptional(UUID uuid) {
-    return userPanacheRepository.findByIdOptional(uuid)
+  public Optional<User> findByPrincipalOptional(String principal) {
+    return userPanacheRepository.find("principal", principal).firstResultOptional()
         .map(userJpaMapper::toDomain);
   }
 

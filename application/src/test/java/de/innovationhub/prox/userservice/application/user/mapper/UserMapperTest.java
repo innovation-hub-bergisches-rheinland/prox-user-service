@@ -15,7 +15,7 @@ class UserMapperTest {
     // Given
     var id = UUID.randomUUID();
     var principal = UUID.randomUUID().toString();
-    var user = new User(id, principal);
+    var user = new User(principal);
 
     // When
     var dto = UserMapper.INSTANCE.toDto(user);

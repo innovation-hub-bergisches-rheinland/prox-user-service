@@ -23,16 +23,15 @@ class UserJpaMapperTest {
   @Test
   void should_map_User_to_UserJpa() {
     // Given
-    var id = UUID.randomUUID();
     var principal = UUID.randomUUID().toString();
-    var user = new User(id, principal);
+    var user = new User(principal);
 
     // When
     var jpa = userJpaMapper.toPersistence(user);
 
     // Then
     assertThat(jpa).isNotNull();
-    assertThat(jpa.getId()).isEqualTo(id);
+    assertThat(jpa.getId()).isNotNull();
     assertThat(jpa.getPrincipal()).isEqualTo(principal);
   }
 
@@ -50,7 +49,6 @@ class UserJpaMapperTest {
 
     // Then
     assertThat(user).isNotNull();
-    assertThat(user.getId()).isEqualTo(id);
     assertThat(user.getPrincipal()).isEqualTo(principal);
   }
 }

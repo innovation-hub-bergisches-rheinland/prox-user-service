@@ -19,30 +19,28 @@ class UserRepositoryImplTest {
   UserRepository userRepository;
 
   @Test
-  void findByIdOptional() {
+  void findByPrincipalOptional() {
     // Given
-    var id = UUID.randomUUID();
     var principal = UUID.randomUUID().toString();
-    var user = new User(id, principal);
+    var user = new User(principal);
     userRepository.save(user);
 
     // When
-    var optResult = userRepository.findByIdOptional(id);
+    var optResult = userRepository.findByPrincipalOptional(principal);
 
     // Then
     assertThat(optResult).isNotEmpty();
     var foundUser = optResult.get();
-    assertThat(foundUser.getId()).isEqualTo(id);
     assertThat(foundUser.getPrincipal()).isEqualTo(principal);
   }
 
   @Test
-  void findByIdOptionalEmpty() {
+  void findByPrincipalOptionalEmpty() {
     // Given
-    var id = UUID.randomUUID();
+    var principal = UUID.randomUUID().toString();
 
     // When
-    var optResult = userRepository.findByIdOptional(id);
+    var optResult = userRepository.findByPrincipalOptional(principal);
 
     // Then
     assertThat(optResult).isEmpty();
@@ -51,18 +49,16 @@ class UserRepositoryImplTest {
   @Test
   void save() {
     // Given
-    var id = UUID.randomUUID();
     var principal = UUID.randomUUID().toString();
-    var user = new User(id, principal);
+    var user = new User(principal);
 
     // When
     userRepository.save(user);
 
     // Then
-    var optResult = userRepository.findByIdOptional(id);
+    var optResult = userRepository.findByPrincipalOptional(principal);
     assertThat(optResult).isNotEmpty();
     var foundUser = optResult.get();
-    assertThat(foundUser.getId()).isEqualTo(id);
     assertThat(foundUser.getPrincipal()).isEqualTo(principal);
   }
 
@@ -83,7 +79,7 @@ class UserRepositoryImplTest {
     // Given
     var id = UUID.randomUUID();
     var principal = UUID.randomUUID().toString();
-    var user = new User(id, principal);
+    var user = new User(principal);
     userRepository.save(user);
 
     // When

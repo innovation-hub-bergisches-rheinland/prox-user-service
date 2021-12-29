@@ -9,12 +9,7 @@ import org.junit.jupiter.api.Test;
 
 class UserTest {
   @Test
-  void should_throw_exception_when_id_is_null() {
-    assertThatThrownBy(() -> new User(null, "abc")).isInstanceOf(IllegalArgumentException.class);
-  }
-
-  @Test
   void should_throw_exception_when_principal_is_null() {
-    assertThatThrownBy(() -> new User(UUID.randomUUID(), null)).isInstanceOf(IllegalArgumentException.class);
+    assertThatThrownBy(() -> new User(null)).isInstanceOf(IllegalArgumentException.class);
   }
 }

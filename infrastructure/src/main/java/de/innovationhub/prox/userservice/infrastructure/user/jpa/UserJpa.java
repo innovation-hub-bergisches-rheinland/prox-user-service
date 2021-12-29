@@ -26,7 +26,7 @@ public class UserJpa {
 
   @Id
   @Column(name = "id", updatable = false, nullable = false)
-  private UUID id;
+  private UUID id = UUID.randomUUID();
 
   @NaturalId
   @Column(name = "principal", updatable = false, nullable = false, unique = true)

@@ -31,7 +31,6 @@ class UserServiceTest {
 
     // Then
     assertThat(createdUser).isNotNull();
-    assertThat(createdUser.getId()).isNotNull();
     assertThat(createdUser.getPrincipal()).isEqualTo(principal);
     verify(userRepository).save(any());
   }
