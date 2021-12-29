@@ -8,16 +8,17 @@ import io.quarkus.test.TestTransaction;
 import io.quarkus.test.junit.QuarkusTest;
 import java.util.UUID;
 import javax.inject.Inject;
+import javax.transaction.Transactional;
 import org.junit.jupiter.api.Test;
 
 @QuarkusTest
+@Transactional
 class UserRepositoryImplTest {
 
   @Inject
   UserRepository userRepository;
 
   @Test
-  @TestTransaction
   void findByIdOptional() {
     // Given
     var id = UUID.randomUUID();
@@ -34,7 +35,6 @@ class UserRepositoryImplTest {
   }
 
   @Test
-  @TestTransaction
   void findByIdOptionalEmpty() {
     // Given
     var id = UUID.randomUUID();
@@ -47,7 +47,6 @@ class UserRepositoryImplTest {
   }
 
   @Test
-  @TestTransaction
   void save() {
     // Given
     var id = UUID.randomUUID();

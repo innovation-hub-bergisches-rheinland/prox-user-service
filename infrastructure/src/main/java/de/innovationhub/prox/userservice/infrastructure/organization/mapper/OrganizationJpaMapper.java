@@ -5,9 +5,12 @@ import de.innovationhub.prox.userservice.infrastructure.organization.jpa.Organiz
 import java.util.UUID;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.factory.Mappers;
 
 @Mapper(componentModel = "cdi", imports = { UUID.class })
 public interface OrganizationJpaMapper {
+  OrganizationJpaMapper INSTANCE = Mappers.getMapper(OrganizationJpaMapper.class);
+
   @Mapping(target = "id", source = "id", defaultExpression = "java( UUID.randomUUID() )")
   @Mapping(target = "name", source = "name")
   OrganizationJpa toPersistence(Organization organization);
