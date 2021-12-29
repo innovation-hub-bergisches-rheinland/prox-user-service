@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.*;
 
 import de.innovationhub.prox.userservice.domain.user.enitity.User;
 import de.innovationhub.prox.userservice.domain.user.repository.UserRepository;
-import io.quarkus.test.TestTransaction;
 import io.quarkus.test.junit.QuarkusTest;
 import java.util.UUID;
 import javax.inject.Inject;
@@ -23,7 +22,7 @@ class UserRepositoryImplTest {
     // Given
     var principal = UUID.randomUUID().toString();
     var user = new User(principal);
-    userRepository.save(user);
+    userRepository.create(user);
 
     // When
     var optResult = userRepository.findByPrincipalOptional(principal);
@@ -53,7 +52,7 @@ class UserRepositoryImplTest {
     var user = new User(principal);
 
     // When
-    userRepository.save(user);
+    userRepository.create(user);
 
     // Then
     var optResult = userRepository.findByPrincipalOptional(principal);
@@ -80,7 +79,7 @@ class UserRepositoryImplTest {
     var id = UUID.randomUUID();
     var principal = UUID.randomUUID().toString();
     var user = new User(principal);
-    userRepository.save(user);
+    userRepository.create(user);
 
     // When
     var exist = userRepository.existByPrincipal(principal);

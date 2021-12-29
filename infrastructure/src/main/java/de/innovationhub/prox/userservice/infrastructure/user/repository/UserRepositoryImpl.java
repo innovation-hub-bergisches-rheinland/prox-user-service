@@ -34,8 +34,17 @@ public class UserRepositoryImpl implements UserRepository {
 
   @Override
   @Transactional
-  public void save(User user) {
+  public void create(User user) {
     var jpaModel = userJpaMapper.toPersistence(user);
     userPanacheRepository.persist(jpaModel);
+  }
+
+  @Override
+  @Transactional
+  public void update(String principal, User user) {
+    var jpa = userPanacheRepository.find("principal", principal).firstResultOptional()
+        .map(userJpa -> userJpaMapper.toPersistence(userJpa.getId(), user))
+        .orElseThrow();
+    userPanacheRepository.persist(jpa);
   }
 }

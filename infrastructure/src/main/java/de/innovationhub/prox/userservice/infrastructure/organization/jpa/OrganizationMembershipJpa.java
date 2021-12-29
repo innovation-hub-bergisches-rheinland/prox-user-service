@@ -1,6 +1,6 @@
 package de.innovationhub.prox.userservice.infrastructure.organization.jpa;
 
-import de.innovationhub.prox.userservice.domain.organization.vo.OrganizationRole;
+import de.innovationhub.prox.userservice.domain.user.vo.OrganizationRole;
 import de.innovationhub.prox.userservice.infrastructure.user.jpa.UserJpa;
 import javax.persistence.Column;
 import javax.persistence.Entity;

@@ -15,6 +15,9 @@ public interface UserJpaMapper {
   @Mapping(target = "principal", source = "principal")
   UserJpa toPersistence(User user);
 
+  @Mapping(target = "id", source = "id")
+  UserJpa toPersistence(UUID id, User user);
+
   @Mapping(target = "principal", source = "principal")
   User toDomain(UserJpa userJpa);
 }
