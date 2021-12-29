@@ -1,6 +1,7 @@
 package de.innovationhub.prox.userservice.application.organization.message.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import de.innovationhub.prox.userservice.application.organization.message.dto.OrganizationDTO;
 import java.util.UUID;
 
-public record ReadOrganizationResponse(@JsonProperty("id") UUID id, @JsonProperty("name") String name) {}
+public record ReadOrganizationResponse(@JsonProperty("organization") OrganizationDTO organization) {}

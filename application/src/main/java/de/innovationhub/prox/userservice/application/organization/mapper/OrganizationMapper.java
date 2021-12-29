@@ -23,11 +23,11 @@ public interface OrganizationMapper {
   @Mapping(target = "name", source = "name")
   OrganizationDTO toDto(CreateOrganizationRequest request);
 
-  @Mapping(target = "id", source = "id")
-  @Mapping(target = "name", source = "name")
+  @Mapping(target = "organization.id", source = "dto.id")
+  @Mapping(target = "organization.name", source = "dto.name")
   ReadOrganizationResponse toReadResponse(OrganizationDTO dto);
 
-  @Mapping(target = "id", source = "id")
-  @Mapping(target = "name", source = "name")
+  @Mapping(target = "organization.id", source = "dto.id")
+  @Mapping(target = "organization.name", source = "dto.name")
   CreateOrganizationResponse toCreateResponse(OrganizationDTO dto);
 }

@@ -33,12 +33,12 @@ class OrganizationRestControllerTest {
         .post("/organizations")
       .then()
         .statusCode(201)
-        .body("id", is(not(emptyOrNullString())))
-        .body("name", is("Musterfirma GmbH & Co. KG"))
+        .body("organization.id", is(not(emptyOrNullString())))
+        .body("organization.name", is("Musterfirma GmbH & Co. KG"))
       .extract()
         .response();
 
-    var id = UUID.fromString(response.path("id"));
+    var id = UUID.fromString(response.path("organization.id"));
 
     var optOrg = organizationRepository.findByIdOptional(id);
 

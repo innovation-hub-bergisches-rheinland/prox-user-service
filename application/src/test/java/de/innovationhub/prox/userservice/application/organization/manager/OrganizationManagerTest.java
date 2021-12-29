@@ -37,8 +37,9 @@ class OrganizationManagerTest {
 
     // Then
     assertThat(response).isNotNull();
-    assertThat(response.id()).isNotNull();
-    assertThat(response.name()).isEqualTo("Musterfirma GmbH & Co. KG");
+    assertThat(response.organization()).isNotNull();
+    assertThat(response.organization().id()).isNotNull();
+    assertThat(response.organization().name()).isEqualTo("Musterfirma GmbH & Co. KG");
     verify(organizationService).create(eq("Musterfirma GmbH & Co. KG"));
   }
 }

@@ -35,6 +35,7 @@ class UserMapperTest {
 
     // Then
     assertThat(response).isNotNull();
-    assertThat(response.id()).isEqualTo(id);
+    assertThat(response.user()).isNotNull();
+    assertThat(response.user().id()).isEqualTo(id);
   }
 }

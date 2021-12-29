@@ -50,8 +50,9 @@ class OrganizationMapperTest {
 
     // Then
     assertThat(response).isNotNull();
-    assertThat(response.id()).isEqualTo(id);
-    assertThat(response.name()).isEqualTo("Musterfirma GmbH & Co. KG");
+    assertThat(response.organization()).isNotNull();
+    assertThat(response.organization().id()).isEqualTo(id);
+    assertThat(response.organization().name()).isEqualTo("Musterfirma GmbH & Co. KG");
   }
 
   @Test
@@ -65,7 +66,8 @@ class OrganizationMapperTest {
 
     // Then
     assertThat(response).isNotNull();
-    assertThat(response.id()).isEqualTo(id);
-    assertThat(response.name()).isEqualTo("Musterfirma GmbH & Co. KG");
+    assertThat(response.organization()).isNotNull();
+    assertThat(response.organization().id()).isEqualTo(id);
+    assertThat(response.organization().name()).isEqualTo("Musterfirma GmbH & Co. KG");
   }
 }
