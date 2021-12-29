@@ -68,7 +68,7 @@ allprojects {
 		reports {
 			xml.required = true
 		}
-		dependsOn test
+		// dependsOn test
 	}
 }
 
