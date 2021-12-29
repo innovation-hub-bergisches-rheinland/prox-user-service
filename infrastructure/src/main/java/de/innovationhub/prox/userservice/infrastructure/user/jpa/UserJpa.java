@@ -14,6 +14,7 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.NaturalId;
 
 @Entity
 @Table(name = "users")
@@ -26,6 +27,10 @@ public class UserJpa {
   @Id
   @Column(name = "id", updatable = false, nullable = false)
   private UUID id;
+
+  @NaturalId
+  @Column(name = "principal", updatable = false, nullable = false, unique = true)
+  private String principal;
 
   /*@OneToMany(mappedBy = "user")
   private Set<OrganizationMembershipJpa> memberships;*/

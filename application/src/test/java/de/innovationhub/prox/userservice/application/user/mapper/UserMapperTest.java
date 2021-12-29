@@ -14,21 +14,22 @@ class UserMapperTest {
   void toDto() {
     // Given
     var id = UUID.randomUUID();
-    var user = new User(id);
+    var principal = UUID.randomUUID().toString();
+    var user = new User(id, principal);
 
     // When
     var dto = UserMapper.INSTANCE.toDto(user);
 
     // Then
     assertThat(dto).isNotNull();
-    assertThat(dto.id()).isEqualTo(id);
+    assertThat(dto.principal()).isEqualTo(principal);
   }
 
   @Test
   void toReadResponse() {
     // Given
-    var id = UUID.randomUUID();
-    var dto = new UserDTO(id);
+    var principal = UUID.randomUUID().toString();
+    var dto = new UserDTO(principal);
 
     // When
     var response = UserMapper.INSTANCE.toReadResponse(dto);
@@ -36,6 +37,6 @@ class UserMapperTest {
     // Then
     assertThat(response).isNotNull();
     assertThat(response.user()).isNotNull();
-    assertThat(response.user().id()).isEqualTo(id);
+    assertThat(response.user().principal()).isEqualTo(principal);
   }
 }

@@ -11,9 +11,9 @@ import org.mapstruct.factory.Mappers;
 public interface UserMapper {
   UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
 
-  @Mapping(target = "id", source = "id")
+  @Mapping(target = "principal", source = "principal")
   UserDTO toDto(User user);
 
-  @Mapping(target = "user.id", source = "dto.id")
+  @Mapping(target = "user.principal", source = "dto.principal")
   ReadUserResponse toReadResponse(UserDTO dto);
 }

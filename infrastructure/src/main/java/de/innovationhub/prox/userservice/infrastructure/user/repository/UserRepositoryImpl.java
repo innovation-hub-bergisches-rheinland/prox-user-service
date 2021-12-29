@@ -28,6 +28,11 @@ public class UserRepositoryImpl implements UserRepository {
   }
 
   @Override
+  public boolean existByPrincipal(String principal) {
+    return userPanacheRepository.find("principal", principal).count() > 0;
+  }
+
+  @Override
   @Transactional
   public void save(User user) {
     var jpaModel = userJpaMapper.toPersistence(user);

@@ -6,5 +6,6 @@ import java.util.UUID;
 
 public interface UserRepository {
   Optional<User> findByIdOptional(UUID uuid);
+  boolean existByPrincipal(String principal);
   void save(User user);
 }

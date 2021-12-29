@@ -11,9 +11,11 @@ import org.mapstruct.factory.Mappers;
 public interface UserJpaMapper {
   UserJpaMapper INSTANCE = Mappers.getMapper(UserJpaMapper.class);
 
+  @Mapping(target = "principal", source = "principal")
   @Mapping(target = "id", source = "id")
   UserJpa toPersistence(User user);
 
+  @Mapping(target = "principal", source = "principal")
   @Mapping(target = "id", source = "id")
   User toDomain(UserJpa userJpa);
 }

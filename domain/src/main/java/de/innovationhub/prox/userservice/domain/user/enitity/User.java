@@ -14,7 +14,14 @@ import lombok.ToString;
 public class User {
   private final UUID id;
 
-  public User(@NonNull UUID id) {
+  /**
+   * A unique and constant identifier of the user can be a username, id or email address.
+   * However, it cannot change over time!
+   */
+  private final String principal;
+
+  public User(@NonNull UUID id, @NonNull String principal) {
+    this.principal = principal;
     this.id = id;
   }
 }

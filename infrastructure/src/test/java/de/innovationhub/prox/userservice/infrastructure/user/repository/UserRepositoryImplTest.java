@@ -22,7 +22,8 @@ class UserRepositoryImplTest {
   void findByIdOptional() {
     // Given
     var id = UUID.randomUUID();
-    var user = new User(id);
+    var principal = UUID.randomUUID().toString();
+    var user = new User(id, principal);
     userRepository.save(user);
 
     // When
@@ -32,6 +33,7 @@ class UserRepositoryImplTest {
     assertThat(optResult).isNotEmpty();
     var foundUser = optResult.get();
     assertThat(foundUser.getId()).isEqualTo(id);
+    assertThat(foundUser.getPrincipal()).isEqualTo(principal);
   }
 
   @Test
@@ -50,7 +52,8 @@ class UserRepositoryImplTest {
   void save() {
     // Given
     var id = UUID.randomUUID();
-    var user = new User(id);
+    var principal = UUID.randomUUID().toString();
+    var user = new User(id, principal);
 
     // When
     userRepository.save(user);
@@ -60,5 +63,33 @@ class UserRepositoryImplTest {
     assertThat(optResult).isNotEmpty();
     var foundUser = optResult.get();
     assertThat(foundUser.getId()).isEqualTo(id);
+    assertThat(foundUser.getPrincipal()).isEqualTo(principal);
+  }
+
+  @Test
+  void shouldNotExistByPrincipalIfPrincipalNotPersisted() {
+    // Given
+    var principal = UUID.randomUUID().toString();
+
+    // When
+    var exist = userRepository.existByPrincipal(principal);
+
+    // Then
+    assertThat(exist).isFalse();
+  }
+
+  @Test
+  void shouldExistByPrincipalIfPrincipalIsPersisted() {
+    // Given
+    var id = UUID.randomUUID();
+    var principal = UUID.randomUUID().toString();
+    var user = new User(id, principal);
+    userRepository.save(user);
+
+    // When
+    var exist = userRepository.existByPrincipal(principal);
+
+    // Then
+    assertThat(exist).isTrue();
   }
 }
