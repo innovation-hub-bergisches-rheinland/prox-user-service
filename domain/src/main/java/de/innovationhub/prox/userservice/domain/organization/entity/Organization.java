@@ -5,6 +5,7 @@ import java.util.UUID;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.Setter;
 import lombok.Singular;
 import lombok.ToString;
@@ -25,10 +26,7 @@ public class Organization {
   /** Name of the org */
   private String name;
 
-  public Organization(UUID id, String name) {
-    Objects.requireNonNull(id);
-    Objects.requireNonNull(name);
-
+  public Organization(@NonNull UUID id, @NonNull String name) {
     if (name.trim().length() > 255 || name.trim().length() <= 0) {
       throw new IllegalArgumentException("Name length must be between 0 and 255");
     }
@@ -37,7 +35,7 @@ public class Organization {
     this.name = name;
   }
 
-  public void setName(String name) {
+  public void setName(@NonNull String name) {
     if (name.trim().length() > 255 || name.trim().length() <= 0) {
       throw new IllegalArgumentException("Name length must be between 0 and 255");
     }
