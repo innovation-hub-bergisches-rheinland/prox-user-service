@@ -1,22 +1,21 @@
-create table users(
-    id uuid,
-    principal varchar(255) not null unique,
+create table representative(
+    id uuid not null unique,
+    owner_principal varchar (255) not null unique,
+    name varchar (255),
     primary key(id)
 );
 
 create table organizations(
-    id uuid,
+    id uuid not null unique,
     name varchar(255) not null,
+    owner_principal varchar (255) not null,
     primary key (id)
 );
 
 create table organization_memberships(
-    id uuid,
-    user_id uuid,
-    organization_id uuid,
-    role varchar (25),
-    primary key (id),
-    unique (user_id, organization_id),
-    foreign key (organization_id) references organizations,
-    foreign key (user_id) references users
+    user_principal varchar(255) not null,
+    organization_id uuid not null,
+    member_role smallint not null,
+    unique (user_principal, organization_id),
+    foreign key (organization_id) references organizations
 );

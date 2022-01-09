@@ -30,4 +30,6 @@ dependencies {
     testImplementation "io.quarkus:quarkus-junit5"
     testImplementation "io.rest-assured:rest-assured:${restAssuredVersion}"
     testImplementation "io.quarkus:quarkus-test-oidc-server"
+    testImplementation "io.quarkus:quarkus-test-security-jwt"
+    testImplementation "io.quarkus:quarkus-test-security-oidc"
 }
