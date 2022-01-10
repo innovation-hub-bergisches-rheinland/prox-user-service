@@ -32,4 +32,5 @@ dependencies {
     testImplementation "io.quarkus:quarkus-test-oidc-server"
     testImplementation "io.quarkus:quarkus-test-security-jwt"
     testImplementation "io.quarkus:quarkus-test-security-oidc"
+    testImplementation "io.quarkus:quarkus-junit5-mockito"
 }

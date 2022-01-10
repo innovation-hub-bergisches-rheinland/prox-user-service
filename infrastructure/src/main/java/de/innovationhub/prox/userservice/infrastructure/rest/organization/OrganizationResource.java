@@ -7,12 +7,14 @@ import de.innovationhub.prox.userservice.application.organization.service.Organi
 import de.innovationhub.prox.userservice.infrastructure.core.Status;
 import de.innovationhub.prox.userservice.infrastructure.rest.organization.message.OrganizationRestMessageMapper;
 import de.innovationhub.prox.userservice.infrastructure.rest.organization.message.request.PostOrganizationJsonRequest;
+import de.innovationhub.prox.userservice.infrastructure.rest.organization.message.response.OrganizationCollectionJsonResponse;
 import de.innovationhub.prox.userservice.infrastructure.rest.organization.message.response.OrganizationJsonResponse;
 import io.quarkus.security.Authenticated;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import javax.inject.Inject;
+import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -54,7 +56,10 @@ public class OrganizationResource {
   @GET
   @Path("{id}")
   @Produces(MediaType.APPLICATION_JSON)
-  public OrganizationJsonResponse findById(@QueryParam("id") UUID id) {
+  public OrganizationJsonResponse findById(@PathParam(value = "id") UUID id) {
+    if(id == null) {
+      throw new WebApplicationException("Provided ID is null", 400);
+    }
     var request = new FindOrganizationByIdRequest(id);
     return this.organizationService.findById(request)
         .map(messageMapper::toResponse)
@@ -63,10 +68,8 @@ public class OrganizationResource {
 
   @GET
   @Produces(MediaType.APPLICATION_JSON)
-  public Set<OrganizationJsonResponse> findAll() {
-    return this.organizationService
-        .findAll().stream()
-        .map(messageMapper::toResponse)
-        .collect(Collectors.toSet());
+  public OrganizationCollectionJsonResponse findAll() {
+    var mappedCollection = messageMapper.toResponse(organizationService.findAll());
+    return new OrganizationCollectionJsonResponse(mappedCollection);
   }
 }

@@ -3,7 +3,9 @@ package de.innovationhub.prox.userservice.infrastructure.rest.organization.messa
 import de.innovationhub.prox.userservice.application.organization.message.request.CreateOrganizationRequest;
 import de.innovationhub.prox.userservice.application.organization.message.response.OrganizationResponse;
 import de.innovationhub.prox.userservice.infrastructure.rest.organization.message.request.PostOrganizationJsonRequest;
+import de.innovationhub.prox.userservice.infrastructure.rest.organization.message.response.OrganizationCollectionJsonResponse;
 import de.innovationhub.prox.userservice.infrastructure.rest.organization.message.response.OrganizationJsonResponse;
+import java.util.Set;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
@@ -18,4 +20,6 @@ public interface OrganizationRestMessageMapper {
 
   @Mapping(target = "owner", source = "response.ownerPrincipal")
   OrganizationJsonResponse toResponse(OrganizationResponse response);
+
+  Set<OrganizationJsonResponse> toResponse(Set<OrganizationResponse> response);
 }

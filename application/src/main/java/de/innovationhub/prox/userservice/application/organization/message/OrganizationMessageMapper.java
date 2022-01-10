@@ -21,4 +21,6 @@ public interface OrganizationMessageMapper {
   @Mapping(target = "name", source = "name")
   @Mapping(target = "owner.principal", source = "ownerPrincipal")
   Organization fromRequest(CreateOrganizationRequest request);
+
+
 }

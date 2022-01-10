@@ -4,6 +4,7 @@ import de.innovationhub.prox.userservice.application.organization.message.Organi
 import de.innovationhub.prox.userservice.application.organization.message.request.CreateOrganizationRequest;
 import de.innovationhub.prox.userservice.application.organization.message.request.FindOrganizationByIdRequest;
 import de.innovationhub.prox.userservice.application.organization.message.response.OrganizationResponse;
+import de.innovationhub.prox.userservice.domain.organization.entity.Organization;
 import de.innovationhub.prox.userservice.domain.organization.entity.Organization.OrganizationId;
 import de.innovationhub.prox.userservice.domain.organization.repository.OrganizationRepository;
 import java.util.Optional;
