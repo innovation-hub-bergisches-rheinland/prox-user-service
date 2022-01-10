@@ -21,7 +21,7 @@ import org.junit.jupiter.api.Test;
 @QuarkusTest
 @TestHTTPEndpoint(OrganizationResource.class)
 @QuarkusTestResource(OidcWiremockTestResource.class)
-class OrganizationResourceTest {
+class OrganizationResourceMockTest {
 
   @InjectMock
   OrganizationService organizationService;
