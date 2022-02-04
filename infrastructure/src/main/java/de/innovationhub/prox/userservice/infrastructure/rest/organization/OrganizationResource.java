@@ -48,7 +48,8 @@ public class OrganizationResource {
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
   public OrganizationJsonResponse create(PostOrganizationJsonRequest jsonRequest) {
-    var request = messageMapper.toRequest(jsonRequest, jsonWebToken.getSubject());
+    var userId = UUID.fromString(jsonWebToken.getSubject());
+    var request = messageMapper.toRequest(jsonRequest, userId);
     var response = this.organizationService.createOrganization(request);
     return this.messageMapper.toResponse(response);
   }

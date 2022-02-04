@@ -6,6 +6,7 @@ import de.innovationhub.prox.userservice.infrastructure.rest.organization.messag
 import de.innovationhub.prox.userservice.infrastructure.rest.organization.message.response.OrganizationCollectionJsonResponse;
 import de.innovationhub.prox.userservice.infrastructure.rest.organization.message.response.OrganizationJsonResponse;
 import java.util.Set;
+import java.util.UUID;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
@@ -15,10 +16,10 @@ public interface OrganizationRestMessageMapper {
   OrganizationRestMessageMapper INSTANCE = Mappers.getMapper(OrganizationRestMessageMapper.class);
 
   @Mapping(target = "name", source = "json.name")
-  @Mapping(target = "ownerPrincipal", source = "principal")
-  CreateOrganizationRequest toRequest(PostOrganizationJsonRequest json, String principal);
+  @Mapping(target = "ownerId", source = "ownerId")
+  CreateOrganizationRequest toRequest(PostOrganizationJsonRequest json, UUID ownerId);
 
-  @Mapping(target = "owner", source = "response.ownerPrincipal")
+  @Mapping(target = "owner", source = "response.ownerId")
   OrganizationJsonResponse toResponse(OrganizationResponse response);
 
   Set<OrganizationJsonResponse> toResponse(Set<OrganizationResponse> response);

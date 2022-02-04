@@ -32,8 +32,8 @@ public class OrganizationJpaEntity {
   @Column(name = "name", nullable = false)
   private String name;
 
-  @Column(name = "owner_principal", updatable = false, nullable = false)
-  private String owner;
+  @Column(name = "owner_id", updatable = false, nullable = false)
+  private UUID owner;
 
   // TODO: There must be a better approach
   @ElementCollection
@@ -43,7 +43,7 @@ public class OrganizationJpaEntity {
           @JoinColumn(name = "organization_id", referencedColumnName = "id")
       },
       uniqueConstraints = {
-          @UniqueConstraint(columnNames = {"user_principal", "organization_id"})
+          @UniqueConstraint(columnNames = {"user_id", "organization_id"})
       }
   )
   private Set<OrganizationMembershipJpaEmbeddable> members;

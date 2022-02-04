@@ -1,6 +1,6 @@
 package de.innovationhub.prox.userservice.domain.organization.entity;
 
-import de.innovationhub.prox.userservice.domain.core.user.entity.ProxUser;
+import de.innovationhub.prox.userservice.domain.user.entity.ProxUser;
 import de.innovationhub.prox.userservice.domain.organization.vo.OrganizationMembership;
 import java.util.HashMap;
 import java.util.Map;

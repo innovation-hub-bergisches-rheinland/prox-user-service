@@ -12,12 +12,12 @@ public interface RepresentativeJpaMapper {
   RepresentativeJpaMapper INSTANCE = Mappers.getMapper(RepresentativeJpaMapper.class);
 
   @Mapping(target = "id.id", source = "id")
-  @Mapping(target = "user.principal", source = "owner")
+  @Mapping(target = "user.id", source = "owner")
   @Mapping(target = "name", source = "name")
   Representative toDomain(RepresentativeJpaEntity jpaEntity);
 
   @Mapping(target = "id", source = "id.id")
-  @Mapping(target = "owner", source = "user.principal")
+  @Mapping(target = "owner", source = "user.id")
   @Mapping(target = "name", source = "name")
   RepresentativeJpaEntity toPersistence(Representative domain);
 }

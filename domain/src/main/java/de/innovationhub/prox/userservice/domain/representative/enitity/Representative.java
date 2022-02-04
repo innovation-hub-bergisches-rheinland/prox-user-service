@@ -1,6 +1,6 @@
 package de.innovationhub.prox.userservice.domain.representative.enitity;
 
-import de.innovationhub.prox.userservice.domain.core.user.entity.ProxUser;
+import de.innovationhub.prox.userservice.domain.user.entity.ProxUser;
 import java.util.UUID;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;

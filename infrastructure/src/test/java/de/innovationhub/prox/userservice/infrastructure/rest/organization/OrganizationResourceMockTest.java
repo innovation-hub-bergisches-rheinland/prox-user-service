@@ -44,7 +44,7 @@ class OrganizationResourceMockTest {
     var subject = "00000000-0000-0000-0000-000000000000";
     when(organizationService.createOrganization(any())).thenAnswer(invocation -> {
       var request = invocation.getArgument(0, CreateOrganizationRequest.class);
-      return new OrganizationResponse(UUID.randomUUID(), request.name(), request.ownerPrincipal());
+      return new OrganizationResponse(UUID.randomUUID(), request.name(), request.ownerId());
     });
 
     given()
@@ -86,7 +86,7 @@ class OrganizationResourceMockTest {
   @Test
   void shouldReturnOk() {
     when(organizationService.findAll()).thenReturn(Set.of(
-        new OrganizationResponse(UUID.fromString("00000000-0000-0000-0000-000000000000"), "Musterfirma GmbH & Co. KG", "00000000-0000-0000-0000-000000000000")
+        new OrganizationResponse(UUID.fromString("00000000-0000-0000-0000-000000000000"), "Musterfirma GmbH & Co. KG", UUID.fromString("00000000-0000-0000-0000-000000000000"))
     ));
 
     given()

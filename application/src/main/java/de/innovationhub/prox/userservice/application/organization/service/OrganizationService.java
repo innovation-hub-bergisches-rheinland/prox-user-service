@@ -30,7 +30,7 @@ public class OrganizationService {
     // TODO Request Validator
     var org = this.organizationMessageMapper.fromRequest(request);
     organizationRepository.save(org);
-    return new OrganizationResponse(org.getId().id(), org.getName(), org.getOwner().principal());
+    return new OrganizationResponse(org.getId().id(), org.getName(), org.getOwner().id());
   }
 
   public Optional<OrganizationResponse> findById(FindOrganizationByIdRequest request) {

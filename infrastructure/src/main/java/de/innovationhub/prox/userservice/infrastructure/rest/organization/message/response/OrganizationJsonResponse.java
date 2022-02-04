@@ -6,7 +6,7 @@ import java.util.UUID;
 public record OrganizationJsonResponse(
     @JsonProperty("id") UUID id,
     @JsonProperty("name") String name,
-    @JsonProperty("owner") String owner
+    @JsonProperty("owner") UUID owner
     ) {
 
 }

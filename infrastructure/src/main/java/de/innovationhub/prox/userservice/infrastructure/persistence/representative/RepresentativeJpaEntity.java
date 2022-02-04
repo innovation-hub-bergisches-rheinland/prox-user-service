@@ -24,8 +24,8 @@ public class RepresentativeJpaEntity {
   @Column(name = "id", unique = true, updatable = false, nullable = false)
   private UUID id;
 
-  @Column(name = "owner_principal", unique = true, updatable = false, nullable = false)
-  private String owner;
+  @Column(name = "owner_id", unique = true, updatable = false, nullable = false)
+  private UUID owner;
 
   @Column(name = "name", nullable = false)
   private String name;

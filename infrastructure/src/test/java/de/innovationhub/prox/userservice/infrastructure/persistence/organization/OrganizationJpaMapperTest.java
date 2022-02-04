@@ -2,7 +2,7 @@ package de.innovationhub.prox.userservice.infrastructure.persistence.organizatio
 
 import static org.assertj.core.api.Assertions.*;
 
-import de.innovationhub.prox.userservice.domain.core.user.entity.ProxUser;
+import de.innovationhub.prox.userservice.domain.user.entity.ProxUser;
 import de.innovationhub.prox.userservice.domain.organization.entity.Organization;
 import de.innovationhub.prox.userservice.domain.organization.entity.Organization.OrganizationId;
 import de.innovationhub.prox.userservice.domain.organization.vo.OrganizationMembership;
@@ -18,8 +18,8 @@ class OrganizationJpaMapperTest {
   @Test
   void toPersistence() {
     // Given
-    var owner = new ProxUser(UUID.randomUUID().toString());
-    var member = new ProxUser(UUID.randomUUID().toString());
+    var owner = new ProxUser(UUID.randomUUID());
+    var member = new ProxUser(UUID.randomUUID());
     var org = new Organization(new OrganizationId(UUID.randomUUID()), "Musterfirma GmbH & Co. KG", owner);
     org.addMember(member, new OrganizationMembership(OrganizationRole.MEMBER));
 
@@ -29,26 +29,26 @@ class OrganizationJpaMapperTest {
     // Then
     assertThat(jpa.getId()).isEqualTo(org.getId().id());
     assertThat(jpa.getName()).isEqualTo(org.getName());
-    assertThat(jpa.getOwner()).isEqualTo(owner.principal());
+    assertThat(jpa.getOwner()).isEqualTo(owner.id());
     assertThat(jpa.getMembers()).hasSize(1);
     assertThat(jpa.getMembers()).extracting(
-        entry -> entry.getPrincipal(),
+        entry -> entry.getUserId(),
         entry -> entry.getRole()
-    ).containsExactlyInAnyOrder(tuple(member.principal(), OrganizationRole.MEMBER));
+    ).containsExactlyInAnyOrder(tuple(member.id(), OrganizationRole.MEMBER));
   }
 
   @Test
   void toDomain() {
     // Given
     var member = OrganizationMembershipJpaEmbeddable.builder()
-        .principal(UUID.randomUUID().toString())
+        .userId(UUID.randomUUID())
         .role(OrganizationRole.MEMBER)
         .build();
     var jpaOrg = OrganizationJpaEntity.builder()
         .id(UUID.randomUUID())
         .name("Musterfirma GmbH & Co. KG")
         .members(Set.of(member))
-        .owner(UUID.randomUUID().toString())
+        .owner(UUID.randomUUID())
         .build();
 
     // When
@@ -57,10 +57,10 @@ class OrganizationJpaMapperTest {
     // Then
     assertThat(domain.getName()).isEqualTo(jpaOrg.getName());
     assertThat(domain.getId().id()).isEqualTo(jpaOrg.getId());
-    assertThat(domain.getOwner().principal()).isEqualTo(jpaOrg.getOwner());
+    assertThat(domain.getOwner().id()).isEqualTo(jpaOrg.getOwner());
 
     assertThat(domain.getMembers()).hasSize(1);
-    var actualMember = domain.getMembers().get(new ProxUser(member.getPrincipal()));
+    var actualMember = domain.getMembers().get(new ProxUser(member.getUserId()));
     assertThat(actualMember).isNotNull();
     assertThat(actualMember.getRole()).isEqualTo(OrganizationRole.MEMBER);
   }

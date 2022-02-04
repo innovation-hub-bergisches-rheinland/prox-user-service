@@ -14,12 +14,12 @@ public interface OrganizationMessageMapper {
 
   @Mapping(target = "id", source = "id.id")
   @Mapping(target = "name", source = "name")
-  @Mapping(target = "ownerPrincipal", source = "owner.principal")
+  @Mapping(target = "ownerId", source = "owner.id")
   OrganizationResponse createResponse(Organization organization);
 
   @Mapping(target = "id.id", expression = "java( UUID.randomUUID() )")
   @Mapping(target = "name", source = "name")
-  @Mapping(target = "owner.principal", source = "ownerPrincipal")
+  @Mapping(target = "owner.id", source = "ownerId")
   Organization fromRequest(CreateOrganizationRequest request);
 
 

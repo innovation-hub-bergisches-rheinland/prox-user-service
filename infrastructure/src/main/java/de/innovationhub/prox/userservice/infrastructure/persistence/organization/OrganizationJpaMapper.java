@@ -1,6 +1,6 @@
 package de.innovationhub.prox.userservice.infrastructure.persistence.organization;
 
-import de.innovationhub.prox.userservice.domain.core.user.entity.ProxUser;
+import de.innovationhub.prox.userservice.domain.user.entity.ProxUser;
 import de.innovationhub.prox.userservice.domain.organization.entity.Organization;
 import de.innovationhub.prox.userservice.domain.organization.vo.OrganizationMembership;
 import java.util.Map;
@@ -17,19 +17,19 @@ public interface OrganizationJpaMapper {
 
   @Mapping(target = "id", source = "id.id")
   @Mapping(target = "name", source = "name")
-  @Mapping(target = "owner", source = "owner.principal")
+  @Mapping(target = "owner", source = "owner.id")
   OrganizationJpaEntity toPersistence(Organization organization);
 
   @Mapping(target = "id.id", source = "id")
   @Mapping(target = "name", source = "name")
-  @Mapping(target = "owner.principal", source = "owner")
+  @Mapping(target = "owner.id", source = "owner")
   Organization toDomain(OrganizationJpaEntity entity);
 
   default Map<ProxUser, OrganizationMembership> toDomain(
       Set<OrganizationMembershipJpaEmbeddable> persistence) {
     return persistence.stream()
         .collect(Collectors.toMap(
-            k -> new ProxUser(k.getPrincipal()),
+            k -> new ProxUser(k.getUserId()),
             v -> new OrganizationMembership(v.getRole())
         ));
   }
@@ -37,7 +37,7 @@ public interface OrganizationJpaMapper {
   default Set<OrganizationMembershipJpaEmbeddable> toPersistence(Map<ProxUser, OrganizationMembership> domain) {
     return domain.entrySet()
         .stream()
-        .map(e -> new OrganizationMembershipJpaEmbeddable(e.getKey().principal(), e.getValue().getRole()))
+        .map(e -> new OrganizationMembershipJpaEmbeddable(e.getKey().id(), e.getValue().getRole()))
         .collect(Collectors.toSet());
   }
 }

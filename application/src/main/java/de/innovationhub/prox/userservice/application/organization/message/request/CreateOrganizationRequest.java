@@ -2,6 +2,6 @@ package de.innovationhub.prox.userservice.application.organization.message.reque
 
 import java.util.UUID;
 
-public record CreateOrganizationRequest(String name, String ownerPrincipal) {
+public record CreateOrganizationRequest(String name, UUID ownerId) {
 
 }
