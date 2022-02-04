@@ -1,8 +1,8 @@
-package de.innovationhub.prox.userservice.infrastructure.rest.organization.message.request;
+package de.innovationhub.prox.userservice.infrastructure.rest.organization.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public record PostOrganizationJsonRequest(
+public record PostOrganizationDto(
     @JsonProperty("name") String name,
     @JsonProperty("owner") String owner
 ) {

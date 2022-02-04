@@ -1,14 +1,12 @@
 package de.innovationhub.prox.userservice.application.organization.service;
 
-import de.innovationhub.prox.userservice.application.organization.message.OrganizationMessageMapper;
-import de.innovationhub.prox.userservice.application.organization.message.request.CreateOrganizationRequest;
-import de.innovationhub.prox.userservice.application.organization.message.request.FindOrganizationByIdRequest;
-import de.innovationhub.prox.userservice.application.organization.message.response.OrganizationResponse;
 import de.innovationhub.prox.userservice.domain.organization.entity.Organization;
 import de.innovationhub.prox.userservice.domain.organization.entity.Organization.OrganizationId;
 import de.innovationhub.prox.userservice.domain.organization.repository.OrganizationRepository;
+import de.innovationhub.prox.userservice.domain.user.entity.ProxUser;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -16,31 +14,26 @@ import javax.inject.Inject;
 @ApplicationScoped
 public class OrganizationService {
   private final OrganizationRepository organizationRepository;
-  private final OrganizationMessageMapper organizationMessageMapper;
 
   @Inject
   public OrganizationService(
-      OrganizationRepository organizationRepository,
-      OrganizationMessageMapper organizationMessageMapper) {
+      OrganizationRepository organizationRepository) {
     this.organizationRepository = organizationRepository;
-    this.organizationMessageMapper = organizationMessageMapper;
   }
 
-  public OrganizationResponse createOrganization(CreateOrganizationRequest request) {
+  public Organization createOrganization(String name, UUID ownerId) {
     // TODO Request Validator
-    var org = this.organizationMessageMapper.fromRequest(request);
+    // TODO: find prox user
+    var org = new Organization(new OrganizationId(UUID.randomUUID()), name, new ProxUser(ownerId));
     organizationRepository.save(org);
-    return new OrganizationResponse(org.getId().id(), org.getName(), org.getOwner().id());
+    return org;
   }
 
-  public Optional<OrganizationResponse> findById(FindOrganizationByIdRequest request) {
-    return this.organizationRepository.findByIdOptional(new OrganizationId(request.id()))
-        .map(organizationMessageMapper::createResponse);
+  public Optional<Organization> findById(UUID id) {
+    return this.organizationRepository.findByIdOptional(new OrganizationId(id));
   }
 
-  public Set<OrganizationResponse> findAll() {
-    return organizationRepository.findAllOrganizations()
-        .stream().map(organizationMessageMapper::createResponse)
-        .collect(Collectors.toSet());
+  public Set<Organization> findAll() {
+    return organizationRepository.findAllOrganizations();
   }
 }

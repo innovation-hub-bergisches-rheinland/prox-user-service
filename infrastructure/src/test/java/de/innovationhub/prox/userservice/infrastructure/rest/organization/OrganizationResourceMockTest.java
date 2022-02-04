@@ -4,10 +4,10 @@ import static io.restassured.RestAssured.*;
 import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.*;
 
-import de.innovationhub.prox.userservice.application.organization.message.request.CreateOrganizationRequest;
-import de.innovationhub.prox.userservice.application.organization.message.request.FindOrganizationByIdRequest;
-import de.innovationhub.prox.userservice.application.organization.message.response.OrganizationResponse;
 import de.innovationhub.prox.userservice.application.organization.service.OrganizationService;
+import de.innovationhub.prox.userservice.domain.organization.entity.Organization;
+import de.innovationhub.prox.userservice.domain.organization.entity.Organization.OrganizationId;
+import de.innovationhub.prox.userservice.domain.user.entity.ProxUser;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.common.http.TestHTTPEndpoint;
 import io.quarkus.test.junit.QuarkusTest;
@@ -36,20 +36,17 @@ class OrganizationResourceMockTest {
     .then()
         .statusCode(401);
 
-    verify(organizationService, times(0)).createOrganization(any());
+    verify(organizationService, times(0)).createOrganization(any(), any());
   }
 
   @Test
   void shouldReturnCreated() {
-    var subject = "00000000-0000-0000-0000-000000000000";
-    when(organizationService.createOrganization(any())).thenAnswer(invocation -> {
-      var request = invocation.getArgument(0, CreateOrganizationRequest.class);
-      return new OrganizationResponse(UUID.randomUUID(), request.name(), request.ownerId());
-    });
+    var subject = UUID.fromString("00000000-0000-0000-0000-000000000000");
+    when(organizationService.createOrganization(any(), eq(subject))).thenReturn(new Organization(new OrganizationId(UUID.randomUUID()), "Musterfirma GmbH & Co. KG", new ProxUser(subject)));
 
     given()
         .auth()
-          .oauth2(buildAccessToken(subject))
+          .oauth2(buildAccessToken(subject.toString()))
         .contentType("application/json")
         .accept("application/json")
         .body("""
@@ -65,13 +62,12 @@ class OrganizationResourceMockTest {
         .body("id", not(emptyOrNullString()))
         .body("owner", equalTo("00000000-0000-0000-0000-000000000000"));
 
-    verify(organizationService).createOrganization(any());
+    verify(organizationService).createOrganization(any(), eq(subject));
   }
 
   @Test
   void shouldReturnNotFound() {
     var idToFind = UUID.fromString("00000000-0000-0000-0000-000000000001");
-    var expectedRequest = new FindOrganizationByIdRequest(UUID.fromString(idToFind.toString()));
 
     given()
         .accept("application/json")
@@ -80,13 +76,13 @@ class OrganizationResourceMockTest {
     .then()
         .statusCode(404);
 
-    verify(organizationService).findById(eq(expectedRequest));
+    verify(organizationService).findById(eq(idToFind));
   }
 
   @Test
   void shouldReturnOk() {
     when(organizationService.findAll()).thenReturn(Set.of(
-        new OrganizationResponse(UUID.fromString("00000000-0000-0000-0000-000000000000"), "Musterfirma GmbH & Co. KG", UUID.fromString("00000000-0000-0000-0000-000000000000"))
+        new Organization(new OrganizationId(UUID.fromString("00000000-0000-0000-0000-000000000000")), "Musterfirma GmbH & Co. KG", new ProxUser(UUID.fromString("00000000-0000-0000-0000-000000000000")))
     ));
 
     given()
