@@ -5,7 +5,7 @@ import static org.assertj.core.api.Assertions.*;
 import de.innovationhub.prox.userservice.domain.core.user.entity.ProxUser;
 import de.innovationhub.prox.userservice.domain.organization.entity.Organization;
 import de.innovationhub.prox.userservice.domain.organization.entity.Organization.OrganizationId;
-import de.innovationhub.prox.userservice.domain.organization.entity.OrganizationMembership;
+import de.innovationhub.prox.userservice.domain.organization.vo.OrganizationMembership;
 import de.innovationhub.prox.userservice.domain.organization.vo.OrganizationRole;
 import java.util.Set;
 import java.util.UUID;

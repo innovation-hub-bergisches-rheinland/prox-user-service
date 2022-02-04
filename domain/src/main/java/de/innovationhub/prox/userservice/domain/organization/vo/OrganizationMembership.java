@@ -1,4 +1,4 @@
-package de.innovationhub.prox.userservice.domain.organization.entity;
+package de.innovationhub.prox.userservice.domain.organization.vo;
 
 import de.innovationhub.prox.userservice.domain.organization.vo.OrganizationRole;
 import lombok.AccessLevel;
@@ -8,8 +8,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 /**
- * Represents an Organization in PROX, examples are companies, laboratories, institutes or other
- * organizations
+ * Represents an Organization membership in PROX
  */
 @Getter
 @Setter

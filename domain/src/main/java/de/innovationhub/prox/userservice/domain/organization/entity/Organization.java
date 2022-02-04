@@ -1,7 +1,7 @@
 package de.innovationhub.prox.userservice.domain.organization.entity;
 
 import de.innovationhub.prox.userservice.domain.core.user.entity.ProxUser;
-import de.innovationhub.prox.userservice.domain.organization.vo.OrganizationRole;
+import de.innovationhub.prox.userservice.domain.organization.vo.OrganizationMembership;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
