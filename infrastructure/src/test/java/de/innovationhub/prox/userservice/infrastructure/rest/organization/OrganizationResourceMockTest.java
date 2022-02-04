@@ -11,6 +11,7 @@ import de.innovationhub.prox.userservice.domain.user.entity.ProxUser;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.common.http.TestHTTPEndpoint;
 import io.quarkus.test.junit.QuarkusTest;
+import io.quarkus.test.junit.TestProfile;
 import io.quarkus.test.junit.mockito.InjectMock;
 import io.quarkus.test.oidc.server.OidcWiremockTestResource;
 import io.smallrye.jwt.build.Jwt;
@@ -21,6 +22,7 @@ import org.junit.jupiter.api.Test;
 @QuarkusTest
 @TestHTTPEndpoint(OrganizationResource.class)
 @QuarkusTestResource(OidcWiremockTestResource.class)
+@TestProfile(OidcWiremockTestProfile.class)
 class OrganizationResourceMockTest {
 
   @InjectMock
