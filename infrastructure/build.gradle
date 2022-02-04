@@ -21,6 +21,7 @@ dependencies {
     implementation 'io.quarkus:quarkus-arc'
     implementation 'io.quarkus:quarkus-container-image-jib'
     implementation 'io.quarkus:quarkus-oidc'
+    implementation 'io.quarkus:quarkus-keycloak-admin-client'
     implementation "org.mapstruct:mapstruct:${mapstructVersion}"
 
     annotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}"

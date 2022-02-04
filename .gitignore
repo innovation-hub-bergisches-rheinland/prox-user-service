@@ -33,7 +33,7 @@ nb-configuration.xml
 *.rej
 
 # Local environment
-.env
+infrastructure/.env
 
 
 # Created by https://www.toptal.com/developers/gitignore/api/node
@@ -112,7 +112,7 @@ web_modules/
 .yarn-integrity
 
 # dotenv environment variables file
-.env
+infrastructure/.env
 .env.test
 .env.production
 
