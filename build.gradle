@@ -29,7 +29,8 @@ allprojects {
 		mapstructVersion = "1.4.2.Final"
 		assertJVersion = "3.22.0"
 		junitVersion = "5.8.2"
-		lombokVersion = "1.18.22";
+		lombokVersion = "1.18.22"
+		mockitoVersion = "4.3.1"
 	}
 
 	dependencies {
@@ -37,7 +38,8 @@ allprojects {
 		implementation("org.apache.commons:commons-lang3:${apacheCommonsVersion}")
 		testImplementation("org.junit.jupiter:junit-jupiter:${junitVersion}")
 		testImplementation("org.assertj:assertj-core:${assertJVersion}")
-		testImplementation "org.mockito:mockito-core:4.2.0"
+		testImplementation "org.mockito:mockito-core:${mockitoVersion}"
+		testImplementation "org.mockito:mockito-junit-jupiter:${mockitoVersion}"
 		compileOnly "org.projectlombok:lombok:${lombokVersion}"
 		annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
 

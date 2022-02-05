@@ -37,6 +37,10 @@ public class KeycloakService {
     }
   }
 
+  public boolean existsById(UUID id) {
+    return this.findById(id).isPresent();
+  }
+
   @CacheResult(cacheName = "keycloak-users-search-cache")
   public Iterable<UserResponseDto> search(String query) {
     var searchResult = this.realmResource.users().search(query, 0, 100, true);
