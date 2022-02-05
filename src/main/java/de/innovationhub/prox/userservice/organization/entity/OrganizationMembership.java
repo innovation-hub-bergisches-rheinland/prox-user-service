@@ -17,9 +17,6 @@ import lombok.Setter;
 @AllArgsConstructor
 @Builder
 public class OrganizationMembership {
-  @Column(name = "user_id", nullable = false, updatable = false, unique = true)
-  private UUID userId;
-
   @Column(name = "member_role", nullable = false, columnDefinition = "int2")
   private OrganizationRole role;
 }

@@ -1,7 +1,9 @@
 package de.innovationhub.prox.userservice.organization.entity;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import javax.persistence.CollectionTable;
@@ -11,6 +13,7 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.MapKeyColumn;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import lombok.AccessLevel;
@@ -39,7 +42,6 @@ public class Organization {
   @Column(name = "owner_id", updatable = false, nullable = false)
   private UUID owner;
 
-  // TODO: There must be a better approach
   @ElementCollection(fetch = FetchType.EAGER)
   @CollectionTable(
       name = "organization_memberships",
@@ -50,6 +52,7 @@ public class Organization {
           @UniqueConstraint(columnNames = {"user_id", "organization_id"})
       }
   )
+  @MapKeyColumn(name = "user_id")
   @Builder.Default
-  private Set<OrganizationMembership> members = new HashSet<>();
+  private Map<UUID, OrganizationMembership> members = new HashMap<>();
 }

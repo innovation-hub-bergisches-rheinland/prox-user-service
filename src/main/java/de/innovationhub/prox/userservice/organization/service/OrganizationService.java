@@ -49,8 +49,8 @@ public class OrganizationService {
     }
     // TODO: verify user ID
     var member =  request.userId();
-    var membership = new OrganizationMembership(member, request.role());
-    org.getMembers().add(membership);
+    var membership = new OrganizationMembership(request.role());
+    org.getMembers().put(member, membership);
     this.organizationRepository.save(org);
 
     return new OrganizationMembershipResponse(
@@ -67,9 +67,8 @@ public class OrganizationService {
     }
     // TODO: verify user ID
     var member =  request.memberId();
-    org.getMembers().removeIf(m -> m.getUserId().equals(request.memberId()));
-    var membership = new OrganizationMembership(member, request.role());
-    org.getMembers().add(membership);
+    var membership = new OrganizationMembership(request.role());
+    org.getMembers().put(member, membership);
     this.organizationRepository.save(org);
 
     return new OrganizationMembershipResponse(
@@ -85,7 +84,7 @@ public class OrganizationService {
       throw new ForbiddenOrganizationAccessException();
     }
 
-    org.getMembers().removeIf(member -> member.getUserId().equals(request.userId()));
+    org.getMembers().remove(request.userId());
     this.organizationRepository.save(org);
   }
 

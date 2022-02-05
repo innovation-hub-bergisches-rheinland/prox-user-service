@@ -5,6 +5,7 @@ import de.innovationhub.prox.userservice.organization.entity.OrganizationMembers
 import de.innovationhub.prox.userservice.organization.entity.OrganizationRole;
 import de.innovationhub.prox.userservice.organization.repository.OrganizationPanacheRepository;
 import io.quarkus.test.junit.QuarkusTest;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.UUID;
 import javax.inject.Inject;
@@ -46,8 +47,8 @@ class OrganizationPanacheRepositoryTest {
     // Given
     var owner = UUID.randomUUID();
     var member = UUID.randomUUID();
-    var org = new Organization(UUID.randomUUID(), "Musterfirma GmbH & Co. KG", owner, new HashSet<>());
-    org.getMembers().add(new OrganizationMembership(member, OrganizationRole.MEMBER));
+    var org = new Organization(UUID.randomUUID(), "Musterfirma GmbH & Co. KG", owner, new HashMap<>());
+    org.getMembers().put(member, new OrganizationMembership(OrganizationRole.MEMBER));
 
     // WHen
     organizationPanacheRepository.persist(org);

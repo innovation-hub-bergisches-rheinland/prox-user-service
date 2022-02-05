@@ -105,7 +105,7 @@ public class OrganizationResourceIntegrationTest {
     var bobId = UUID.fromString("ed0b4a07-2612-4571-a9ab-27e13ce752f1");
     var orgId = UUID.randomUUID();
     var dummyOrg = Organization.builder().id(orgId).name("ACME Ltd.").owner(aliceId).build();
-    dummyOrg.getMembers().add(new OrganizationMembership(bobId, OrganizationRole.MEMBER));
+    dummyOrg.getMembers().put(bobId, new OrganizationMembership(OrganizationRole.MEMBER));
     this.organizationRepository.save(dummyOrg);
 
 
@@ -137,7 +137,7 @@ public class OrganizationResourceIntegrationTest {
     var bobId = UUID.fromString("ed0b4a07-2612-4571-a9ab-27e13ce752f1");
     var orgId = UUID.randomUUID();
     var dummyOrg = Organization.builder().id(orgId).name("ACME Ltd.").owner(aliceId).build();
-    dummyOrg.getMembers().add(new OrganizationMembership(bobId, OrganizationRole.MEMBER));
+    dummyOrg.getMembers().put(bobId, new OrganizationMembership(OrganizationRole.MEMBER));
     this.organizationRepository.save(dummyOrg);
 
     RestAssured.given()
