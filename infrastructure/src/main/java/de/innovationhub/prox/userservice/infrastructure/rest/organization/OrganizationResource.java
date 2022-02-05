@@ -8,6 +8,7 @@ import de.innovationhub.prox.userservice.infrastructure.core.Status;
 import de.innovationhub.prox.userservice.infrastructure.rest.organization.dto.OrganizationRestMessageMapper;
 import de.innovationhub.prox.userservice.infrastructure.rest.organization.dto.request.PostOrganizationDto;
 import de.innovationhub.prox.userservice.infrastructure.rest.organization.dto.request.PostOrganizationMemberDto;
+import de.innovationhub.prox.userservice.infrastructure.rest.organization.dto.request.PutOrganizationMemberDto;
 import de.innovationhub.prox.userservice.infrastructure.rest.organization.dto.response.OrganizationCollectionDto;
 import de.innovationhub.prox.userservice.infrastructure.rest.organization.dto.response.OrganizationDto;
 import de.innovationhub.prox.userservice.infrastructure.rest.organization.dto.response.OrganizationMemberDto;
@@ -84,6 +85,29 @@ public class OrganizationResource {
 
     try {
       var response = this.organizationService.createOrganizationMembership(organizationId, request, userId);
+      return this.messageMapper.toResponse(response);
+    } catch (ForbiddenOrganizationAccessException e) {
+      throw new WebApplicationException(e, 403);
+    } catch (OrganizationNotFoundException e) {
+      throw new WebApplicationException(e, 404);
+    }
+  }
+
+  @PUT
+  @Authenticated
+  @Path("{id}/memberships/{memberId}")
+  @Produces(MediaType.APPLICATION_JSON)
+  @Consumes(MediaType.APPLICATION_JSON)
+  public OrganizationMemberDto updateOrganizationMember(
+      @PathParam("id") UUID organizationId,
+      @PathParam("memberId") UUID memberId,
+      @RequestBody PutOrganizationMemberDto updateDto
+  ) {
+    var userId = UUID.fromString(jsonWebToken.getSubject());
+    var request = this.messageMapper.toRequest(updateDto, memberId);
+
+    try {
+      var response = this.organizationService.updateOrganizationMembership(organizationId, request, userId);
       return this.messageMapper.toResponse(response);
     } catch (ForbiddenOrganizationAccessException e) {
       throw new WebApplicationException(e, 403);

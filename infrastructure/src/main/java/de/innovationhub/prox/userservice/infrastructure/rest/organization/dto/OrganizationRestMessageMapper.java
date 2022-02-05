@@ -1,10 +1,11 @@
 package de.innovationhub.prox.userservice.infrastructure.rest.organization.dto;
 
 import de.innovationhub.prox.userservice.application.organization.dto.request.CreateOrganizationMembershipRequest;
-import de.innovationhub.prox.userservice.application.organization.dto.response.CreateOrganizationMembershipResponse;
+import de.innovationhub.prox.userservice.application.organization.dto.request.UpdateOrganizationMembershipRequest;
+import de.innovationhub.prox.userservice.application.organization.dto.response.OrganizationMembershipResponse;
 import de.innovationhub.prox.userservice.domain.organization.entity.Organization;
-import de.innovationhub.prox.userservice.infrastructure.rest.organization.dto.request.PostOrganizationDto;
 import de.innovationhub.prox.userservice.infrastructure.rest.organization.dto.request.PostOrganizationMemberDto;
+import de.innovationhub.prox.userservice.infrastructure.rest.organization.dto.request.PutOrganizationMemberDto;
 import de.innovationhub.prox.userservice.infrastructure.rest.organization.dto.response.OrganizationDto;
 import de.innovationhub.prox.userservice.infrastructure.rest.organization.dto.response.OrganizationMemberDto;
 import java.util.Set;
@@ -25,5 +26,9 @@ public interface OrganizationRestMessageMapper {
 
   CreateOrganizationMembershipRequest toRequest(PostOrganizationMemberDto dto);
 
-  OrganizationMemberDto toResponse(CreateOrganizationMembershipResponse response);
+  @Mapping(target = "memberId", source = "memberId")
+  @Mapping(target = "role", source = "dto.role")
+  UpdateOrganizationMembershipRequest toRequest(PutOrganizationMemberDto dto, UUID memberId);
+
+  OrganizationMemberDto toResponse(OrganizationMembershipResponse response);
 }

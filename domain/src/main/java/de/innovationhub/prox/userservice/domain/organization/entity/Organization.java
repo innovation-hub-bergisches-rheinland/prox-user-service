@@ -56,6 +56,14 @@ public class Organization {
     this.members.remove(user);
   }
 
+  public void updateMembership(UserId userId, OrganizationMembership newMembership) {
+    var membership = members.get(userId);
+    if(membership == null) {
+      throw new UnsupportedOperationException("Representative not a member of the organization");
+    }
+    this.members.put(userId, newMembership);
+  }
+
   public void setName(@NonNull String name) {
     if (name.trim().length() > 255 || name.trim().length() <= 0) {
       throw new IllegalArgumentException("Name length must be between 0 and 255");

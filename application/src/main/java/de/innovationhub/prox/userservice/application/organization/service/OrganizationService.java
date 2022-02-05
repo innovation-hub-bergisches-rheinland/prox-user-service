@@ -2,9 +2,9 @@ package de.innovationhub.prox.userservice.application.organization.service;
 
 import de.innovationhub.prox.userservice.application.organization.dto.request.CreateOrganizationMembershipRequest;
 import de.innovationhub.prox.userservice.application.organization.dto.request.DeleteOrganizationMembershipRequest;
-import de.innovationhub.prox.userservice.application.organization.dto.response.CreateOrganizationMembershipResponse;
+import de.innovationhub.prox.userservice.application.organization.dto.request.UpdateOrganizationMembershipRequest;
+import de.innovationhub.prox.userservice.application.organization.dto.response.OrganizationMembershipResponse;
 import de.innovationhub.prox.userservice.application.organization.exception.ForbiddenOrganizationAccessException;
-import de.innovationhub.prox.userservice.application.organization.exception.OrganizationMembershipNotFoundException;
 import de.innovationhub.prox.userservice.application.organization.exception.OrganizationNotFoundException;
 import de.innovationhub.prox.userservice.domain.core.user.UserId;
 import de.innovationhub.prox.userservice.domain.organization.entity.Organization;
@@ -35,7 +35,7 @@ public class OrganizationService {
     return org;
   }
 
-  public CreateOrganizationMembershipResponse createOrganizationMembership(UUID organizationId, CreateOrganizationMembershipRequest request, UUID authenticatedUserId) {
+  public OrganizationMembershipResponse createOrganizationMembership(UUID organizationId, CreateOrganizationMembershipRequest request, UUID authenticatedUserId) {
     var org = organizationRepository.findByIdOptional(new OrganizationId(organizationId)).orElseThrow(() -> new OrganizationNotFoundException());
     if(!org.getOwner().id().equals(authenticatedUserId)) {
       throw new ForbiddenOrganizationAccessException();
@@ -46,7 +46,24 @@ public class OrganizationService {
     org.addMember(member, membership);
     this.organizationRepository.save(org);
 
-    return new CreateOrganizationMembershipResponse(
+    return new OrganizationMembershipResponse(
+        member.id(),
+        membership.getRole()
+    );
+  }
+
+  public OrganizationMembershipResponse updateOrganizationMembership(UUID organizationId, UpdateOrganizationMembershipRequest request, UUID authenticatedUserId) {
+    var org = organizationRepository.findByIdOptional(new OrganizationId(organizationId)).orElseThrow(() -> new OrganizationNotFoundException());
+    if(!org.getOwner().id().equals(authenticatedUserId)) {
+      throw new ForbiddenOrganizationAccessException();
+    }
+    // TODO: verify user ID
+    var member =  new UserId(request.memberId());
+    var membership = new OrganizationMembership(request.role());
+    org.updateMembership(member, membership);
+    this.organizationRepository.save(org);
+
+    return new OrganizationMembershipResponse(
         member.id(),
         membership.getRole()
     );

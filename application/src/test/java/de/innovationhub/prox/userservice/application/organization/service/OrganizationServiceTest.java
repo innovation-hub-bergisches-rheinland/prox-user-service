@@ -6,7 +6,8 @@ import static org.mockito.Mockito.*;
 
 import de.innovationhub.prox.userservice.application.organization.dto.request.CreateOrganizationMembershipRequest;
 import de.innovationhub.prox.userservice.application.organization.dto.request.DeleteOrganizationMembershipRequest;
-import de.innovationhub.prox.userservice.application.organization.dto.response.CreateOrganizationMembershipResponse;
+import de.innovationhub.prox.userservice.application.organization.dto.request.UpdateOrganizationMembershipRequest;
+import de.innovationhub.prox.userservice.application.organization.dto.response.OrganizationMembershipResponse;
 import de.innovationhub.prox.userservice.application.organization.exception.ForbiddenOrganizationAccessException;
 import de.innovationhub.prox.userservice.application.organization.exception.OrganizationNotFoundException;
 import de.innovationhub.prox.userservice.domain.core.user.UserId;
@@ -63,7 +64,7 @@ class OrganizationServiceTest {
 
     // Then
     assertThat(response)
-        .extracting(CreateOrganizationMembershipResponse::userId, CreateOrganizationMembershipResponse::role)
+        .extracting(OrganizationMembershipResponse::userId, OrganizationMembershipResponse::role)
         .containsExactly(request.userId(), request.role());
   }
 
@@ -155,6 +156,79 @@ class OrganizationServiceTest {
 
     // When / Then
     assertThrows(ForbiddenOrganizationAccessException.class, () -> this.organizationService.deleteOrganizationMembership(organizationId.id(), request, authenticatedUserId.id()));
+  }
+
+  @Test
+  void shouldThrowNotFoundExceptionWhenUpdatingMembershipOfNotExistingOrg() {
+    // Given
+    var organizationId = new OrganizationId(UUID.randomUUID());
+    when(this.organizationRepository.findByIdOptional(organizationId)).thenReturn(Optional.empty());
+
+    // When / Then
+    assertThrows(OrganizationNotFoundException.class, () -> this.organizationService.updateOrganizationMembership(organizationId.id(), null, UUID.randomUUID()));
+  }
+
+  @Test
+  void shouldReturnResponseWhenUpdatingMembership() {
+    // Given
+    var authenticatedUserId = new UserId(UUID.randomUUID());
+    var organizationId = new OrganizationId(UUID.randomUUID());
+    var request = new UpdateOrganizationMembershipRequest(
+        UUID.randomUUID(),
+        OrganizationRole.ADMIN
+    );
+    var givenOrg = createDummyOrganization(organizationId, authenticatedUserId);
+    givenOrg.addMember(new UserId(request.memberId()), new OrganizationMembership(OrganizationRole.MEMBER));
+    when(this.organizationRepository.findByIdOptional(eq(organizationId))).thenReturn(Optional.of(givenOrg));
+
+    // When
+    var response = this.organizationService.updateOrganizationMembership(organizationId.id(), request, authenticatedUserId.id());
+
+    // Then
+    assertThat(response)
+        .extracting(OrganizationMembershipResponse::userId, OrganizationMembershipResponse::role)
+        .containsExactly(request.memberId(), request.role());
+  }
+
+  @Test
+  void shouldSaveMembershipWhenUpdatingMembership() {
+    // Given
+    var authenticatedUserId = new UserId(UUID.randomUUID());
+    var organizationId = new OrganizationId(UUID.randomUUID());
+    var request = new UpdateOrganizationMembershipRequest(
+        UUID.randomUUID(),
+        OrganizationRole.MEMBER
+    );
+    var givenOrg = createDummyOrganization(organizationId, authenticatedUserId);
+    givenOrg.addMember(new UserId(request.memberId()), new OrganizationMembership(OrganizationRole.MEMBER));
+    when(this.organizationRepository.findByIdOptional(eq(organizationId))).thenReturn(Optional.of(givenOrg));
+
+    // When
+    this.organizationService.updateOrganizationMembership(organizationId.id(), request, authenticatedUserId.id());
+
+    // Then
+    ArgumentCaptor<Organization> captor = ArgumentCaptor.forClass(Organization.class);
+    verify(this.organizationRepository).save(captor.capture());
+    assertThat(captor.getValue())
+        .isNotNull()
+        .matches(org -> org.getMembers().get(new UserId(request.memberId())).getRole().equals(request.role()));
+  }
+
+  @Test
+  void shouldThrowForbiddenExceptionWhenUpdatingMembershipOfOrgWithoutOwnerRole() {
+    // Given
+    var authenticatedUserId = new UserId(UUID.randomUUID());
+    var ownerId = new UserId(UUID.randomUUID());
+    var organizationId = new OrganizationId(UUID.randomUUID());
+    var request = new UpdateOrganizationMembershipRequest(
+        UUID.randomUUID(),
+        OrganizationRole.MEMBER
+    );
+    var givenOrg = createDummyOrganization(organizationId, ownerId);
+    when(this.organizationRepository.findByIdOptional(eq(organizationId))).thenReturn(Optional.of(givenOrg));
+
+    // When / Then
+    assertThrows(ForbiddenOrganizationAccessException.class, () -> this.organizationService.updateOrganizationMembership(organizationId.id(), request, authenticatedUserId.id()));
   }
 
   private Organization createDummyOrganization(OrganizationId organizationId, UserId ownerId) {
