@@ -1,7 +1,7 @@
 package de.innovationhub.prox.userservice.user.web;
 
-import de.innovationhub.prox.userservice.infrastructure.iam.KeycloakService;
-import de.innovationhub.prox.userservice.infrastructure.iam.dto.UserResponseDto;
+import de.innovationhub.prox.userservice.user.service.KeycloakService;
+import de.innovationhub.prox.userservice.user.dto.UserResponseDto;
 import io.quarkus.security.Authenticated;
 import java.util.UUID;
 import javax.inject.Inject;

@@ -5,27 +5,16 @@ import static org.assertj.core.api.Assertions.tuple;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 
-import de.innovationhub.prox.userservice.infrastructure.iam.dto.UserResponseDto;
-import de.innovationhub.prox.userservice.organization.entity.Organization;
-import de.innovationhub.prox.userservice.organization.entity.OrganizationMembership;
-import de.innovationhub.prox.userservice.organization.entity.OrganizationRole;
-import de.innovationhub.prox.userservice.organization.repository.OrganizationRepository;
-import de.innovationhub.prox.userservice.organization.web.OrganizationResource;
+import de.innovationhub.prox.userservice.user.dto.UserResponseDto;
 import de.innovationhub.prox.userservice.user.web.UserResource;
-import io.quarkus.test.TestTransaction;
 import io.quarkus.test.common.http.TestHTTPEndpoint;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.keycloak.client.KeycloakTestClient;
 import io.restassured.RestAssured;
 import java.util.List;
 import java.util.UUID;
-import javax.inject.Inject;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
 
 @QuarkusTest
 @TestHTTPEndpoint(UserResource.class)

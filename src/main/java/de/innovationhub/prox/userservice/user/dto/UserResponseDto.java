@@ -1,4 +1,4 @@
-package de.innovationhub.prox.userservice.infrastructure.iam.dto;
+package de.innovationhub.prox.userservice.user.dto;
 
 import java.util.UUID;
 import lombok.Value;

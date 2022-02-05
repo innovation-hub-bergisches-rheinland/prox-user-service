@@ -1,17 +1,15 @@
-package de.innovationhub.prox.userservice.infrastructure.iam;
+package de.innovationhub.prox.userservice.user.service;
 
-import de.innovationhub.prox.userservice.infrastructure.iam.dto.UserResponseDto;
-import de.innovationhub.prox.userservice.infrastructure.iam.mapper.UserMapper;
+import de.innovationhub.prox.userservice.user.dto.UserResponseDto;
+import de.innovationhub.prox.userservice.user.dto.UserMapper;
 import io.quarkus.cache.CacheResult;
 import java.util.Optional;
 import java.util.UUID;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.ws.rs.NotFoundException;
-import javax.ws.rs.WebApplicationException;
 import org.keycloak.admin.client.resource.RealmResource;
 import org.keycloak.admin.client.resource.UsersResource;
-import org.keycloak.representations.idm.UserRepresentation;
 
 @ApplicationScoped
 public class KeycloakService {

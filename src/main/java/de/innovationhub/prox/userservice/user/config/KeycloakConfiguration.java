@@ -1,4 +1,4 @@
-package de.innovationhub.prox.userservice.infrastructure.iam.config;
+package de.innovationhub.prox.userservice.user.config;
 
 import io.smallrye.config.ConfigMapping;
 

@@ -1,6 +1,5 @@
-package de.innovationhub.prox.userservice.infrastructure.iam.mapper;
+package de.innovationhub.prox.userservice.user.dto;
 
-import de.innovationhub.prox.userservice.infrastructure.iam.dto.UserResponseDto;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Stream;

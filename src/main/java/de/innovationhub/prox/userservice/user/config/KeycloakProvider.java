@@ -1,4 +1,4 @@
-package de.innovationhub.prox.userservice.infrastructure.iam.config;
+package de.innovationhub.prox.userservice.user.config;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
