@@ -2,6 +2,7 @@ package de.innovationhub.prox.userservice.user.web;
 
 import de.innovationhub.prox.userservice.infrastructure.iam.KeycloakService;
 import de.innovationhub.prox.userservice.infrastructure.iam.dto.UserResponseDto;
+import io.quarkus.security.Authenticated;
 import java.util.UUID;
 import javax.inject.Inject;
 import javax.ws.rs.GET;
@@ -21,12 +22,14 @@ public class UserResource {
   }
 
   @GET
+  @Authenticated
   @Path("search")
   public Iterable<UserResponseDto> findUser(@QueryParam("q") String searchQuery) {
     return this.keycloakService.search(searchQuery);
   }
 
   @GET
+  @Authenticated
   @Path("{id}")
   public UserResponseDto getKeycloakService(@PathParam("id") UUID id) {
     return keycloakService.findById(id)

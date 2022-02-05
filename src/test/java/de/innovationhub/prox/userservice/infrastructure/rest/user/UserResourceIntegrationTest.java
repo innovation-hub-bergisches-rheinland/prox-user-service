@@ -31,6 +31,8 @@ import org.junit.jupiter.api.TestMethodOrder;
 @TestHTTPEndpoint(UserResource.class)
 public class UserResourceIntegrationTest {
 
+  KeycloakTestClient keycloakTestClient = new KeycloakTestClient();
+
   @BeforeEach
   void setUp() {
     RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
@@ -93,6 +95,8 @@ public class UserResourceIntegrationTest {
 
   private List<UserResponseDto> performSearch(String searchQuery) {
     return RestAssured.given()
+        .auth()
+        .oauth2(keycloakTestClient.getAccessToken("alice"))
         .contentType("application/json")
         .accept("application/json")
         .queryParam("q", searchQuery)

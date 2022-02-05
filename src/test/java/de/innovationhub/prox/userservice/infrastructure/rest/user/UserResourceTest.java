@@ -12,6 +12,7 @@ import de.innovationhub.prox.userservice.user.web.UserResource;
 import io.quarkus.test.common.http.TestHTTPEndpoint;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.mockito.InjectMock;
+import io.quarkus.test.security.TestSecurity;
 import io.restassured.RestAssured;
 import java.util.Collections;
 import java.util.Optional;
@@ -29,6 +30,7 @@ class UserResourceTest {
   KeycloakService keycloakService;
 
   @Test
+  @TestSecurity(authorizationEnabled = false)
   void shouldReturnUser() {
     // Given
     var easyRandom = new EasyRandom();
@@ -41,7 +43,6 @@ class UserResourceTest {
         .when()
         .get("{id}", userId.toString())
         .then()
-        .log().ifValidationFails()
         .statusCode(200)
         .extract()
         .jsonPath().getObject(".", UserResponseDto.class);
@@ -51,6 +52,7 @@ class UserResourceTest {
   }
 
   @Test
+  @TestSecurity(authorizationEnabled = false)
   void shouldReturnNotFound() {
     // Given
     when(keycloakService.findById(any())).thenReturn(Optional.empty());
@@ -60,13 +62,13 @@ class UserResourceTest {
         .when()
         .get("{id}", UUID.randomUUID().toString())
         .then()
-        .log().ifValidationFails()
         .statusCode(404);
 
     verify(keycloakService).findById(any());
   }
 
   @Test
+  @TestSecurity(authorizationEnabled = false)
   void shouldReturnSearchResult() {
     // Given
     var searchQuery = "abcdefgh";
@@ -81,7 +83,6 @@ class UserResourceTest {
         .when()
         .get("search")
         .then()
-        .log().ifValidationFails()
         .statusCode(200)
         .extract()
         .jsonPath()
@@ -93,6 +94,7 @@ class UserResourceTest {
   }
 
   @Test
+  @TestSecurity(authorizationEnabled = false)
   void shouldReturnEmptySearchResult() {
     // Given
     var searchQuery = "abcdefgh";
@@ -104,7 +106,6 @@ class UserResourceTest {
         .when()
         .get("search")
         .then()
-        .log().ifValidationFails()
         .statusCode(200)
         .extract()
         .jsonPath()
