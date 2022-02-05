@@ -1,7 +1,0 @@
-dependencies {
-    implementation project(":domain")
-    implementation "org.mapstruct:mapstruct:${mapstructVersion}"
-    implementation "jakarta.transaction:jakarta.transaction-api:2.0.0"
-
-    annotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}"
-}

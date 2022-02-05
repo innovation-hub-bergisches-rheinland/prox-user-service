@@ -8,73 +8,103 @@ plugins {
 	// id "io.freefair.lombok" version "6.3.0"
 	id 'jacoco'
 	id 'idea'
+	id 'java'
+	id 'io.quarkus'
 }
+
+repositories {
+	mavenLocal()
+	mavenCentral()
+}
+
+group = "de.innovationhub.prox.userservice"
+version = file('version.txt').text.trim()
 
 ext {
-	version = file('version.txt').text.trim()
+	apacheCommonsVersion = "3.11"
+	mapstructVersion = "1.4.2.Final"
+	assertJVersion = "3.22.0"
+	junitVersion = "5.8.2"
+	lombokVersion = "1.18.22"
+	mockitoVersion = "4.3.1"
+	restAssuredVersion = "4.4.0"
+	easyRandomVersion = "5.0.0"
 }
 
-allprojects {
-	apply plugin: "java"
-//	apply plugin: "io.freefair.lombok"
+dependencies {
+	implementation enforcedPlatform("${quarkusPlatformGroupId}:${quarkusPlatformArtifactId}:${quarkusPlatformVersion}")
+	implementation("org.apache.commons:commons-lang3:${apacheCommonsVersion}")
 
-	repositories {
-		mavenLocal()
-		mavenCentral()
+	implementation 'io.quarkus:quarkus-resteasy-reactive-jackson'
+	implementation 'io.quarkus:quarkus-hibernate-orm'
+	implementation 'io.quarkus:quarkus-flyway'
+	implementation 'io.quarkus:quarkus-hibernate-validator'
+	implementation 'io.quarkus:quarkus-smallrye-openapi'
+	implementation 'io.quarkus:quarkus-resteasy-reactive'
+	implementation 'io.quarkus:quarkus-hibernate-orm-panache'
+	implementation 'io.quarkus:quarkus-jdbc-postgresql'
+	implementation 'io.quarkus:quarkus-arc'
+	implementation 'io.quarkus:quarkus-container-image-jib'
+	implementation 'io.quarkus:quarkus-oidc'
+	implementation 'io.quarkus:quarkus-keycloak-admin-client'
+	implementation 'io.quarkus:quarkus-cache'
+	implementation "org.mapstruct:mapstruct:${mapstructVersion}"
+
+	compileOnly "org.projectlombok:lombok:${lombokVersion}"
+
+	annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+	annotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}"
+
+	testImplementation "io.quarkus:quarkus-junit5"
+	testImplementation "io.rest-assured:rest-assured:${restAssuredVersion}"
+	testImplementation "io.quarkus:quarkus-test-oidc-server"
+	testImplementation "io.quarkus:quarkus-test-security-jwt"
+	testImplementation "io.quarkus:quarkus-test-security-oidc"
+	testImplementation "io.quarkus:quarkus-test-keycloak-server"
+	testImplementation "io.quarkus:quarkus-junit5-mockito"
+	testImplementation("org.junit.jupiter:junit-jupiter:${junitVersion}")
+	testImplementation("org.assertj:assertj-core:${assertJVersion}")
+	testImplementation "org.mockito:mockito-core:${mockitoVersion}"
+	testImplementation "org.mockito:mockito-junit-jupiter:${mockitoVersion}"
+	testImplementation("org.jeasy:easy-random-core:${easyRandomVersion}")
+	testImplementation("org.jeasy:easy-random-bean-validation:${easyRandomVersion}") {
+		exclude group: "org.yaml", module: "snakeyaml"
 	}
+}
 
-	ext {
-		javaxCDIVersion = "2.0"
-		apacheCommonsVersion = "3.11"
-		mapstructVersion = "1.4.2.Final"
-		assertJVersion = "3.22.0"
-		junitVersion = "5.8.2"
-		lombokVersion = "1.18.22"
-		mockitoVersion = "4.3.1"
-	}
-
-	dependencies {
-		implementation("javax.enterprise:cdi-api:${javaxCDIVersion}")
-		implementation("org.apache.commons:commons-lang3:${apacheCommonsVersion}")
-		testImplementation("org.junit.jupiter:junit-jupiter:${junitVersion}")
-		testImplementation("org.assertj:assertj-core:${assertJVersion}")
-		testImplementation "org.mockito:mockito-core:${mockitoVersion}"
-		testImplementation "org.mockito:mockito-junit-jupiter:${mockitoVersion}"
-		compileOnly "org.projectlombok:lombok:${lombokVersion}"
-		annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
-
-		/*testCompileOnly "org.projectlombok:lombok:${lombokVersion}"
-		testAnnotationProcessor "org.projectlombok:lombok:${lombokVersion}"*/
-	}
-
-	group = "de.innovationhub.prox.userservice"
-	version = "${version}"
-
-	java {
-		sourceCompatibility = JavaVersion.VERSION_17
-		targetCompatibility = JavaVersion.VERSION_17
-	}
-
-	compileJava {
-		options.encoding = "UTF-8"
-		options.compilerArgs << "-parameters"
-	}
-
-	compileTestJava {
-		options.encoding = "UTF-8"
-	}
-
-	test {
-		useJUnitPlatform()
-		finalizedBy jacocoTestReport
-	}
-
-	jacocoTestReport {
-		reports {
-			xml.required = true
+sourceSets {
+	main {
+		resources {
+			srcDirs += ['config']
 		}
-		// dependsOn test
 	}
+}
+
+
+java {
+	sourceCompatibility = JavaVersion.VERSION_17
+	targetCompatibility = JavaVersion.VERSION_17
+}
+
+compileJava {
+	options.encoding = "UTF-8"
+	options.compilerArgs << "-parameters"
+}
+
+compileTestJava {
+	options.encoding = "UTF-8"
+}
+
+test {
+	useJUnitPlatform()
+	finalizedBy jacocoTestReport
+}
+
+jacocoTestReport {
+	reports {
+		xml.required = true
+	}
+	// dependsOn test
 }
 
 
