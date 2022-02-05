@@ -3,8 +3,7 @@ package de.innovationhub.prox.userservice.infrastructure.rest.organization.dto.r
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public record PostOrganizationDto(
-    @JsonProperty("name") String name,
-    @JsonProperty("owner") String owner
+    @JsonProperty("name") String name
 ) {
 
 }
