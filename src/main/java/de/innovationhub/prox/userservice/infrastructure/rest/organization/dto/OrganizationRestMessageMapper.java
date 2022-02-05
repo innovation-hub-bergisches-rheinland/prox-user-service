@@ -31,5 +31,6 @@ public interface OrganizationRestMessageMapper {
   @Mapping(target = "role", source = "dto.role")
   UpdateOrganizationMembershipRequest toRequest(PutOrganizationMemberDto dto, UUID memberId);
 
+  @Mapping(target = "member", source = "userId")
   OrganizationMemberDto toResponse(OrganizationMembershipResponse response);
 }

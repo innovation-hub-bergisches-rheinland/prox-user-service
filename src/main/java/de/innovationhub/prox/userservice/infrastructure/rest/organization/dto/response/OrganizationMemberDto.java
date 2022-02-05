@@ -5,7 +5,7 @@ import de.innovationhub.prox.userservice.organization.entity.OrganizationRole;
 import java.util.UUID;
 
 public record OrganizationMemberDto(
-    @JsonProperty(value = "userId", required = true) UUID userId,
+    @JsonProperty(value = "member", required = true) UUID member,
     @JsonProperty(value = "role", required = true) OrganizationRole role
 ) {
 

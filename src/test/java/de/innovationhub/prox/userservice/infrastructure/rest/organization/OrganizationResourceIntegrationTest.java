@@ -2,6 +2,7 @@ package de.innovationhub.prox.userservice.infrastructure.rest.organization;
 
 import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.*;
 
 import de.innovationhub.prox.userservice.organization.entity.Organization;
 import de.innovationhub.prox.userservice.organization.entity.OrganizationMembership;
@@ -58,6 +59,8 @@ public class OrganizationResourceIntegrationTest {
         .post()
     .then()
         .statusCode(201)
+        .body("$.id", notNullValue())
+        .body("$.name", is("ACME Ltd."))
         .extract()
         .jsonPath().getUUID("id");
 
@@ -90,6 +93,8 @@ public class OrganizationResourceIntegrationTest {
         .when()
     .post("{id}/memberships", orgId.toString())
         .then()
+        .body("$.member", is(bobId.toString()))
+        .body("$.role", is("MEMBER"))
         .statusCode(201);
 
     var org = this.organizationRepository.findById(orgId).get();
@@ -122,6 +127,8 @@ public class OrganizationResourceIntegrationTest {
         .when()
         .put("{id}/memberships/{memberId}", orgId.toString(), bobId.toString())
         .then()
+        .body("$.member", is(bobId.toString()))
+        .body("$.role", is("ADMIN"))
         .statusCode(200);
 
     var org = this.organizationRepository.findById(orgId).get();
