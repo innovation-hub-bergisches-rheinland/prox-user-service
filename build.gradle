@@ -75,7 +75,7 @@ dependencies {
 sourceSets {
 	main {
 		resources {
-			srcDirs += ['config']
+			srcDirs += ['src/config']
 		}
 	}
 }

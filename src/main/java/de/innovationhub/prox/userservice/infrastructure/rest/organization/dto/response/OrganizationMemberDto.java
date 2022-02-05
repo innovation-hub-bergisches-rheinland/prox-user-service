@@ -1,7 +1,7 @@
 package de.innovationhub.prox.userservice.infrastructure.rest.organization.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import de.innovationhub.prox.userservice.domain.organization.vo.OrganizationRole;
+import de.innovationhub.prox.userservice.organization.entity.OrganizationRole;
 import java.util.UUID;
 
 public record OrganizationMemberDto(

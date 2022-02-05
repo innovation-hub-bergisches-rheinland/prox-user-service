@@ -1,7 +1,6 @@
 package de.innovationhub.prox.userservice.infrastructure.rest.user;
 
 import static io.restassured.RestAssured.given;
-import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
@@ -9,6 +8,7 @@ import static org.mockito.Mockito.when;
 
 import de.innovationhub.prox.userservice.infrastructure.iam.KeycloakService;
 import de.innovationhub.prox.userservice.infrastructure.iam.dto.UserResponseDto;
+import de.innovationhub.prox.userservice.user.web.UserResource;
 import io.quarkus.test.common.http.TestHTTPEndpoint;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.mockito.InjectMock;
@@ -41,6 +41,7 @@ class UserResourceTest {
         .when()
         .get("{id}", userId.toString())
         .then()
+        .log().ifValidationFails()
         .statusCode(200)
         .extract()
         .jsonPath().getObject(".", UserResponseDto.class);
@@ -59,6 +60,7 @@ class UserResourceTest {
         .when()
         .get("{id}", UUID.randomUUID().toString())
         .then()
+        .log().ifValidationFails()
         .statusCode(404);
 
     verify(keycloakService).findById(any());
@@ -79,6 +81,7 @@ class UserResourceTest {
         .when()
         .get("search")
         .then()
+        .log().ifValidationFails()
         .statusCode(200)
         .extract()
         .jsonPath()
@@ -101,6 +104,7 @@ class UserResourceTest {
         .when()
         .get("search")
         .then()
+        .log().ifValidationFails()
         .statusCode(200)
         .extract()
         .jsonPath()

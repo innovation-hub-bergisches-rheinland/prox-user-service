@@ -2,9 +2,6 @@ package de.innovationhub.prox.userservice.infrastructure.iam.mapper;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.assertj.core.api.Assertions.*;
-
-import de.innovationhub.prox.userservice.infrastructure.iam.dto.UserResponseDto;
-import de.innovationhub.prox.userservice.infrastructure.persistence.organization.OrganizationJpaMapper;
 import org.assertj.core.api.Assertions;
 import org.jeasy.random.EasyRandom;
 import org.junit.jupiter.api.Test;

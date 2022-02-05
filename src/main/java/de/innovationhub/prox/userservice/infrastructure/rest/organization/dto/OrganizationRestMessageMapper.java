@@ -1,13 +1,14 @@
 package de.innovationhub.prox.userservice.infrastructure.rest.organization.dto;
 
-import de.innovationhub.prox.userservice.application.organization.dto.request.CreateOrganizationMembershipRequest;
-import de.innovationhub.prox.userservice.application.organization.dto.request.UpdateOrganizationMembershipRequest;
-import de.innovationhub.prox.userservice.application.organization.dto.response.OrganizationMembershipResponse;
-import de.innovationhub.prox.userservice.domain.organization.entity.Organization;
+import de.innovationhub.prox.userservice.organization.dto.request.CreateOrganizationMembershipRequest;
+import de.innovationhub.prox.userservice.organization.dto.request.UpdateOrganizationMembershipRequest;
+import de.innovationhub.prox.userservice.organization.dto.response.OrganizationMembershipResponse;
 import de.innovationhub.prox.userservice.infrastructure.rest.organization.dto.request.PostOrganizationMemberDto;
 import de.innovationhub.prox.userservice.infrastructure.rest.organization.dto.request.PutOrganizationMemberDto;
 import de.innovationhub.prox.userservice.infrastructure.rest.organization.dto.response.OrganizationDto;
 import de.innovationhub.prox.userservice.infrastructure.rest.organization.dto.response.OrganizationMemberDto;
+import de.innovationhub.prox.userservice.organization.entity.Organization;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import org.mapstruct.Mapper;
@@ -18,11 +19,11 @@ import org.mapstruct.factory.Mappers;
 public interface OrganizationRestMessageMapper {
   OrganizationRestMessageMapper INSTANCE = Mappers.getMapper(OrganizationRestMessageMapper.class);
 
-  @Mapping(target = "id", source = "organization.id.id")
-  @Mapping(target = "owner", source = "organization.owner.id")
+  @Mapping(target = "id", source = "organization.id")
+  @Mapping(target = "owner", source = "organization.owner")
   OrganizationDto toResponse(Organization organization);
 
-  Set<OrganizationDto> toResponse(Set<Organization> organization);
+  List<OrganizationDto> toResponse(List<Organization> organization);
 
   CreateOrganizationMembershipRequest toRequest(PostOrganizationMemberDto dto);
 
