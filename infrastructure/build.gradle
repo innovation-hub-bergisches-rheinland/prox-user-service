@@ -6,6 +6,14 @@ ext {
     restAssuredVersion = "4.4.0"
 }
 
+sourceSets {
+    main {
+        resources {
+            srcDirs += ['config']
+        }
+    }
+}
+
 dependencies {
     implementation project(":application")
     implementation project(":domain")
