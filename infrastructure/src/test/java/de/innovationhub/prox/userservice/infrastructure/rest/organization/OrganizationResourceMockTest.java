@@ -5,9 +5,9 @@ import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.*;
 
 import de.innovationhub.prox.userservice.application.organization.service.OrganizationService;
+import de.innovationhub.prox.userservice.domain.core.user.UserId;
 import de.innovationhub.prox.userservice.domain.organization.entity.Organization;
 import de.innovationhub.prox.userservice.domain.organization.entity.Organization.OrganizationId;
-import de.innovationhub.prox.userservice.domain.user.entity.ProxUser;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.common.http.TestHTTPEndpoint;
 import io.quarkus.test.junit.QuarkusTest;
@@ -44,7 +44,7 @@ class OrganizationResourceMockTest {
   @Test
   void shouldReturnCreated() {
     var subject = UUID.fromString("00000000-0000-0000-0000-000000000000");
-    when(organizationService.createOrganization(any(), eq(subject))).thenReturn(new Organization(new OrganizationId(UUID.randomUUID()), "Musterfirma GmbH & Co. KG", new ProxUser(subject)));
+    when(organizationService.createOrganization(any(), eq(subject))).thenReturn(new Organization(new OrganizationId(UUID.randomUUID()), "Musterfirma GmbH & Co. KG", new UserId(subject)));
 
     given()
         .auth()
@@ -84,7 +84,7 @@ class OrganizationResourceMockTest {
   @Test
   void shouldReturnOk() {
     when(organizationService.findAll()).thenReturn(Set.of(
-        new Organization(new OrganizationId(UUID.fromString("00000000-0000-0000-0000-000000000000")), "Musterfirma GmbH & Co. KG", new ProxUser(UUID.fromString("00000000-0000-0000-0000-000000000000")))
+        new Organization(new OrganizationId(UUID.fromString("00000000-0000-0000-0000-000000000000")), "Musterfirma GmbH & Co. KG", new UserId(UUID.fromString("00000000-0000-0000-0000-000000000000")))
     ));
 
     given()

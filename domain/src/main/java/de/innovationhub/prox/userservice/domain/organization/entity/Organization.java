@@ -1,6 +1,6 @@
 package de.innovationhub.prox.userservice.domain.organization.entity;
 
-import de.innovationhub.prox.userservice.domain.user.entity.ProxUser;
+import de.innovationhub.prox.userservice.domain.core.user.UserId;
 import de.innovationhub.prox.userservice.domain.organization.vo.OrganizationMembership;
 import java.util.HashMap;
 import java.util.Map;
@@ -28,12 +28,12 @@ public class Organization {
   /** Name of the org */
   private String name;
 
-  private final ProxUser owner;
+  private final UserId owner;
 
   @Setter(AccessLevel.NONE)
-  private final Map<ProxUser, OrganizationMembership> members = new HashMap<>();
+  private final Map<UserId, OrganizationMembership> members = new HashMap<>();
 
-  public Organization(@NonNull OrganizationId id, @NonNull String name, @NonNull ProxUser owner) {
+  public Organization(@NonNull OrganizationId id, @NonNull String name, @NonNull UserId owner) {
     if (name.trim().length() > 255 || name.trim().length() <= 0) {
       throw new IllegalArgumentException("Name length must be between 0 and 255");
     }
@@ -43,12 +43,12 @@ public class Organization {
     this.owner = owner;
   }
 
-  public void addMember(ProxUser member, OrganizationMembership role) {
+  public void addMember(UserId member, OrganizationMembership role) {
     if(members.containsKey(member)) throw new UnsupportedOperationException("Cannot overwrite membership");
     this.members.put(member, role);
   }
 
-  public void removeMember(ProxUser user) {
+  public void removeMember(UserId user) {
     var membership = members.get(user);
     if(membership == null) {
       throw new UnsupportedOperationException("Representative not a member of the organization");

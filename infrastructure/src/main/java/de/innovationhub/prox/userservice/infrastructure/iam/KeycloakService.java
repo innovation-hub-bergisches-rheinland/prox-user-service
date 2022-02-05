@@ -1,13 +1,15 @@
 package de.innovationhub.prox.userservice.infrastructure.iam;
 
+import de.innovationhub.prox.userservice.infrastructure.iam.dto.UserResponseDto;
+import de.innovationhub.prox.userservice.infrastructure.iam.mapper.UserMapper;
 import io.quarkus.cache.CacheResult;
 import java.util.Optional;
 import java.util.UUID;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.ws.rs.NotFoundException;
 import javax.ws.rs.WebApplicationException;
 import org.keycloak.admin.client.resource.RealmResource;
-import org.keycloak.admin.client.resource.UserResource;
 import org.keycloak.admin.client.resource.UsersResource;
 import org.keycloak.representations.idm.UserRepresentation;
 
@@ -15,31 +17,29 @@ import org.keycloak.representations.idm.UserRepresentation;
 public class KeycloakService {
   private final RealmResource realmResource;
   private final UsersResource usersResource;
+  private final UserMapper userMapper;
 
   @Inject
-  public KeycloakService(RealmResource realmResource) {
+  public KeycloakService(RealmResource realmResource,
+      UserMapper userMapper) {
     this.realmResource = realmResource;
     this.usersResource = realmResource.users();
+    this.userMapper = userMapper;
   }
 
   @CacheResult(cacheName = "keycloak-user-cache")
-  public Optional<UserRepresentation> findById(UUID id) {
+  public Optional<UserResponseDto> findById(UUID id) {
     try {
       var result = this.usersResource.get(id.toString()).toRepresentation();
-      return Optional.of(result);
-    } catch (WebApplicationException e) {
-      // If we receive a 404 status, the user doesn't exist, and we can return an empty result
-      if(e.getResponse().getStatus() == 404) {
-        return Optional.empty();
-      }
-
-      // Otherwise, the response is erroneous, and therefore we need to rethrow the exception
-      throw e;
+      return Optional.of(this.userMapper.toDto(result));
+    } catch (NotFoundException e) {
+      return Optional.empty();
     }
   }
 
   @CacheResult(cacheName = "keycloak-users-search-cache")
-  public Iterable<UserRepresentation> search(String query) {
-    return this.realmResource.users().search(query, 0, 100, true);
+  public Iterable<UserResponseDto> search(String query) {
+    var searchResult = this.realmResource.users().search(query, 0, 100, true);
+    return this.userMapper.toDtoSet(searchResult.stream());
   }
 }

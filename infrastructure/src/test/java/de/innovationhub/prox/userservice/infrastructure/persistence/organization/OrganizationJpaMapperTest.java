@@ -2,7 +2,7 @@ package de.innovationhub.prox.userservice.infrastructure.persistence.organizatio
 
 import static org.assertj.core.api.Assertions.*;
 
-import de.innovationhub.prox.userservice.domain.user.entity.ProxUser;
+import de.innovationhub.prox.userservice.domain.core.user.UserId;
 import de.innovationhub.prox.userservice.domain.organization.entity.Organization;
 import de.innovationhub.prox.userservice.domain.organization.entity.Organization.OrganizationId;
 import de.innovationhub.prox.userservice.domain.organization.vo.OrganizationMembership;
@@ -18,8 +18,8 @@ class OrganizationJpaMapperTest {
   @Test
   void toPersistence() {
     // Given
-    var owner = new ProxUser(UUID.randomUUID());
-    var member = new ProxUser(UUID.randomUUID());
+    var owner = new UserId(UUID.randomUUID());
+    var member = new UserId(UUID.randomUUID());
     var org = new Organization(new OrganizationId(UUID.randomUUID()), "Musterfirma GmbH & Co. KG", owner);
     org.addMember(member, new OrganizationMembership(OrganizationRole.MEMBER));
 
@@ -60,7 +60,7 @@ class OrganizationJpaMapperTest {
     assertThat(domain.getOwner().id()).isEqualTo(jpaOrg.getOwner());
 
     assertThat(domain.getMembers()).hasSize(1);
-    var actualMember = domain.getMembers().get(new ProxUser(member.getUserId()));
+    var actualMember = domain.getMembers().get(new UserId(member.getUserId()));
     assertThat(actualMember).isNotNull();
     assertThat(actualMember.getRole()).isEqualTo(OrganizationRole.MEMBER);
   }

@@ -2,7 +2,7 @@ package de.innovationhub.prox.userservice.infrastructure.persistence.representat
 
 import static org.assertj.core.api.Assertions.*;
 
-import de.innovationhub.prox.userservice.domain.user.entity.ProxUser;
+import de.innovationhub.prox.userservice.domain.core.user.UserId;
 import de.innovationhub.prox.userservice.domain.representative.enitity.Representative;
 import de.innovationhub.prox.userservice.domain.representative.enitity.Representative.RepresentativeId;
 import java.util.UUID;
@@ -33,7 +33,7 @@ class RepresentativeJpaMapperTest {
   @Test
   void toPersistence() {
     // Given
-    var domain = new Representative(new RepresentativeId(UUID.randomUUID()), new ProxUser(UUID.randomUUID()), "Prof. Dr. Max Mustermann");
+    var domain = new Representative(new RepresentativeId(UUID.randomUUID()), new UserId(UUID.randomUUID()), "Prof. Dr. Max Mustermann");
 
     // When
     var jpa = mapper.toPersistence(domain);

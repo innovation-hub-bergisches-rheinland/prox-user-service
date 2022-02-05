@@ -1,17 +1,32 @@
 package de.innovationhub.prox.userservice.infrastructure.iam.mapper;
 
-import de.innovationhub.prox.userservice.domain.user.entity.ProxUser;
+import de.innovationhub.prox.userservice.infrastructure.iam.dto.UserResponseDto;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Stream;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.Named;
 
 @Mapper(componentModel = "cdi", imports = UUID.class)
 public interface UserMapper {
   @Mapping(target = "id", expression = "java( UUID.fromString(representation.getId()) )")
-  ProxUser toDomain(UserRepresentation representation);
+  @Mapping(target = "name",source = "representation", qualifiedByName = "parseName")
+  UserResponseDto toDto(UserRepresentation representation);
 
-  Set<ProxUser> toSet(Stream<UserRepresentation> users);
+  Set<UserResponseDto> toDtoSet(Stream<UserRepresentation> users);
+
+  @Named("parseName")
+  default String parseName(UserRepresentation representation) {
+    var firstName = representation.getFirstName();
+    var lastName = representation.getLastName();
+
+    // Defaulting to username
+    if(firstName == null && lastName == null) {
+      return representation.getUsername();
+    }
+
+    return (firstName == null ? "" : firstName) + " " + (lastName == null ? "" : lastName);
+  }
 }

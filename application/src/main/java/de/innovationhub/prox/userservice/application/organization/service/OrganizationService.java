@@ -1,13 +1,12 @@
 package de.innovationhub.prox.userservice.application.organization.service;
 
+import de.innovationhub.prox.userservice.domain.core.user.UserId;
 import de.innovationhub.prox.userservice.domain.organization.entity.Organization;
 import de.innovationhub.prox.userservice.domain.organization.entity.Organization.OrganizationId;
 import de.innovationhub.prox.userservice.domain.organization.repository.OrganizationRepository;
-import de.innovationhub.prox.userservice.domain.user.entity.ProxUser;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
@@ -24,7 +23,7 @@ public class OrganizationService {
   public Organization createOrganization(String name, UUID ownerId) {
     // TODO Request Validator
     // TODO: find prox user
-    var org = new Organization(new OrganizationId(UUID.randomUUID()), name, new ProxUser(ownerId));
+    var org = new Organization(new OrganizationId(UUID.randomUUID()), name, new UserId(ownerId));
     organizationRepository.save(org);
     return org;
   }

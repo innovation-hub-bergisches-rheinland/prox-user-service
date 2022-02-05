@@ -4,6 +4,7 @@ plugins {
 
 ext {
     restAssuredVersion = "4.4.0"
+    easyRandomVersion = "5.0.0"
 }
 
 sourceSets {
@@ -41,4 +42,8 @@ dependencies {
     testImplementation "io.quarkus:quarkus-test-security-jwt"
     testImplementation "io.quarkus:quarkus-test-security-oidc"
     testImplementation "io.quarkus:quarkus-junit5-mockito"
+    testImplementation("org.jeasy:easy-random-core:${easyRandomVersion}")
+    testImplementation("org.jeasy:easy-random-bean-validation:${easyRandomVersion}") {
+        exclude group: "org.yaml", module: "snakeyaml"
+    }
 }
