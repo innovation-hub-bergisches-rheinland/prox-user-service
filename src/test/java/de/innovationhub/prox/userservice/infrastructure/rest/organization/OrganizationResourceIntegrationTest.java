@@ -87,7 +87,7 @@ public class OrganizationResourceIntegrationTest {
         .oauth2(keycloakTestClient.getAccessToken("alice"))
         .body("""
             {
-              "userId": "%s",
+              "member": "%s",
               "role": "MEMBER"
             }
             """.formatted(bobId.toString()))

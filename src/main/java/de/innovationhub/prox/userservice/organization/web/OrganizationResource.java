@@ -1,18 +1,13 @@
 package de.innovationhub.prox.userservice.organization.web;
 
-import de.innovationhub.prox.userservice.organization.dto.request.DeleteOrganizationMembershipRequest;
+import de.innovationhub.prox.userservice.core.Status;
+import de.innovationhub.prox.userservice.organization.dto.OrganizationDto;
+import de.innovationhub.prox.userservice.organization.dto.OrganizationMembershipDto;
 import de.innovationhub.prox.userservice.organization.exception.ForbiddenOrganizationAccessException;
 import de.innovationhub.prox.userservice.organization.exception.OrganizationNotFoundException;
 import de.innovationhub.prox.userservice.organization.service.OrganizationService;
-import de.innovationhub.prox.userservice.core.Status;
-import de.innovationhub.prox.userservice.infrastructure.rest.organization.dto.OrganizationRestMessageMapper;
-import de.innovationhub.prox.userservice.infrastructure.rest.organization.dto.request.PostOrganizationDto;
-import de.innovationhub.prox.userservice.infrastructure.rest.organization.dto.request.PostOrganizationMemberDto;
-import de.innovationhub.prox.userservice.infrastructure.rest.organization.dto.request.PutOrganizationMemberDto;
-import de.innovationhub.prox.userservice.infrastructure.rest.organization.dto.response.OrganizationCollectionDto;
-import de.innovationhub.prox.userservice.infrastructure.rest.organization.dto.response.OrganizationDto;
-import de.innovationhub.prox.userservice.infrastructure.rest.organization.dto.response.OrganizationMemberDto;
 import io.quarkus.security.Authenticated;
+import java.util.List;
 import java.util.UUID;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
@@ -31,17 +26,13 @@ import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
 @Path("organizations")
 public class OrganizationResource {
   private final OrganizationService organizationService;
-  private final OrganizationRestMessageMapper messageMapper;
 
   @Inject
   JsonWebToken jsonWebToken;
 
   @Inject
-  public OrganizationResource(
-      OrganizationService organizationService,
-      OrganizationRestMessageMapper messageMapper) {
+  public OrganizationResource(OrganizationService organizationService) {
     this.organizationService = organizationService;
-    this.messageMapper = messageMapper;
   }
 
   @POST
@@ -49,10 +40,9 @@ public class OrganizationResource {
   @Status(201)
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
-  public OrganizationDto create(PostOrganizationDto jsonRequest) {
+  public OrganizationDto create(OrganizationDto jsonRequest) {
     var userId = UUID.fromString(jsonWebToken.getSubject());
-    var response = this.organizationService.createOrganization(jsonRequest.name(), userId);
-    return this.messageMapper.toResponse(response);
+    return this.organizationService.createOrganization(jsonRequest.name(), userId);
   }
 
   @GET
@@ -63,7 +53,6 @@ public class OrganizationResource {
       throw new WebApplicationException("Provided ID is null", 400);
     }
     return this.organizationService.findById(id)
-        .map(messageMapper::toResponse)
         .orElseThrow(() -> new WebApplicationException(404));
   }
 
@@ -73,16 +62,13 @@ public class OrganizationResource {
   @Status(201)
   @Produces(MediaType.APPLICATION_JSON)
   @Consumes(MediaType.APPLICATION_JSON)
-  public OrganizationMemberDto addOrganizationMember(
+  public OrganizationMembershipDto addOrganizationMember(
       @PathParam("id") UUID organizationId,
-      @RequestBody PostOrganizationMemberDto memberDto
+      @RequestBody OrganizationMembershipDto memberDto
   ) {
     var userId = UUID.fromString(jsonWebToken.getSubject());
-    var request = this.messageMapper.toRequest(memberDto);
-
     try {
-      var response = this.organizationService.createOrganizationMembership(organizationId, request, userId);
-      return this.messageMapper.toResponse(response);
+      return this.organizationService.createOrganizationMembership(organizationId, memberDto, userId);
     } catch (ForbiddenOrganizationAccessException e) {
       throw new WebApplicationException(e, 403);
     } catch (OrganizationNotFoundException e) {
@@ -95,17 +81,16 @@ public class OrganizationResource {
   @Path("{id}/memberships/{memberId}")
   @Produces(MediaType.APPLICATION_JSON)
   @Consumes(MediaType.APPLICATION_JSON)
-  public OrganizationMemberDto updateOrganizationMember(
+  public OrganizationMembershipDto updateOrganizationMember(
       @PathParam("id") UUID organizationId,
       @PathParam("memberId") UUID memberId,
-      @RequestBody PutOrganizationMemberDto updateDto
+      @RequestBody OrganizationMembershipDto updateDto
   ) {
     var userId = UUID.fromString(jsonWebToken.getSubject());
-    var request = this.messageMapper.toRequest(updateDto, memberId);
+    updateDto = new OrganizationMembershipDto(memberId, updateDto.role());
 
     try {
-      var response = this.organizationService.updateOrganizationMembership(organizationId, request, userId);
-      return this.messageMapper.toResponse(response);
+      return this.organizationService.updateOrganizationMembership(organizationId, updateDto, userId);
     } catch (ForbiddenOrganizationAccessException e) {
       throw new WebApplicationException(e, 403);
     } catch (OrganizationNotFoundException e) {
@@ -125,7 +110,7 @@ public class OrganizationResource {
   ) {
     var userId = UUID.fromString(jsonWebToken.getSubject());
     try {
-      this.organizationService.deleteOrganizationMembership(organizationId, new DeleteOrganizationMembershipRequest(memberId), userId);
+      this.organizationService.deleteOrganizationMembership(organizationId, memberId, userId);
     } catch (ForbiddenOrganizationAccessException e) {
       throw new WebApplicationException(e, 403);
     } catch (OrganizationNotFoundException e) {
@@ -135,8 +120,7 @@ public class OrganizationResource {
 
   @GET
   @Produces(MediaType.APPLICATION_JSON)
-  public OrganizationCollectionDto findAll() {
-    var mappedCollection = messageMapper.toResponse(organizationService.findAll());
-    return new OrganizationCollectionDto(mappedCollection);
+  public List<OrganizationDto> findAll() {
+    return this.organizationService.findAll();
   }
 }

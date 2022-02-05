@@ -1,10 +1,10 @@
-package de.innovationhub.prox.userservice.organization.dto.response;
+package de.innovationhub.prox.userservice.organization.dto;
 
 import de.innovationhub.prox.userservice.organization.entity.OrganizationRole;
 import java.util.UUID;
 
-public record OrganizationMembershipResponse(
-    UUID userId,
+public record OrganizationMembershipDto(
+    UUID member,
     OrganizationRole role
 ) {
 
