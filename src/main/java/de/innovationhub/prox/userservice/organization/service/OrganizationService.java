@@ -8,6 +8,7 @@ import de.innovationhub.prox.userservice.organization.entity.OrganizationMembers
 import de.innovationhub.prox.userservice.organization.exception.ForbiddenOrganizationAccessException;
 import de.innovationhub.prox.userservice.organization.exception.OrganizationNotFoundException;
 import de.innovationhub.prox.userservice.organization.repository.OrganizationRepository;
+import io.quarkus.security.identity.SecurityIdentity;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -20,31 +21,34 @@ import javax.transaction.Transactional;
 public class OrganizationService {
   private final OrganizationRepository organizationRepository;
   private final OrganizationMapper organizationMapper;
+  private final SecurityIdentity securityIdentity;
 
   @Inject
   public OrganizationService(
       OrganizationRepository organizationRepository,
-      OrganizationMapper organizationMapper) {
+      OrganizationMapper organizationMapper,
+      SecurityIdentity securityIdentity) {
     this.organizationRepository = organizationRepository;
     this.organizationMapper = organizationMapper;
+    this.securityIdentity = securityIdentity;
   }
 
-  public OrganizationDto createOrganization(String name, UUID ownerId) {
+  public OrganizationDto createOrganization(OrganizationDto request) {
+    var userId = UUID.fromString(securityIdentity.getPrincipal().getName());
     // TODO Request Validator
-    // TODO: find prox user
     Organization org = Organization.builder()
-            .name(name)
-            .owner(ownerId)
+            .name(request.name())
+            .owner(userId)
             .build();
+    securityIdentity.getPrincipal().getName();
     organizationRepository.save(org);
     return this.organizationMapper.toDto(org);
   }
 
   @Transactional
-  public OrganizationMembershipDto createOrganizationMembership(UUID organizationId, OrganizationMembershipDto request, UUID authenticatedUserId) {
-    var all = organizationRepository.findAll();
-    var org = organizationRepository.findById(organizationId).orElseThrow(() -> new OrganizationNotFoundException());
-    if(!org.getOwner().equals(authenticatedUserId)) {
+  public OrganizationMembershipDto setOrganizationMembership(UUID organizationId, OrganizationMembershipDto request) {
+    var org = findByIdOrThrow(organizationId);
+    if(!org.getOwner().toString().equals(securityIdentity.getPrincipal().getName())) {
       throw new ForbiddenOrganizationAccessException();
     }
     // TODO: verify user ID
@@ -60,27 +64,9 @@ public class OrganizationService {
   }
 
   @Transactional
-  public OrganizationMembershipDto updateOrganizationMembership(UUID organizationId, OrganizationMembershipDto request, UUID authenticatedUserId) {
-    var org = organizationRepository.findById(organizationId).orElseThrow(() -> new OrganizationNotFoundException());
-    if(!org.getOwner().equals(authenticatedUserId)) {
-      throw new ForbiddenOrganizationAccessException();
-    }
-    // TODO: verify user ID
-    var member =  request.member();
-    var membership = new OrganizationMembership(request.role());
-    org.getMembers().put(member, membership);
-    this.organizationRepository.save(org);
-
-    return new OrganizationMembershipDto(
-        member,
-        membership.getRole()
-    );
-  }
-
-  @Transactional
-  public void deleteOrganizationMembership(UUID organizationId, UUID memberId, UUID authenticatedUserId) {
-    var org = organizationRepository.findById(organizationId).orElseThrow(() -> new OrganizationNotFoundException());
-    if(!org.getOwner().equals(authenticatedUserId)) {
+  public void deleteOrganizationMembership(UUID organizationId, UUID memberId) {
+    var org = findByIdOrThrow(organizationId);
+    if(!org.getOwner().toString().equals(securityIdentity.getPrincipal().getName())) {
       throw new ForbiddenOrganizationAccessException();
     }
 
@@ -97,5 +83,9 @@ public class OrganizationService {
     return organizationRepository.findAll()
         .stream().map(this.organizationMapper::toDto)
         .collect(Collectors.toList());
+  }
+
+  private Organization findByIdOrThrow(UUID id) {
+    return organizationRepository.findById(id).orElseThrow(OrganizationNotFoundException::new);
   }
 }

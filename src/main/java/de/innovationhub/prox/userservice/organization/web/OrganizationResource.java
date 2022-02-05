@@ -28,9 +28,6 @@ public class OrganizationResource {
   private final OrganizationService organizationService;
 
   @Inject
-  JsonWebToken jsonWebToken;
-
-  @Inject
   public OrganizationResource(OrganizationService organizationService) {
     this.organizationService = organizationService;
   }
@@ -41,8 +38,7 @@ public class OrganizationResource {
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
   public OrganizationDto create(OrganizationDto jsonRequest) {
-    var userId = UUID.fromString(jsonWebToken.getSubject());
-    return this.organizationService.createOrganization(jsonRequest.name(), userId);
+    return this.organizationService.createOrganization(jsonRequest);
   }
 
   @GET
@@ -65,10 +61,9 @@ public class OrganizationResource {
   public OrganizationMembershipDto addOrganizationMember(
       @PathParam("id") UUID organizationId,
       @RequestBody OrganizationMembershipDto memberDto
-  ) {
-    var userId = UUID.fromString(jsonWebToken.getSubject());
+  ) {;
     try {
-      return this.organizationService.createOrganizationMembership(organizationId, memberDto, userId);
+      return this.organizationService.setOrganizationMembership(organizationId, memberDto);
     } catch (ForbiddenOrganizationAccessException e) {
       throw new WebApplicationException(e, 403);
     } catch (OrganizationNotFoundException e) {
@@ -86,11 +81,10 @@ public class OrganizationResource {
       @PathParam("memberId") UUID memberId,
       @RequestBody OrganizationMembershipDto updateDto
   ) {
-    var userId = UUID.fromString(jsonWebToken.getSubject());
     updateDto = new OrganizationMembershipDto(memberId, updateDto.role());
 
     try {
-      return this.organizationService.updateOrganizationMembership(organizationId, updateDto, userId);
+      return this.organizationService.setOrganizationMembership(organizationId, updateDto);
     } catch (ForbiddenOrganizationAccessException e) {
       throw new WebApplicationException(e, 403);
     } catch (OrganizationNotFoundException e) {
@@ -108,9 +102,8 @@ public class OrganizationResource {
       @PathParam("id") UUID organizationId,
       @PathParam("memberId") UUID memberId
   ) {
-    var userId = UUID.fromString(jsonWebToken.getSubject());
     try {
-      this.organizationService.deleteOrganizationMembership(organizationId, memberId, userId);
+      this.organizationService.deleteOrganizationMembership(organizationId, memberId);
     } catch (ForbiddenOrganizationAccessException e) {
       throw new WebApplicationException(e, 403);
     } catch (OrganizationNotFoundException e) {
