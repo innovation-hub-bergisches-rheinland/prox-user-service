@@ -8,9 +8,12 @@ import org.keycloak.representations.idm.UserRepresentation;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
+import org.mapstruct.factory.Mappers;
 
 @Mapper(componentModel = "cdi", imports = UUID.class)
 public interface UserMapper {
+  UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
+
   @Mapping(target = "id", expression = "java( UUID.fromString(representation.getId()) )")
   @Mapping(target = "name",source = "representation", qualifiedByName = "parseName")
   UserResponseDto toDto(UserRepresentation representation);
