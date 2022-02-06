@@ -1,8 +1,12 @@
 package de.innovationhub.prox.userservice.organization.web;
 
 import de.innovationhub.prox.userservice.core.Status;
-import de.innovationhub.prox.userservice.organization.dto.OrganizationDto;
-import de.innovationhub.prox.userservice.organization.dto.OrganizationMembershipDto;
+import de.innovationhub.prox.userservice.organization.dto.request.CreateOrganizationDto;
+import de.innovationhub.prox.userservice.organization.dto.request.CreateOrganizationMembershipDto;
+import de.innovationhub.prox.userservice.organization.dto.request.UpdateOrganizationMembershipDto;
+import de.innovationhub.prox.userservice.organization.dto.response.ViewAllOrganizationMembershipsDto;
+import de.innovationhub.prox.userservice.organization.dto.response.ViewOrganizationDto;
+import de.innovationhub.prox.userservice.organization.dto.response.ViewOrganizationMembershipDto;
 import de.innovationhub.prox.userservice.organization.exception.ForbiddenOrganizationAccessException;
 import de.innovationhub.prox.userservice.organization.exception.OrganizationNotFoundException;
 import de.innovationhub.prox.userservice.organization.service.OrganizationService;
@@ -36,14 +40,14 @@ public class OrganizationResource {
   @Status(201)
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
-  public OrganizationDto create(OrganizationDto jsonRequest) {
+  public ViewOrganizationDto create(CreateOrganizationDto jsonRequest) {
     return this.organizationService.createOrganization(jsonRequest);
   }
 
   @GET
   @Path("{id}")
   @Produces(MediaType.APPLICATION_JSON)
-  public OrganizationDto findById(@PathParam(value = "id") UUID id) {
+  public ViewOrganizationDto findById(@PathParam(value = "id") UUID id) {
     if (id == null) {
       throw new WebApplicationException("Provided ID is null", 400);
     }
@@ -52,17 +56,32 @@ public class OrganizationResource {
         .orElseThrow(() -> new WebApplicationException(404));
   }
 
+  @GET
+  @Authenticated
+  @Path("{id}/memberships")
+  @Produces(MediaType.APPLICATION_JSON)
+  public ViewAllOrganizationMembershipsDto getOrganizationMemberships(
+      @PathParam("id") UUID organizationId) {
+    try {
+      return this.organizationService.getOrganizationMemberships(organizationId);
+    } catch (ForbiddenOrganizationAccessException e) {
+      throw new WebApplicationException(e, 403);
+    } catch (OrganizationNotFoundException e) {
+      throw new WebApplicationException(e, 404);
+    }
+  }
+
   @POST
   @Authenticated
   @Path("{id}/memberships")
   @Status(201)
   @Produces(MediaType.APPLICATION_JSON)
   @Consumes(MediaType.APPLICATION_JSON)
-  public OrganizationMembershipDto addOrganizationMember(
-      @PathParam("id") UUID organizationId, @RequestBody OrganizationMembershipDto memberDto) {
-    ;
+  public ViewOrganizationMembershipDto addOrganizationMember(
+      @PathParam("id") UUID organizationId,
+      @RequestBody CreateOrganizationMembershipDto memberDto) {
     try {
-      return this.organizationService.setOrganizationMembership(organizationId, memberDto);
+      return this.organizationService.createOrganizationMembership(organizationId, memberDto);
     } catch (ForbiddenOrganizationAccessException e) {
       throw new WebApplicationException(e, 403);
     } catch (OrganizationNotFoundException e) {
@@ -75,14 +94,14 @@ public class OrganizationResource {
   @Path("{id}/memberships/{memberId}")
   @Produces(MediaType.APPLICATION_JSON)
   @Consumes(MediaType.APPLICATION_JSON)
-  public OrganizationMembershipDto updateOrganizationMember(
+  public ViewOrganizationMembershipDto updateOrganizationMember(
       @PathParam("id") UUID organizationId,
       @PathParam("memberId") UUID memberId,
-      @RequestBody OrganizationMembershipDto updateDto) {
-    updateDto = new OrganizationMembershipDto(memberId, updateDto.role());
+      @RequestBody UpdateOrganizationMembershipDto updateDto) {
 
     try {
-      return this.organizationService.setOrganizationMembership(organizationId, updateDto);
+      return this.organizationService.updateOrganizationMembership(
+          organizationId, memberId, updateDto);
     } catch (ForbiddenOrganizationAccessException e) {
       throw new WebApplicationException(e, 403);
     } catch (OrganizationNotFoundException e) {
@@ -94,8 +113,6 @@ public class OrganizationResource {
   @Authenticated
   @Path("{id}/memberships/{memberId}")
   @Status(204)
-  @Produces(MediaType.APPLICATION_JSON)
-  @Consumes(MediaType.APPLICATION_JSON)
   public void removeOrganizationMember(
       @PathParam("id") UUID organizationId, @PathParam("memberId") UUID memberId) {
     try {
@@ -109,7 +126,7 @@ public class OrganizationResource {
 
   @GET
   @Produces(MediaType.APPLICATION_JSON)
-  public List<OrganizationDto> findAll() {
+  public List<ViewOrganizationDto> findAll() {
     return this.organizationService.findAll();
   }
 }

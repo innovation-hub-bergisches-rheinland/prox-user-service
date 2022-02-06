@@ -1,8 +1,10 @@
 package de.innovationhub.prox.userservice.organization.web;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.tuple;
 import static org.hamcrest.Matchers.*;
 
+import de.innovationhub.prox.userservice.organization.dto.response.ViewOrganizationMembershipDto;
 import de.innovationhub.prox.userservice.organization.entity.Organization;
 import de.innovationhub.prox.userservice.organization.entity.OrganizationMembership;
 import de.innovationhub.prox.userservice.organization.entity.OrganizationRole;
@@ -25,6 +27,7 @@ import org.junit.jupiter.api.TestMethodOrder;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @TestHTTPEndpoint(OrganizationResource.class)
 public class OrganizationResourceIntegrationTest {
+
   KeycloakTestClient keycloakTestClient = new KeycloakTestClient();
 
   @Inject OrganizationRepository organizationRepository;
@@ -46,11 +49,12 @@ public class OrganizationResourceIntegrationTest {
             .accept("application/json")
             .auth()
             .oauth2(keycloakTestClient.getAccessToken("alice"))
-            .body("""
-            {
-              "name": "ACME Ltd."
-            }
-            """)
+            .body(
+                """
+                {
+                  "name": "ACME Ltd."
+                }
+                """)
             .when()
             .post()
             .then()
@@ -83,16 +87,17 @@ public class OrganizationResourceIntegrationTest {
         .oauth2(keycloakTestClient.getAccessToken("alice"))
         .body(
             """
-            {
-              "member": "%s",
-              "role": "MEMBER"
-            }
-            """
+                {
+                  "member": "%s",
+                  "role": "MEMBER"
+                }
+                """
                 .formatted(bobId.toString()))
         .when()
         .post("{id}/memberships", orgId.toString())
         .then()
-        .body("member", is(bobId.toString()))
+        .body("memberId", is(bobId.toString()))
+        .body("name", is("bob"))
         .body("role", is("MEMBER"))
         .statusCode(201);
 
@@ -128,7 +133,8 @@ public class OrganizationResourceIntegrationTest {
         .when()
         .put("{id}/memberships/{memberId}", orgId.toString(), bobId.toString())
         .then()
-        .body("member", is(bobId.toString()))
+        .body("memberId", is(bobId.toString()))
+        .body("name", is("bob"))
         .body("role", is("ADMIN"))
         .statusCode(200);
 
@@ -182,15 +188,50 @@ public class OrganizationResourceIntegrationTest {
         .oauth2(keycloakTestClient.getAccessToken("alice"))
         .body(
             """
-            {
-              "member": "%s",
-              "role": "MEMBER"
-            }
-            """
+                {
+                  "member": "%s",
+                  "role": "MEMBER"
+                }
+                """
                 .formatted(randomUser.toString()))
         .when()
         .post("{id}/memberships", orgId.toString())
         .then()
         .statusCode(422);
+  }
+
+  @Test
+  @Order(6)
+  void shouldGetMemberships() {
+    // Given
+    var aliceId = UUID.fromString("856ba1b6-ae45-4722-8fa5-212c7f71f10c");
+    var bobId = UUID.fromString("ed0b4a07-2612-4571-a9ab-27e13ce752f1");
+    var julianBradenId = UUID.fromString("64788f0d-a954-4898-bfda-7498aae2b271");
+    var orgId = UUID.randomUUID();
+    var dummyOrg = Organization.builder().id(orgId).name("ACME Ltd.").owner(aliceId).build();
+    dummyOrg.getMembers().put(bobId, new OrganizationMembership(OrganizationRole.MEMBER));
+    dummyOrg.getMembers().put(julianBradenId, new OrganizationMembership(OrganizationRole.ADMIN));
+    this.organizationRepository.save(dummyOrg);
+
+    var response =
+        RestAssured.given()
+            .contentType("application/json")
+            .accept("application/json")
+            .auth()
+            .oauth2(keycloakTestClient.getAccessToken("alice"))
+            .when()
+            .get("{id}/memberships", orgId.toString())
+            .then()
+            .statusCode(200)
+            .extract()
+            .jsonPath()
+            .getList("members", ViewOrganizationMembershipDto.class);
+
+    assertThat(response)
+        .hasSize(2)
+        .extracting("memberId", "name", "role")
+        .containsExactlyInAnyOrder(
+            tuple(bobId, "bob", OrganizationRole.MEMBER),
+            tuple(julianBradenId, "Julian Braden", OrganizationRole.ADMIN));
   }
 }

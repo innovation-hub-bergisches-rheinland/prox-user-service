@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-import de.innovationhub.prox.userservice.user.service.KeycloakService;
+import de.innovationhub.prox.userservice.user.service.UserService;
 import java.util.UUID;
 import javax.validation.ConstraintValidatorContext;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,26 +18,26 @@ class IsValidUserIdConstraintValidatorTest {
 
   IsValidUserIdConstraintValidator validator;
 
-  @Mock KeycloakService keycloakService;
+  @Mock UserService userService;
 
   @Mock ConstraintValidatorContext constraintValidatorContext;
 
   @BeforeEach
   void setup() {
-    this.validator = new IsValidUserIdConstraintValidator(keycloakService);
+    this.validator = new IsValidUserIdConstraintValidator(userService);
   }
 
   @Test
   void shouldReturnTrueIfUserExists() {
     // Given
-    when(keycloakService.existsById(any())).thenReturn(true);
+    when(userService.existsById(any())).thenReturn(true);
     assertTrue(this.validator.isValid(UUID.randomUUID(), constraintValidatorContext));
   }
 
   @Test
   void shouldReturnFalseIfUserDoesntExists() {
     // Given
-    when(keycloakService.existsById(any())).thenReturn(false);
+    when(userService.existsById(any())).thenReturn(false);
     assertFalse(this.validator.isValid(UUID.randomUUID(), constraintValidatorContext));
   }
 }

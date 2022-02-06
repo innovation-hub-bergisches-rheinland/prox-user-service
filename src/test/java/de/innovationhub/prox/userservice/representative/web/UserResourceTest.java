@@ -6,7 +6,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import de.innovationhub.prox.userservice.user.dto.UserResponseDto;
-import de.innovationhub.prox.userservice.user.service.KeycloakService;
+import de.innovationhub.prox.userservice.user.service.UserService;
 import de.innovationhub.prox.userservice.user.web.UserResource;
 import io.quarkus.test.common.http.TestHTTPEndpoint;
 import io.quarkus.test.junit.QuarkusTest;
@@ -25,7 +25,7 @@ import org.junit.jupiter.api.Test;
 @TestHTTPEndpoint(UserResource.class)
 class UserResourceTest {
 
-  @InjectMock KeycloakService keycloakService;
+  @InjectMock UserService userService;
 
   @Test
   @TestSecurity(authorizationEnabled = false)
@@ -34,7 +34,7 @@ class UserResourceTest {
     var easyRandom = new EasyRandom();
     var userId = UUID.randomUUID();
     var randomUser = easyRandom.nextObject(UserResponseDto.class);
-    when(keycloakService.findById(eq(userId))).thenReturn(Optional.of(randomUser));
+    when(userService.findById(eq(userId))).thenReturn(Optional.of(randomUser));
 
     var response =
         RestAssured.given()
@@ -48,14 +48,14 @@ class UserResourceTest {
             .getObject(".", UserResponseDto.class);
 
     Assertions.assertThat(response).isEqualTo(randomUser);
-    verify(keycloakService).findById(eq(userId));
+    verify(userService).findById(eq(userId));
   }
 
   @Test
   @TestSecurity(authorizationEnabled = false)
   void shouldReturnNotFound() {
     // Given
-    when(keycloakService.findById(any())).thenReturn(Optional.empty());
+    when(userService.findById(any())).thenReturn(Optional.empty());
 
     RestAssured.given()
         .accept("application/json")
@@ -64,7 +64,7 @@ class UserResourceTest {
         .then()
         .statusCode(404);
 
-    verify(keycloakService).findById(any());
+    verify(userService).findById(any());
   }
 
   @Test
@@ -74,7 +74,7 @@ class UserResourceTest {
     var searchQuery = "abcdefgh";
     var easyRandom = new EasyRandom();
     var searchResults = easyRandom.objects(UserResponseDto.class, 5).collect(Collectors.toList());
-    when(keycloakService.search(eq(searchQuery))).thenReturn(searchResults);
+    when(userService.search(eq(searchQuery))).thenReturn(searchResults);
 
     var response =
         RestAssured.given()
@@ -90,7 +90,7 @@ class UserResourceTest {
 
     Assertions.assertThat(response).containsExactlyInAnyOrderElementsOf(searchResults);
 
-    verify(keycloakService).search(eq(searchQuery));
+    verify(userService).search(eq(searchQuery));
   }
 
   @Test
@@ -98,7 +98,7 @@ class UserResourceTest {
   void shouldReturnEmptySearchResult() {
     // Given
     var searchQuery = "abcdefgh";
-    when(keycloakService.search(eq(searchQuery))).thenReturn(Collections.emptyList());
+    when(userService.search(eq(searchQuery))).thenReturn(Collections.emptyList());
 
     var response =
         RestAssured.given()
@@ -114,6 +114,6 @@ class UserResourceTest {
 
     Assertions.assertThat(response).isEmpty();
 
-    verify(keycloakService).search(eq(searchQuery));
+    verify(userService).search(eq(searchQuery));
   }
 }

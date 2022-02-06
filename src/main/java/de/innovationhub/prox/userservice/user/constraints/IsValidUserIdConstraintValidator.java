@@ -1,6 +1,6 @@
 package de.innovationhub.prox.userservice.user.constraints;
 
-import de.innovationhub.prox.userservice.user.service.KeycloakService;
+import de.innovationhub.prox.userservice.user.service.UserService;
 import java.util.UUID;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -9,15 +9,15 @@ import javax.validation.ConstraintValidatorContext;
 
 @ApplicationScoped
 public class IsValidUserIdConstraintValidator implements ConstraintValidator<IsValidUserId, UUID> {
-  private final KeycloakService keycloakService;
+  private final UserService userService;
 
   @Inject
-  public IsValidUserIdConstraintValidator(KeycloakService keycloakService) {
-    this.keycloakService = keycloakService;
+  public IsValidUserIdConstraintValidator(UserService userService) {
+    this.userService = userService;
   }
 
   @Override
   public boolean isValid(UUID value, ConstraintValidatorContext context) {
-    return this.keycloakService.existsById(value);
+    return this.userService.existsById(value);
   }
 }
