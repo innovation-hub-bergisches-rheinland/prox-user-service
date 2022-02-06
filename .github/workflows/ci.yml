@@ -154,10 +154,20 @@ jobs:
       - name: Build Docker Image
         run: ./gradlew build -Dquarkus.container-image.build=true --no-daemon -x test
 
+  lint-helm:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v1
+      - name: Lint Helm
+        uses: WyriHaximus/github-action-helm3@v2
+        with:
+          exec: helm lint ./deploy/charts/prox-user-service
+
   release:
     name: Release
 
-    needs: [ validation, test, build-image ]
+    needs: [ validation, test, build-image, lint-helm ]
 
     # Only run if a tag is created
     if: startsWith(github.ref, 'refs/tags/v')
