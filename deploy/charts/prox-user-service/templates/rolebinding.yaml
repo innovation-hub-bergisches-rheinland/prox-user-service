@@ -7,6 +7,30 @@ rules:
       - ""
     resources:
       - secrets
+    resourceNames:
+      {{- if .Values.config.existingSecret }}
+      - {{ .Values.config.existingSecret }}
+      {{- else }}
+      - {{ include "prox-user-service.fullname" . }}
+      {{- end }}
+    verbs:
+      - get
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: view-configmaps
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - configmaps
+    resourceNames:
+      {{- if .Values.config.existingConfigMap }}
+      - {{ .Values.config.existingConfigMap }}
+      {{- else }}
+      - {{ include "prox-user-service.fullname" . }}
+      {{- end }}
     verbs:
       - get
 ---
@@ -17,7 +41,7 @@ metadata:
 roleRef:
   kind: ClusterRole
   apiGroup: rbac.authorization.k8s.io
-  name: view
+  name: view-configmaps
 subjects:
   - kind: ServiceAccount
     name: {{ include "prox-user-service.serviceAccountName" . }}
@@ -25,7 +49,7 @@ subjects:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name: {{ include "prox-user-service.fullname" . }}-viewsecrets
+  name: {{ include "prox-user-service.fullname" . }}-view-secrets
 roleRef:
   kind: Role
   apiGroup: rbac.authorization.k8s.io
