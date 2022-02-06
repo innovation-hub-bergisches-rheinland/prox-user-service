@@ -48,6 +48,7 @@ dependencies {
 	implementation("io.quarkus:quarkus-keycloak-admin-client")
 	implementation("io.quarkus:quarkus-cache")
 	implementation("io.quarkus:quarkus-kubernetes-config")
+	implementation("io.quarkus:quarkus-smallrye-health")
 
 	testImplementation("io.quarkus:quarkus-junit5")
 	testImplementation("io.quarkus:quarkus-test-oidc-server")
