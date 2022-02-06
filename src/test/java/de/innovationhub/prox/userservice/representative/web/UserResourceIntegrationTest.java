@@ -1,4 +1,4 @@
-package de.innovationhub.prox.userservice.infrastructure.rest.user;
+package de.innovationhub.prox.userservice.representative.web;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;

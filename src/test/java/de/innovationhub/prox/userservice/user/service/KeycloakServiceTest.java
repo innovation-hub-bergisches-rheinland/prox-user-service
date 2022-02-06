@@ -1,8 +1,7 @@
-package de.innovationhub.prox.userservice.infrastructure.iam;
+package de.innovationhub.prox.userservice.user.service;
 
 import static org.assertj.core.api.Assertions.*;
 
-import de.innovationhub.prox.userservice.user.service.KeycloakService;
 import io.quarkus.test.junit.QuarkusTest;
 import java.util.UUID;
 import javax.inject.Inject;

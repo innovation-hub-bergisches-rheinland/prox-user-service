@@ -1,4 +1,4 @@
-package de.innovationhub.prox.userservice.infrastructure.iam.mapper;
+package de.innovationhub.prox.userservice.user;
 
 import de.innovationhub.prox.userservice.user.dto.UserMapper;
 import org.assertj.core.api.Assertions;

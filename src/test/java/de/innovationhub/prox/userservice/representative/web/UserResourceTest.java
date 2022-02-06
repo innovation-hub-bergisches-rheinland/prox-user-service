@@ -1,4 +1,4 @@
-package de.innovationhub.prox.userservice.infrastructure.rest.user;
+package de.innovationhub.prox.userservice.representative.web;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;

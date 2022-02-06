@@ -1,4 +1,4 @@
-package de.innovationhub.prox.userservice.infrastructure.rest.organization;
+package de.innovationhub.prox.userservice.organization.web;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -7,7 +7,6 @@ import de.innovationhub.prox.userservice.organization.entity.Organization;
 import de.innovationhub.prox.userservice.organization.entity.OrganizationMembership;
 import de.innovationhub.prox.userservice.organization.entity.OrganizationRole;
 import de.innovationhub.prox.userservice.organization.repository.OrganizationRepository;
-import de.innovationhub.prox.userservice.organization.web.OrganizationResource;
 import io.quarkus.test.TestTransaction;
 import io.quarkus.test.common.http.TestHTTPEndpoint;
 import io.quarkus.test.junit.QuarkusTest;

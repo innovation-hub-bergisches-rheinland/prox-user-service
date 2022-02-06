@@ -1,7 +1,6 @@
-package de.innovationhub.prox.userservice.application.organization.service;
+package de.innovationhub.prox.userservice.organization.service;
 
 import de.innovationhub.prox.userservice.organization.repository.OrganizationRepository;
-import de.innovationhub.prox.userservice.organization.service.OrganizationService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;

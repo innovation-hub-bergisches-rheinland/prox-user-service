@@ -1,7 +1,6 @@
-package de.innovationhub.prox.userservice.infrastructure.persistence.representative;
+package de.innovationhub.prox.userservice.representative.repository;
 
 import de.innovationhub.prox.userservice.representative.entity.Representative;
-import de.innovationhub.prox.userservice.representative.repository.RepresentativePanacheRepository;
 import io.quarkus.test.junit.QuarkusTest;
 import java.util.UUID;
 import javax.inject.Inject;

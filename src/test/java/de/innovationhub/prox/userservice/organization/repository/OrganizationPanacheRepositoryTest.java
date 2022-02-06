@@ -1,9 +1,8 @@
-package de.innovationhub.prox.userservice.infrastructure.persistence.organization;
+package de.innovationhub.prox.userservice.organization.repository;
 
 import de.innovationhub.prox.userservice.organization.entity.Organization;
 import de.innovationhub.prox.userservice.organization.entity.OrganizationMembership;
 import de.innovationhub.prox.userservice.organization.entity.OrganizationRole;
-import de.innovationhub.prox.userservice.organization.repository.OrganizationPanacheRepository;
 import io.quarkus.test.junit.QuarkusTest;
 import java.util.HashMap;
 import java.util.UUID;
