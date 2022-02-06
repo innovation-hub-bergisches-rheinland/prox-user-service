@@ -60,3 +60,51 @@ Create the name of the service account to use
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
 {{- end }}
+
+{{/*
+Looks if there's an existing secret and reuse its password. If not it generates a new password and uses it.
+*/}}
+{{- define "prox-user-service.databaseUser" -}}
+{{- $secret := (lookup "v1" "Secret" .Release.Namespace (include "prox-user-service.fullname" .) ) -}}
+  {{- if $secret -}}
+    {{-  index $secret "data" "databaseUser" -}}
+  {{- else -}}
+    {{- "postgres" -}}
+  {{- end -}}
+{{- end -}}
+
+{{/*
+Looks if there's an existing secret and reuse its password. If not it generates a new password and uses it.
+*/}}
+{{- define "prox-user-service.databasePassword" -}}
+{{- $secret := (lookup "v1" "Secret" .Release.Namespace (include "prox-user-service.fullname" .) ) -}}
+  {{- if $secret -}}
+    {{-  index $secret "data" "databasePassword" -}}
+  {{- else -}}
+    {{- (randAlphaNum 40) | b64enc | quote -}}
+  {{- end -}}
+{{- end -}}
+
+{{/*
+Looks if there's an existing secret and reuse its password. If not it generates a new password and uses it.
+*/}}
+{{- define "prox-user-service.keycloakClientSecret" -}}
+{{- $secret := (lookup "v1" "Secret" .Release.Namespace (include "prox-user-service.fullname" .) ) -}}
+  {{- if $secret -}}
+    {{-  index $secret "data" "superUserPassword" -}}
+  {{- else -}}
+    {{- uuidv4 | quote -}}
+  {{- end -}}
+{{- end -}}
+
+{{/*
+Looks if there's an existing secret and reuse its password. If not it generates a new password and uses it.
+*/}}
+{{- define "prox-user-service.replicationUserPassword" -}}
+{{- $secret := (lookup "v1" "Secret" .Release.Namespace (include "prox-user-service.fullname" .) ) -}}
+  {{- if $secret -}}
+    {{-  index $secret "data" "replicationUserPassword" -}}
+  {{- else -}}
+    {{- (randAlphaNum 40) | b64enc | quote -}}
+  {{- end -}}
+{{- end -}}
