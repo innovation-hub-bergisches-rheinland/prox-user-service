@@ -152,7 +152,7 @@ jobs:
           cache: 'gradle'
 
       - name: Build Docker Image
-        run: ./gradlew build -Dquarkus.container-image.build=true --no-daemon
+        run: ./gradlew build -Dquarkus.container-image.build=true --no-daemon -x test
 
   release:
     name: Release
@@ -188,7 +188,7 @@ jobs:
           echo ::set-output name=version::$(cat version.txt)
 
       - name: Build and Push Docker Image
-        run: ./gradlew build -Dquarkus.container-image.build=true -Dquarkus.container-image.push=true --no-daemon
+        run: ./gradlew build -Dquarkus.container-image.build=true -Dquarkus.container-image.push=true --no-daemon -x test
 
       - name: Publish Helm charts
         uses: stefanprodan/helm-gh-pages@master
