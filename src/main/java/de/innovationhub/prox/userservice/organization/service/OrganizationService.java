@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
+import javax.validation.Valid;
 
 @ApplicationScoped
 public class OrganizationService {
@@ -33,9 +34,8 @@ public class OrganizationService {
     this.securityIdentity = securityIdentity;
   }
 
-  public OrganizationDto createOrganization(OrganizationDto request) {
+  public OrganizationDto createOrganization(@Valid OrganizationDto request) {
     var userId = UUID.fromString(securityIdentity.getPrincipal().getName());
-    // TODO Request Validator
     Organization org = Organization.builder()
             .name(request.name())
             .owner(userId)
@@ -46,7 +46,7 @@ public class OrganizationService {
   }
 
   @Transactional
-  public OrganizationMembershipDto setOrganizationMembership(UUID organizationId, OrganizationMembershipDto request) {
+  public OrganizationMembershipDto setOrganizationMembership(UUID organizationId, @Valid OrganizationMembershipDto request) {
     var org = findByIdOrThrow(organizationId);
     if(!org.getOwner().toString().equals(securityIdentity.getPrincipal().getName())) {
       throw new ForbiddenOrganizationAccessException();

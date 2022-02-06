@@ -167,4 +167,31 @@ public class OrganizationResourceIntegrationTest {
     var org = this.organizationRepository.findById(orgId).get();
     Assertions.assertThat(org.getMembers()).hasSize(0);
   }
+
+  @Test
+  @Order(5)
+  void shouldReturn422OnInvalidMemberId() {
+    // Given
+    var aliceId = UUID.fromString("856ba1b6-ae45-4722-8fa5-212c7f71f10c");
+    var orgId = UUID.randomUUID();
+    var dummyOrg = Organization.builder().id(orgId).name("ACME Ltd.").owner(aliceId).build();
+    this.organizationRepository.save(dummyOrg);
+    var randomUser = UUID.randomUUID();
+
+    RestAssured.given()
+        .contentType("application/json")
+        .accept("application/json")
+        .auth()
+        .oauth2(keycloakTestClient.getAccessToken("alice"))
+        .body("""
+            {
+              "member": "%s",
+              "role": "MEMBER"
+            }
+            """.formatted(randomUser.toString()))
+        .when()
+        .post("{id}/memberships", orgId.toString())
+        .then()
+        .statusCode(422);
+  }
 }
