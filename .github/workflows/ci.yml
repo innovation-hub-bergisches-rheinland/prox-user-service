@@ -1,16 +1,20 @@
 name: CI
 
 on:
+  # Run on every pull request
+  pull_request:
+    branches: [ main ]
+    types: [ opened, synchronize, reopened ]
   push:
     branches: [ main ]
     tags:
       - 'v[0-9]+.[0-9]+.[0-9]+'
-  pull_request:
-    branches: [ main ]
 
 env:
   JAVA_VERSION: 17
-  NODE_VERSION: 16.x
+
+# Will build the binaries, run tests and checks on them and if everything succeeds AND it is a push
+# to the main branch will build and deploy a snapshot release of the binaries
 
 jobs:
   # Basic Gradle wrapper validation. This step is run first, due to security
@@ -129,6 +133,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: ./gradlew jacocoTestReport sonarqube --stacktrace -i
 
+
   build-image:
     name: Build Docker Image
 
@@ -147,38 +152,55 @@ jobs:
           cache: 'gradle'
 
       - name: Jib Docker Build
-        run: ./gradlew --stacktrace jibDockerBuild
+        run: ./gradlew build -Dquarkus.container-image.build=true
 
-  release:
-    name: Release
-
-    # Only run if a tag is created
-    if: startsWith(github.ref, 'refs/tags/v')
-
-    needs: [ validation, build-image ]
-
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Check out repo
-        uses: actions/checkout@v2
-        with:
-          # Shipkit needs the whole Git history for changelog generation
-          fetch-depth: 0
-
-      - name: Set up Java
-        uses: actions/setup-java@v2
-        with:
-          java-version: ${{ env.JAVA_VERSION }}
-          distribution: temurin
-          cache: 'gradle'
-
-      - name: Login to Quay
-        uses: docker/login-action@v1
-        with:
-          registry: quay.io
-          username: ${{ secrets.QUAY_IO_USERNAME }}
-          password: ${{ secrets.QUAY_IO_PASSWORD }}
-
-      - name: Jib Docker Build and push
-        run: ./gradlew --stacktrace jib
+#  release:
+#    name: Release
+#
+#    needs: [ validation, test, build-image ]
+#
+#    # Only run if a tag is created
+#    if: startsWith(github.ref, 'refs/tags/v')
+#
+#    runs-on: ubuntu-latest
+#
+#    steps:
+#      - name: Checkout Repository
+#        uses: actions/checkout@v2
+#
+#      - name: Set up JDK ${{ env.JAVA_VERSION }}
+#        uses: actions/setup-java@v2
+#        with:
+#          java-version: ${{ env.JAVA_VERSION }}
+#          distribution: 'temurin'
+#          cache: 'maven'
+#
+#      - name: Login to Quay
+#        uses: docker/login-action@v1
+#        with:
+#          registry: quay.io
+#          username: ${{ secrets.QUAY_IO_USERNAME }}
+#          password: ${{ secrets.QUAY_IO_PASSWORD }}
+#
+#      - name: Get Project version
+#        id: project
+#        run: |
+#          echo ::set-output name=version::$(cat version.txt)
+#
+#      - name: Download build
+#        uses: actions/download-artifact@v2
+#        with:
+#          path: ./target
+#          name: maven-target.zip
+#
+#      - name: Maven Deploy
+#        run: |
+#          mvn -nsu -B -e -Prelease -DskipTests -Djib.to.tags=latest,${{ steps.project.outputs.version }} deploy
+#
+#      - name: Publish Helm charts
+#        uses: stefanprodan/helm-gh-pages@master
+#        with:
+#          token: ${{ secrets.GITHUB_TOKEN }}
+#          charts_dir: ./deploy/charts
+#          app_version: ${{ steps.project.outputs.version }}
+#          chart_version: ${{ steps.project.outputs.version }}
