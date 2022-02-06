@@ -7,6 +7,8 @@ import java.util.UUID;
 
 public interface OrganizationRepository {
   Optional<Organization> findById(UUID id);
+
   List<Organization> findAll();
+
   void save(Organization organization);
 }

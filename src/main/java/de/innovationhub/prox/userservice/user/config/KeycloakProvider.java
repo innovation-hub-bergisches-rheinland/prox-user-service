@@ -15,14 +15,10 @@ public class KeycloakProvider {
 
   @Inject
   public KeycloakProvider(
-      @ConfigProperty(name = "keycloak.server-url")
-      String keycloakServerUrl,
-      @ConfigProperty(name = "keycloak.realm")
-      String keycloakRealm,
-      @ConfigProperty(name = "keycloak.client-id")
-      String keycloakClientId,
-      @ConfigProperty(name = "keycloak.client-secret")
-      String keycloakClientSecret) {
+      @ConfigProperty(name = "keycloak.server-url") String keycloakServerUrl,
+      @ConfigProperty(name = "keycloak.realm") String keycloakRealm,
+      @ConfigProperty(name = "keycloak.client-id") String keycloakClientId,
+      @ConfigProperty(name = "keycloak.client-secret") String keycloakClientSecret) {
     this.keycloakServerUrl = keycloakServerUrl;
     this.keycloakRealm = keycloakRealm;
     this.keycloakClientId = keycloakClientId;
@@ -37,6 +33,7 @@ public class KeycloakProvider {
         .clientId(this.keycloakClientId)
         .clientSecret(this.keycloakClientSecret)
         .grantType(OAuth2Constants.CLIENT_CREDENTIALS)
-        .build().realm(this.keycloakRealm);
+        .build()
+        .realm(this.keycloakRealm);
   }
 }

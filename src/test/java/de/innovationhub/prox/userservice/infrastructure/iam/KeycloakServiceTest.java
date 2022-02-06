@@ -9,14 +9,11 @@ import javax.inject.Inject;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-/**
- * Runs against the pre-configured keycloak dev service.
- */
+/** Runs against the pre-configured keycloak dev service. */
 @QuarkusTest
 class KeycloakServiceTest {
 
-  @Inject
-  KeycloakService keycloakService;
+  @Inject KeycloakService keycloakService;
 
   @Test
   void shouldFindAliceWithId() {
@@ -27,7 +24,8 @@ class KeycloakServiceTest {
     var alice = keycloakService.findById(aliceId);
 
     // Then
-    Assertions.assertThat(alice).isNotEmpty()
+    Assertions.assertThat(alice)
+        .isNotEmpty()
         .get()
         .extracting("id", "name")
         .containsExactly(aliceId, "alice");

@@ -2,8 +2,6 @@ package de.innovationhub.prox.userservice.infrastructure.rest.user;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
 
 import de.innovationhub.prox.userservice.user.dto.UserResponseDto;
 import de.innovationhub.prox.userservice.user.web.UserResource;

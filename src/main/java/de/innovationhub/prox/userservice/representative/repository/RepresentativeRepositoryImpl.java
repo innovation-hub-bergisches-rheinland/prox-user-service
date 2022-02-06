@@ -9,12 +9,11 @@ import javax.inject.Inject;
 import javax.transaction.Transactional;
 
 @ApplicationScoped
-public class RepresentativeRepositoryImpl implements RepresentativeRepository{
+public class RepresentativeRepositoryImpl implements RepresentativeRepository {
   private final RepresentativePanacheRepository panacheRepository;
 
   @Inject
-  public RepresentativeRepositoryImpl(
-      RepresentativePanacheRepository panacheRepository) {
+  public RepresentativeRepositoryImpl(RepresentativePanacheRepository panacheRepository) {
     this.panacheRepository = panacheRepository;
   }
 

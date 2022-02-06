@@ -36,37 +36,32 @@ public class OrganizationService {
 
   public OrganizationDto createOrganization(@Valid OrganizationDto request) {
     var userId = UUID.fromString(securityIdentity.getPrincipal().getName());
-    Organization org = Organization.builder()
-            .name(request.name())
-            .owner(userId)
-            .build();
+    Organization org = Organization.builder().name(request.name()).owner(userId).build();
     securityIdentity.getPrincipal().getName();
     organizationRepository.save(org);
     return this.organizationMapper.toDto(org);
   }
 
   @Transactional
-  public OrganizationMembershipDto setOrganizationMembership(UUID organizationId, @Valid OrganizationMembershipDto request) {
+  public OrganizationMembershipDto setOrganizationMembership(
+      UUID organizationId, @Valid OrganizationMembershipDto request) {
     var org = findByIdOrThrow(organizationId);
-    if(!org.getOwner().toString().equals(securityIdentity.getPrincipal().getName())) {
+    if (!org.getOwner().toString().equals(securityIdentity.getPrincipal().getName())) {
       throw new ForbiddenOrganizationAccessException();
     }
     // TODO: verify user ID
-    var member =  request.member();
+    var member = request.member();
     var membership = new OrganizationMembership(request.role());
     org.getMembers().put(member, membership);
     this.organizationRepository.save(org);
 
-    return new OrganizationMembershipDto(
-        member,
-        membership.getRole()
-    );
+    return new OrganizationMembershipDto(member, membership.getRole());
   }
 
   @Transactional
   public void deleteOrganizationMembership(UUID organizationId, UUID memberId) {
     var org = findByIdOrThrow(organizationId);
-    if(!org.getOwner().toString().equals(securityIdentity.getPrincipal().getName())) {
+    if (!org.getOwner().toString().equals(securityIdentity.getPrincipal().getName())) {
       throw new ForbiddenOrganizationAccessException();
     }
 
@@ -75,13 +70,12 @@ public class OrganizationService {
   }
 
   public Optional<OrganizationDto> findById(UUID id) {
-    return this.organizationRepository.findById(id)
-        .map(this.organizationMapper::toDto);
+    return this.organizationRepository.findById(id).map(this.organizationMapper::toDto);
   }
 
   public List<OrganizationDto> findAll() {
-    return organizationRepository.findAll()
-        .stream().map(this.organizationMapper::toDto)
+    return organizationRepository.findAll().stream()
+        .map(this.organizationMapper::toDto)
         .collect(Collectors.toList());
   }
 

@@ -13,8 +13,7 @@ public class OrganizationRepositoryImpl implements OrganizationRepository {
   private final OrganizationPanacheRepository organizationPanacheRepository;
 
   @Inject
-  public OrganizationRepositoryImpl(
-      OrganizationPanacheRepository organizationPanacheRepository) {
+  public OrganizationRepositoryImpl(OrganizationPanacheRepository organizationPanacheRepository) {
     this.organizationPanacheRepository = organizationPanacheRepository;
   }
 
@@ -27,8 +26,7 @@ public class OrganizationRepositoryImpl implements OrganizationRepository {
   @Override
   @Transactional
   public List<Organization> findAll() {
-    return organizationPanacheRepository.findAll()
-        .list();
+    return organizationPanacheRepository.findAll().list();
   }
 
   @Override

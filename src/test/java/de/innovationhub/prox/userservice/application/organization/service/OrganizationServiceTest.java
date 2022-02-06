@@ -9,13 +9,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 class OrganizationServiceTest {
-  @Mock
-  OrganizationRepository organizationRepository;
+  @Mock OrganizationRepository organizationRepository;
 
   OrganizationService organizationService;
 
   @BeforeEach
-  void setUp() {
-
-  }
+  void setUp() {}
 }

@@ -8,9 +8,4 @@ import javax.validation.constraints.NotEmpty;
 
 public record OrganizationDto(
     @JsonProperty(value = "id", access = Access.READ_ONLY) UUID id,
-    @NotBlank
-    @NotEmpty
-    @JsonProperty(value = "name") String name
-) {
-
-}
+    @NotBlank @NotEmpty @JsonProperty(value = "name") String name) {}

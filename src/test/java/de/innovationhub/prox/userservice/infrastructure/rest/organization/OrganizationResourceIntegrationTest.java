@@ -1,8 +1,6 @@
 package de.innovationhub.prox.userservice.infrastructure.rest.organization;
 
-import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.entry;
 import static org.hamcrest.Matchers.*;
 
 import de.innovationhub.prox.userservice.organization.entity.Organization;
@@ -17,8 +15,6 @@ import io.quarkus.test.keycloak.client.KeycloakTestClient;
 import io.restassured.RestAssured;
 import java.util.UUID;
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.transaction.Transactional;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer;
@@ -32,8 +28,7 @@ import org.junit.jupiter.api.TestMethodOrder;
 public class OrganizationResourceIntegrationTest {
   KeycloakTestClient keycloakTestClient = new KeycloakTestClient();
 
-  @Inject
-  OrganizationRepository organizationRepository;
+  @Inject OrganizationRepository organizationRepository;
 
   @BeforeEach
   void setUp() {
@@ -46,24 +41,26 @@ public class OrganizationResourceIntegrationTest {
   void shouldCreateOrganization() {
     var aliceId = UUID.fromString("856ba1b6-ae45-4722-8fa5-212c7f71f10c");
 
-    var orgId = RestAssured.given()
-        .contentType("application/json")
-        .accept("application/json")
-        .auth()
-        .oauth2(keycloakTestClient.getAccessToken("alice"))
-        .body("""
+    var orgId =
+        RestAssured.given()
+            .contentType("application/json")
+            .accept("application/json")
+            .auth()
+            .oauth2(keycloakTestClient.getAccessToken("alice"))
+            .body("""
             {
               "name": "ACME Ltd."
             }
             """)
-    .when()
-        .post()
-    .then()
-        .statusCode(201)
-        .body("id", notNullValue())
-        .body("name", is("ACME Ltd."))
-        .extract()
-        .jsonPath().getUUID("id");
+            .when()
+            .post()
+            .then()
+            .statusCode(201)
+            .body("id", notNullValue())
+            .body("name", is("ACME Ltd."))
+            .extract()
+            .jsonPath()
+            .getUUID("id");
 
     var org = this.organizationRepository.findById(orgId).get();
     Assertions.assertThat(org.getName()).isEqualTo("ACME Ltd.");
@@ -85,14 +82,16 @@ public class OrganizationResourceIntegrationTest {
         .accept("application/json")
         .auth()
         .oauth2(keycloakTestClient.getAccessToken("alice"))
-        .body("""
+        .body(
+            """
             {
               "member": "%s",
               "role": "MEMBER"
             }
-            """.formatted(bobId.toString()))
+            """
+                .formatted(bobId.toString()))
         .when()
-    .post("{id}/memberships", orgId.toString())
+        .post("{id}/memberships", orgId.toString())
         .then()
         .body("member", is(bobId.toString()))
         .body("role", is("MEMBER"))
@@ -116,7 +115,6 @@ public class OrganizationResourceIntegrationTest {
     var dummyOrg = Organization.builder().id(orgId).name("ACME Ltd.").owner(aliceId).build();
     dummyOrg.getMembers().put(bobId, new OrganizationMembership(OrganizationRole.MEMBER));
     this.organizationRepository.save(dummyOrg);
-
 
     RestAssured.given()
         .contentType("application/json")
@@ -183,12 +181,14 @@ public class OrganizationResourceIntegrationTest {
         .accept("application/json")
         .auth()
         .oauth2(keycloakTestClient.getAccessToken("alice"))
-        .body("""
+        .body(
+            """
             {
               "member": "%s",
               "role": "MEMBER"
             }
-            """.formatted(randomUser.toString()))
+            """
+                .formatted(randomUser.toString()))
         .when()
         .post("{id}/memberships", orgId.toString())
         .then()

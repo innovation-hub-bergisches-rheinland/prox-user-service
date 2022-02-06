@@ -14,8 +14,7 @@ import org.junit.jupiter.api.Test;
 @Transactional
 class RepresentativePanacheRepositoryTest {
 
-  @Inject
-  RepresentativePanacheRepository representativePanacheRepository;
+  @Inject RepresentativePanacheRepository representativePanacheRepository;
 
   @Test
   @Disabled("No pre-populated data source introduced")

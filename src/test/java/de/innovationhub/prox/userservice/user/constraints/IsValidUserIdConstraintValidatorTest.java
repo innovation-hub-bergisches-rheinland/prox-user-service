@@ -18,11 +18,9 @@ class IsValidUserIdConstraintValidatorTest {
 
   IsValidUserIdConstraintValidator validator;
 
-  @Mock
-  KeycloakService keycloakService;
+  @Mock KeycloakService keycloakService;
 
-  @Mock
-  ConstraintValidatorContext constraintValidatorContext;
+  @Mock ConstraintValidatorContext constraintValidatorContext;
 
   @BeforeEach
   void setup() {

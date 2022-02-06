@@ -6,7 +6,6 @@ import de.innovationhub.prox.userservice.organization.entity.OrganizationRole;
 import de.innovationhub.prox.userservice.organization.repository.OrganizationPanacheRepository;
 import io.quarkus.test.junit.QuarkusTest;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.UUID;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
@@ -18,8 +17,7 @@ import org.junit.jupiter.api.Test;
 @Transactional
 class OrganizationPanacheRepositoryTest {
 
-  @Inject
-  OrganizationPanacheRepository organizationPanacheRepository;
+  @Inject OrganizationPanacheRepository organizationPanacheRepository;
 
   @Test
   @Disabled("No pre-populated data source introduced")
@@ -36,9 +34,11 @@ class OrganizationPanacheRepositoryTest {
     var foundOrg = optFound.get();
 
     // TODO: Well isn't this more a mapping test?
-    Assertions.assertThat(foundOrg.getId()).isEqualTo(UUID.fromString("00000000-0000-0000-0000-00000000"));
+    Assertions.assertThat(foundOrg.getId())
+        .isEqualTo(UUID.fromString("00000000-0000-0000-0000-00000000"));
     Assertions.assertThat(foundOrg.getName()).isEqualTo("Musterfirma GmbH & Co. KG");
-    Assertions.assertThat(foundOrg.getOwner()).isEqualTo(UUID.fromString("00000000-0000-0000-0000-00000000"));
+    Assertions.assertThat(foundOrg.getOwner())
+        .isEqualTo(UUID.fromString("00000000-0000-0000-0000-00000000"));
     Assertions.assertThat(foundOrg.getMembers()).hasSize(1);
   }
 
@@ -47,7 +47,8 @@ class OrganizationPanacheRepositoryTest {
     // Given
     var owner = UUID.randomUUID();
     var member = UUID.randomUUID();
-    var org = new Organization(UUID.randomUUID(), "Musterfirma GmbH & Co. KG", owner, new HashMap<>());
+    var org =
+        new Organization(UUID.randomUUID(), "Musterfirma GmbH & Co. KG", owner, new HashMap<>());
     org.getMembers().put(member, new OrganizationMembership(OrganizationRole.MEMBER));
 
     // WHen

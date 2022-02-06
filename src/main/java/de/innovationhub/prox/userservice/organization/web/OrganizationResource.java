@@ -20,7 +20,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
-import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
 
 @Path("organizations")
@@ -45,10 +44,11 @@ public class OrganizationResource {
   @Path("{id}")
   @Produces(MediaType.APPLICATION_JSON)
   public OrganizationDto findById(@PathParam(value = "id") UUID id) {
-    if(id == null) {
+    if (id == null) {
       throw new WebApplicationException("Provided ID is null", 400);
     }
-    return this.organizationService.findById(id)
+    return this.organizationService
+        .findById(id)
         .orElseThrow(() -> new WebApplicationException(404));
   }
 
@@ -59,9 +59,8 @@ public class OrganizationResource {
   @Produces(MediaType.APPLICATION_JSON)
   @Consumes(MediaType.APPLICATION_JSON)
   public OrganizationMembershipDto addOrganizationMember(
-      @PathParam("id") UUID organizationId,
-      @RequestBody OrganizationMembershipDto memberDto
-  ) {;
+      @PathParam("id") UUID organizationId, @RequestBody OrganizationMembershipDto memberDto) {
+    ;
     try {
       return this.organizationService.setOrganizationMembership(organizationId, memberDto);
     } catch (ForbiddenOrganizationAccessException e) {
@@ -79,8 +78,7 @@ public class OrganizationResource {
   public OrganizationMembershipDto updateOrganizationMember(
       @PathParam("id") UUID organizationId,
       @PathParam("memberId") UUID memberId,
-      @RequestBody OrganizationMembershipDto updateDto
-  ) {
+      @RequestBody OrganizationMembershipDto updateDto) {
     updateDto = new OrganizationMembershipDto(memberId, updateDto.role());
 
     try {
@@ -99,9 +97,7 @@ public class OrganizationResource {
   @Produces(MediaType.APPLICATION_JSON)
   @Consumes(MediaType.APPLICATION_JSON)
   public void removeOrganizationMember(
-      @PathParam("id") UUID organizationId,
-      @PathParam("memberId") UUID memberId
-  ) {
+      @PathParam("id") UUID organizationId, @PathParam("memberId") UUID memberId) {
     try {
       this.organizationService.deleteOrganizationMembership(organizationId, memberId);
     } catch (ForbiddenOrganizationAccessException e) {

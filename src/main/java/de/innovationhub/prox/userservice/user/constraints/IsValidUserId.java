@@ -13,12 +13,11 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 import javax.validation.Constraint;
 import javax.validation.Payload;
-import javax.validation.constraints.Email;
 
-@Target({ METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER, TYPE_USE })
+@Target({METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER, TYPE_USE})
 @Retention(RUNTIME)
 @Documented
-@Constraint(validatedBy = { IsValidUserIdConstraintValidator.class })
+@Constraint(validatedBy = {IsValidUserIdConstraintValidator.class})
 public @interface IsValidUserId {
   String message() default "{de.innovationhub.prox.userservice.user.constraints.IsValidUserId}";
 

@@ -14,7 +14,7 @@ public interface UserMapper {
   UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
 
   @Mapping(target = "id", expression = "java( UUID.fromString(representation.getId()) )")
-  @Mapping(target = "name",source = "representation", qualifiedByName = "parseName")
+  @Mapping(target = "name", source = "representation", qualifiedByName = "parseName")
   UserResponseDto toDto(UserRepresentation representation);
 
   Set<UserResponseDto> toDtoSet(Stream<UserRepresentation> users);
@@ -25,7 +25,7 @@ public interface UserMapper {
     var lastName = representation.getLastName();
 
     // Defaulting to username
-    if(firstName == null && lastName == null) {
+    if (firstName == null && lastName == null) {
       return representation.getUsername();
     }
 

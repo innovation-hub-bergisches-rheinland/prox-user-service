@@ -6,11 +6,4 @@ import java.util.UUID;
 import javax.validation.constraints.NotNull;
 
 public record OrganizationMembershipDto(
-    @IsValidUserId
-    @NotNull
-    UUID member,
-    @NotNull
-    OrganizationRole role
-) {
-
-}
+    @IsValidUserId @NotNull UUID member, @NotNull OrganizationRole role) {}

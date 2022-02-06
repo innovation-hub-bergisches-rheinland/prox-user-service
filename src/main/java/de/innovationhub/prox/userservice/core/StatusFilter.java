@@ -12,11 +12,12 @@ import javax.ws.rs.ext.Provider;
 public class StatusFilter implements ContainerResponseFilter {
 
   @Override
-  public void filter(ContainerRequestContext requestContext,
-      ContainerResponseContext responseContext) throws IOException {
-    if(responseContext.getStatus() == 200) {
-      for(Annotation annotation : responseContext.getEntityAnnotations()) {
-        if(annotation instanceof Status) {
+  public void filter(
+      ContainerRequestContext requestContext, ContainerResponseContext responseContext)
+      throws IOException {
+    if (responseContext.getStatus() == 200) {
+      for (Annotation annotation : responseContext.getEntityAnnotations()) {
+        if (annotation instanceof Status) {
           responseContext.setStatus(((Status) annotation).value());
           break;
         }

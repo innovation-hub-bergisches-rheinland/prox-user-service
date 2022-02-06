@@ -1,10 +1,7 @@
 package de.innovationhub.prox.userservice.organization.entity;
 
-import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
@@ -45,13 +42,8 @@ public class Organization {
   @ElementCollection(fetch = FetchType.EAGER)
   @CollectionTable(
       name = "organization_memberships",
-      joinColumns = {
-          @JoinColumn(name = "organization_id", referencedColumnName = "id")
-      },
-      uniqueConstraints = {
-          @UniqueConstraint(columnNames = {"user_id", "organization_id"})
-      }
-  )
+      joinColumns = {@JoinColumn(name = "organization_id", referencedColumnName = "id")},
+      uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id", "organization_id"})})
   @MapKeyColumn(name = "user_id")
   @Builder.Default
   private Map<UUID, OrganizationMembership> members = new HashMap<>();

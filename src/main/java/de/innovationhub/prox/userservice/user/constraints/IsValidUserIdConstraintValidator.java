@@ -12,8 +12,7 @@ public class IsValidUserIdConstraintValidator implements ConstraintValidator<IsV
   private final KeycloakService keycloakService;
 
   @Inject
-  public IsValidUserIdConstraintValidator(
-      KeycloakService keycloakService) {
+  public IsValidUserIdConstraintValidator(KeycloakService keycloakService) {
     this.keycloakService = keycloakService;
   }
 

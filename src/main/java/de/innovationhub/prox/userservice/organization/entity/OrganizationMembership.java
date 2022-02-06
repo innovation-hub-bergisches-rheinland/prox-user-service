@@ -1,6 +1,5 @@
 package de.innovationhub.prox.userservice.organization.entity;
 
-import java.util.UUID;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import lombok.AccessLevel;

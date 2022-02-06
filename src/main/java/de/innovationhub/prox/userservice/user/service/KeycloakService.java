@@ -1,7 +1,7 @@
 package de.innovationhub.prox.userservice.user.service;
 
-import de.innovationhub.prox.userservice.user.dto.UserResponseDto;
 import de.innovationhub.prox.userservice.user.dto.UserMapper;
+import de.innovationhub.prox.userservice.user.dto.UserResponseDto;
 import io.quarkus.cache.CacheResult;
 import java.util.Optional;
 import java.util.UUID;
@@ -18,8 +18,7 @@ public class KeycloakService {
   private final UserMapper userMapper;
 
   @Inject
-  public KeycloakService(RealmResource realmResource,
-      UserMapper userMapper) {
+  public KeycloakService(RealmResource realmResource, UserMapper userMapper) {
     this.realmResource = realmResource;
     this.usersResource = realmResource.users();
     this.userMapper = userMapper;
