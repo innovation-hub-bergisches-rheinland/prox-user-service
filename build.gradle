@@ -139,6 +139,11 @@ spotless {
 	}
 }
 
+// Disable the spotlessCheck - We're checking manually in the Pipeline or separate task
+tasks.named('spotlessCheck').configure {
+	enabled  = false
+}
+
 tasks.named('sonarqube').configure {
 	dependsOn test
 }
