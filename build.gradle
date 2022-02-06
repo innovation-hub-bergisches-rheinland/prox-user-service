@@ -126,9 +126,6 @@ idea {
 spotless {
 	encoding 'UTF-8'
 
-	freshmark {
-		target '*.md'
-	}
 	java {
 		importOrder()
 		removeUnusedImports()
@@ -139,12 +136,6 @@ spotless {
 	groovyGradle {
 		target '*.gradle'
 		greclipse('4.21.0')
-	}
-	format 'styling', {
-		target '*.js', '*.ts', '*.css', '*.scss', '*.json', '*.md', '*.html', '*.yml', '*.yaml', '*.sql'
-		prettier('2.5.0').config([
-			'tabWidth': 2
-		])
 	}
 }
 
