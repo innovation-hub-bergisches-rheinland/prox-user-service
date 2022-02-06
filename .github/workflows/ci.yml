@@ -50,7 +50,7 @@ jobs:
 
       - name: Gradle Assemble
         run: |
-          ./gradlew --stacktrace assemble
+          ./gradlew --stacktrace assemble --no-daemon
 
   test:
 
@@ -70,7 +70,7 @@ jobs:
 
       - name: Gradle test
         run: |
-          ./gradlew --stacktrace test
+          ./gradlew --stacktrace test --no-daemon
 
       - name: Upload Test Report
         uses: actions/upload-artifact@v2
@@ -99,7 +99,7 @@ jobs:
 
       - name: Gradle Codestyle Check
         run: |
-          ./gradlew --stacktrace spotlessCheck
+          ./gradlew --stacktrace spotlessCheck --no-daemon
 
   sonarcloud:
     name: SonarCloud analysis
@@ -131,7 +131,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: ./gradlew jacocoTestReport sonarqube --stacktrace -i
+        run: ./gradlew jacocoTestReport sonarqube --stacktrace -i --no-daemon
 
 
   build-image:
@@ -151,56 +151,49 @@ jobs:
           distribution: temurin
           cache: 'gradle'
 
-      - name: Jib Docker Build
-        run: ./gradlew build -Dquarkus.container-image.build=true
+      - name: Build Docker Image
+        run: ./gradlew build -Dquarkus.container-image.build=true --no-daemon
 
-#  release:
-#    name: Release
-#
-#    needs: [ validation, test, build-image ]
-#
-#    # Only run if a tag is created
-#    if: startsWith(github.ref, 'refs/tags/v')
-#
-#    runs-on: ubuntu-latest
-#
-#    steps:
-#      - name: Checkout Repository
-#        uses: actions/checkout@v2
-#
-#      - name: Set up JDK ${{ env.JAVA_VERSION }}
-#        uses: actions/setup-java@v2
-#        with:
-#          java-version: ${{ env.JAVA_VERSION }}
-#          distribution: 'temurin'
-#          cache: 'maven'
-#
-#      - name: Login to Quay
-#        uses: docker/login-action@v1
-#        with:
-#          registry: quay.io
-#          username: ${{ secrets.QUAY_IO_USERNAME }}
-#          password: ${{ secrets.QUAY_IO_PASSWORD }}
-#
-#      - name: Get Project version
-#        id: project
-#        run: |
-#          echo ::set-output name=version::$(cat version.txt)
-#
-#      - name: Download build
-#        uses: actions/download-artifact@v2
-#        with:
-#          path: ./target
-#          name: maven-target.zip
-#
-#      - name: Maven Deploy
-#        run: |
-#          mvn -nsu -B -e -Prelease -DskipTests -Djib.to.tags=latest,${{ steps.project.outputs.version }} deploy
-#
-#      - name: Publish Helm charts
-#        uses: stefanprodan/helm-gh-pages@master
-#        with:
-#          token: ${{ secrets.GITHUB_TOKEN }}
-#          charts_dir: ./deploy/charts
-#          app_version: ${{ steps.project.outputs.version }}
-#          chart_version: ${{ steps.project.outputs.version }}
+  release:
+    name: Release
+
+    needs: [ validation, test, build-image ]
+
+    # Only run if a tag is created
+    if: startsWith(github.ref, 'refs/tags/v')
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Set up JDK ${{ env.JAVA_VERSION }}
+        uses: actions/setup-java@v2
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: 'temurin'
+          cache: 'gradle'
+
+      - name: Login to Quay
+        uses: docker/login-action@v1
+        with:
+          registry: quay.io
+          username: ${{ secrets.QUAY_IO_USERNAME }}
+          password: ${{ secrets.QUAY_IO_PASSWORD }}
+
+      - name: Get Project version
+        id: project
+        run: |
+          echo ::set-output name=version::$(cat version.txt)
+
+      - name: Build and Push Docker Image
+        run: ./gradlew build -Dquarkus.container-image.build=true -Dquarkus.container-image.push=true --no-daemon
+
+      - name: Publish Helm charts
+        uses: stefanprodan/helm-gh-pages@master
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          charts_dir: ./deploy/charts
+          app_version: ${{ steps.project.outputs.version }}
+          chart_version: ${{ steps.project.outputs.version }}
