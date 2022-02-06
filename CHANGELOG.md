@@ -2,6 +2,35 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## 1.0.0 (2022-02-06)
+
+
+### ⚠ BREAKING CHANGES
+
+* add a basis for the quarkus implementation
+
+### Features
+
+* add api for updating membership ([0b59eb5](https://github.com/innovation-hub-bergisches-rheinland/prox-user-service/commit/0b59eb598050ceec6d02b33d73ac2906c77d420e))
+* add functionality to add and remove members ([ef75919](https://github.com/innovation-hub-bergisches-rheinland/prox-user-service/commit/ef759190cbb7a387286f18176156fd834208d3dc))
+* add keycloak admin client bean ([11df4c0](https://github.com/innovation-hub-bergisches-rheinland/prox-user-service/commit/11df4c0252671853f11d5a6958fcfa5ff1c05d76))
+* add keycloak implementation for a user repo ([79173a4](https://github.com/innovation-hub-bergisches-rheinland/prox-user-service/commit/79173a4959371d593f416ae9386d94c11f6c253e))
+* add mapstruct and dto mappers ([97b824c](https://github.com/innovation-hub-bergisches-rheinland/prox-user-service/commit/97b824c3c8155a8fe3155c33af69779abdbdd1a5))
+* create organization ([b19fd46](https://github.com/innovation-hub-bergisches-rheinland/prox-user-service/commit/b19fd4634efe02c863b07f24b617ff70e3d876f4))
+* implement create organization api ([a7f1f62](https://github.com/innovation-hub-bergisches-rheinland/prox-user-service/commit/a7f1f621a82efd40186a3fdb3bee8ce2fcbda8d3))
+* validate user id against keycloak ([fb6070b](https://github.com/innovation-hub-bergisches-rheinland/prox-user-service/commit/fb6070b93776d59d91cc13fc616d94b491eaa388))
+
+
+### Bug Fixes
+
+* change to new keycloak deployment ([930dcf2](https://github.com/innovation-hub-bergisches-rheinland/prox-user-service/commit/930dcf2930e43b35b0779ae0f30843dd0a30ccb6))
+* export required javac modules for spotless ([53548e9](https://github.com/innovation-hub-bergisches-rheinland/prox-user-service/commit/53548e99bc14c6881e2fdd0e253fabfffde26dad))
+
+
+### build
+
+* add a basis for the quarkus implementation ([ab5b603](https://github.com/innovation-hub-bergisches-rheinland/prox-user-service/commit/ab5b60398ff7750bd9c8b41ba72650b07d92710c))
+
 ## 1.0.0 (2021-12-11)
 
 ### Bug Fixes
