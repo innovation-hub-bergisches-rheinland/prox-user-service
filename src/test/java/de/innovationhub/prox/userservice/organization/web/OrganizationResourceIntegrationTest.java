@@ -1,10 +1,8 @@
 package de.innovationhub.prox.userservice.organization.web;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.tuple;
 import static org.hamcrest.Matchers.*;
 
-import de.innovationhub.prox.userservice.organization.dto.response.ViewOrganizationMembershipDto;
 import de.innovationhub.prox.userservice.organization.entity.Organization;
 import de.innovationhub.prox.userservice.organization.entity.OrganizationMembership;
 import de.innovationhub.prox.userservice.organization.entity.OrganizationRole;
@@ -213,25 +211,30 @@ public class OrganizationResourceIntegrationTest {
     dummyOrg.getMembers().put(julianBradenId, new OrganizationMembership(OrganizationRole.ADMIN));
     this.organizationRepository.save(dummyOrg);
 
-    var response =
-        RestAssured.given()
-            .contentType("application/json")
-            .accept("application/json")
-            .auth()
-            .oauth2(keycloakTestClient.getAccessToken("alice"))
-            .when()
-            .get("{id}/memberships", orgId.toString())
-            .then()
-            .statusCode(200)
-            .extract()
-            .jsonPath()
-            .getList("members", ViewOrganizationMembershipDto.class);
-
-    assertThat(response)
-        .hasSize(2)
-        .extracting("memberId", "name", "role")
-        .containsExactlyInAnyOrder(
-            tuple(bobId, "bob", OrganizationRole.MEMBER),
-            tuple(julianBradenId, "Julian Braden", OrganizationRole.ADMIN));
+    RestAssured.given()
+        .contentType("application/json")
+        .accept("application/json")
+        .auth()
+        .oauth2(keycloakTestClient.getAccessToken("alice"))
+        .when()
+        .get("{id}/memberships", orgId.toString())
+        .then()
+        .statusCode(200)
+        .body("members", hasSize(2))
+        .body("members", everyItem(hasKey("memberId")))
+        .body("members", everyItem(hasKey("name")))
+        .body("members", everyItem(hasKey("role")))
+        .body(
+            "members.find { it.memberId == 'ed0b4a07-2612-4571-a9ab-27e13ce752f1' }.name",
+            is("bob"))
+        .body(
+            "members.find { it.memberId == 'ed0b4a07-2612-4571-a9ab-27e13ce752f1' }.role",
+            is("MEMBER"))
+        .body(
+            "members.find { it.memberId == '64788f0d-a954-4898-bfda-7498aae2b271' }.name",
+            is("Julian Braden"))
+        .body(
+            "members.find { it.memberId == '64788f0d-a954-4898-bfda-7498aae2b271' }.role",
+            is("ADMIN"));
   }
 }
