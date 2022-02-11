@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.0.5](https://github.com/innovation-hub-bergisches-rheinland/prox-user-service/compare/v1.0.4...v1.0.5) (2022-02-11)
+
+
+### Bug Fixes
+
+* fix keycloak-client-secret key ([dac088e](https://github.com/innovation-hub-bergisches-rheinland/prox-user-service/commit/dac088e6c22f9f0be2e748fc3e71b6817cf4a83f))
+
 ### [1.0.4](https://github.com/innovation-hub-bergisches-rheinland/prox-user-service/compare/v1.0.3...v1.0.4) (2022-02-11)
 
 
