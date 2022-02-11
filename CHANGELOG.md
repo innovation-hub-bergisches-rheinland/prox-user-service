@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.0.1](https://github.com/innovation-hub-bergisches-rheinland/prox-user-service/compare/v1.0.0...v1.0.1) (2022-02-11)
+
+
+### Bug Fixes
+
+* fix rolebinding template ([966a543](https://github.com/innovation-hub-bergisches-rheinland/prox-user-service/commit/966a5431a9a3fa4b652c5853346bcba3c9d045ac))
+
 ## 1.0.0 (2022-02-06)
 
 
