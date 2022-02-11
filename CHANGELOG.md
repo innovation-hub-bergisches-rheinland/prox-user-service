@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.0.2](https://github.com/innovation-hub-bergisches-rheinland/prox-user-service/compare/v1.0.1...v1.0.2) (2022-02-11)
+
+
+### Bug Fixes
+
+* helm template ([fc70b28](https://github.com/innovation-hub-bergisches-rheinland/prox-user-service/commit/fc70b28157e0d1a8c90086f0fa5ca83dc6338744))
+* update config map and secret casing ([c201ce6](https://github.com/innovation-hub-bergisches-rheinland/prox-user-service/commit/c201ce6faaa5f97da9dfeb1f17e1a0d9b1bec743))
+
 ### [1.0.1](https://github.com/innovation-hub-bergisches-rheinland/prox-user-service/compare/v1.0.0...v1.0.1) (2022-02-11)
 
 
