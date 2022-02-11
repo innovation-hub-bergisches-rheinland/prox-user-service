@@ -64,10 +64,10 @@ Create the name of the service account to use
 {{/*
 Looks if there's an existing secret and reuse its password. If not it generates a new password and uses it.
 */}}
-{{- define "prox-user-service.databaseUser" -}}
+{{- define "prox-user-service.database-user" -}}
 {{- $secret := (lookup "v1" "Secret" .Release.Namespace (include "prox-user-service.fullname" .) ) -}}
   {{- if $secret -}}
-    {{-  index $secret "data" "databaseUser" -}}
+    {{-  index $secret "data" "database-user" -}}
   {{- else -}}
     {{- "postgres" -}}
   {{- end -}}
@@ -76,10 +76,10 @@ Looks if there's an existing secret and reuse its password. If not it generates 
 {{/*
 Looks if there's an existing secret and reuse its password. If not it generates a new password and uses it.
 */}}
-{{- define "prox-user-service.databasePassword" -}}
+{{- define "prox-user-service.database-password" -}}
 {{- $secret := (lookup "v1" "Secret" .Release.Namespace (include "prox-user-service.fullname" .) ) -}}
   {{- if $secret -}}
-    {{-  index $secret "data" "databasePassword" -}}
+    {{-  index $secret "data" "database-password" -}}
   {{- else -}}
     {{- (randAlphaNum 40) | b64enc | quote -}}
   {{- end -}}
@@ -88,10 +88,10 @@ Looks if there's an existing secret and reuse its password. If not it generates 
 {{/*
 Looks if there's an existing secret and reuse its password. If not it generates a new password and uses it.
 */}}
-{{- define "prox-user-service.keycloakClientSecret" -}}
+{{- define "prox-user-service.keycloak.client-secret" -}}
 {{- $secret := (lookup "v1" "Secret" .Release.Namespace (include "prox-user-service.fullname" .) ) -}}
   {{- if $secret -}}
-    {{-  index $secret "data" "superUserPassword" -}}
+    {{-  index $secret "data" "keycloak.client-secret" -}}
   {{- else -}}
     {{- uuidv4 | quote -}}
   {{- end -}}
@@ -100,10 +100,10 @@ Looks if there's an existing secret and reuse its password. If not it generates 
 {{/*
 Looks if there's an existing secret and reuse its password. If not it generates a new password and uses it.
 */}}
-{{- define "prox-user-service.replicationUserPassword" -}}
+{{- define "prox-user-service.replication-user-password" -}}
 {{- $secret := (lookup "v1" "Secret" .Release.Namespace (include "prox-user-service.fullname" .) ) -}}
   {{- if $secret -}}
-    {{-  index $secret "data" "replicationUserPassword" -}}
+    {{-  index $secret "data" "replication-user-password" -}}
   {{- else -}}
     {{- (randAlphaNum 40) | b64enc | quote -}}
   {{- end -}}

@@ -6,10 +6,10 @@ metadata:
   labels:
     {{- include "prox-user-service.labels" . | nindent 4 }}
 data:
-  databaseHost: prox-user-service-db
-  databasePort: 5432
-  databaseName: postgres
-  keycloakServerUrl: https://login.aws.innovation-hub.de/auth
-  keycloakRealm: innovation-hub-bergisches-rheinland
-  keycloakClientId: prox-user-service
+  "database-host": prox-user-service-db
+  "database-port": 5432
+  "database-name": postgres
+  "keycloak.server-url": https://login.aws.innovation-hub.de/auth
+  "keycloak.realm": innovation-hub-bergisches-rheinland
+  "keycloak.client-id": prox-user-service
   {{- end }}
