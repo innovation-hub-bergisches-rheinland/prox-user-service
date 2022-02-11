@@ -1,7 +1,7 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
-  name: view-secrets
+  name: prox-user-service-view-secrets
 rules:
   - apiGroups:
       - ""
@@ -19,7 +19,7 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
-  name: view-configmaps
+  name: prox-user-service-view-configmaps
 rules:
   - apiGroups:
       - ""
@@ -39,9 +39,9 @@ kind: RoleBinding
 metadata:
   name: {{ include "prox-user-service.fullname" . }}-view
 roleRef:
-  kind: ClusterRole
+  kind: Role
   apiGroup: rbac.authorization.k8s.io
-  name: view-configmaps
+  name: prox-user-service-view-configmaps
 subjects:
   - kind: ServiceAccount
     name: {{ include "prox-user-service.serviceAccountName" . }}
@@ -53,7 +53,7 @@ metadata:
 roleRef:
   kind: Role
   apiGroup: rbac.authorization.k8s.io
-  name: view-secrets
+  name: prox-user-service-view-secrets
 subjects:
   - kind: ServiceAccount
     name: {{ include "prox-user-service.serviceAccountName" . }}
