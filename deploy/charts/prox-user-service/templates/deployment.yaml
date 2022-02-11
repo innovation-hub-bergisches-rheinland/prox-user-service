@@ -65,7 +65,7 @@ spec:
                 secretKeyRef:
                   key: keycloak.client-id
                   {{- if .Values.config.existingSecret }}
-                  name: { { .Values.config.existingSecret }}
+                  name: {{ .Values.config.existingSecret }}
                   {{- else }}
                   name: {{ include "prox-user-service.fullname" . }}
                   {{- end }}
