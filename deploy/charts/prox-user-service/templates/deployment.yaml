@@ -36,20 +36,39 @@ spec:
           env:
             - name: QUARKUS_KUBERNETES_CONFIG_ENABLED
               value: "true"
-            - name: QUARKUS_KUBERNETES_CONFIG_SECRETS_ENABLED
-              value: "true"
-            - name: QUARKUS_KUBERNETES_CONFIG_SECRETS
-              {{- if .Values.config.existingSecret }}
-              value: {{ .Values.config.existingSecret }}
-              {{- else }}
-              value: {{ include "prox-user-service.fullname" . }}
-              {{- end }}
             - name: QUARKUS_KUBERNETES_CONFIG_CONFIG_MAPS
               {{- if .Values.config.existingConfigMap }}
               value: {{ .Values.config.existingConfigMap }}
               {{- else }}
               value: {{ include "prox-user-service.fullname" . }}
               {{- end }}
+            - name: DATABASE_USER
+              valueFrom:
+                secretKeyRef:
+                  key: database-user
+                  {{- if .Values.config.existingSecret }}
+                  name: {{ .Values.config.existingSecret }}
+                  {{- else }}
+                  name: {{ include "prox-user-service.fullname" . }}
+                  {{- end }}
+            - name: DATABASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: database-password
+                  {{- if .Values.config.existingSecret }}
+                  name: {{ .Values.config.existingSecret }}
+                  {{- else }}
+                  name: {{ include "prox-user-service.fullname" . }}
+                  {{- end }}
+            - name: KEYCLOAK_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  key: keycloak.client-id
+                  {{- if .Values.config.existingSecret }}
+                  name: { { .Values.config.existingSecret }}
+                  {{- else }}
+                  name: {{ include "prox-user-service.fullname" . }}
+                  {{- end }}
           ports:
             - name: http
               containerPort: 8080
