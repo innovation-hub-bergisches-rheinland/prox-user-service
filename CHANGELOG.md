@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.0.3](https://github.com/innovation-hub-bergisches-rheinland/prox-user-service/compare/v1.0.2...v1.0.3) (2022-02-11)
+
+
+### Bug Fixes
+
+* disable kubernetes-config secret querying and use env mapping ([50802a1](https://github.com/innovation-hub-bergisches-rheinland/prox-user-service/commit/50802a1b971ebd9f98ca303e979be6ca35b82f6c))
+* template syntax ([e92717f](https://github.com/innovation-hub-bergisches-rheinland/prox-user-service/commit/e92717f0c54137a8c9bed2a871d60f8be9efb581))
+
 ### [1.0.2](https://github.com/innovation-hub-bergisches-rheinland/prox-user-service/compare/v1.0.1...v1.0.2) (2022-02-11)
 
 
