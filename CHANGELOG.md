@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.0.7](https://github.com/innovation-hub-bergisches-rheinland/prox-user-service/compare/v1.0.6...v1.0.7) (2022-02-14)
+
+
+### Bug Fixes
+
+* keycloak secret environment variable ([59419a8](https://github.com/innovation-hub-bergisches-rheinland/prox-user-service/commit/59419a8052cd746d35e888fa9e6405899114cd4d))
+
 ### [1.0.6](https://github.com/innovation-hub-bergisches-rheinland/prox-user-service/compare/v1.0.5...v1.0.6) (2022-02-14)
 
 
