@@ -60,7 +60,7 @@ spec:
                   {{- else }}
                   name: {{ include "prox-user-service.fullname" . }}
                   {{- end }}
-            - name: KEYCLOAK_CLIENT_ID
+            - name: KEYCLOAK_CLIENT_SECRET
               valueFrom:
                 secretKeyRef:
                   key: keycloak.client-secret
