@@ -9,6 +9,7 @@ import de.innovationhub.prox.userservice.organization.dto.response.ViewOrganizat
 import de.innovationhub.prox.userservice.organization.dto.response.ViewOrganizationMembershipDto;
 import de.innovationhub.prox.userservice.organization.entity.Organization;
 import de.innovationhub.prox.userservice.organization.entity.OrganizationMembership;
+import de.innovationhub.prox.userservice.organization.entity.OrganizationRole;
 import de.innovationhub.prox.userservice.organization.exception.ForbiddenOrganizationAccessException;
 import de.innovationhub.prox.userservice.organization.exception.OrganizationMembershipNotFoundException;
 import de.innovationhub.prox.userservice.organization.exception.OrganizationNotFoundException;
@@ -24,6 +25,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 import javax.validation.Valid;
+import javax.ws.rs.WebApplicationException;
 
 @ApplicationScoped
 public class OrganizationService {
@@ -55,11 +57,19 @@ public class OrganizationService {
   public ViewOrganizationMembershipDto createOrganizationMembership(
       UUID organizationId, @Valid CreateOrganizationMembershipDto request) {
     var org = findByIdOrThrow(organizationId);
+    // TODO: Admins?
     if (!org.getOwner().toString().equals(securityIdentity.getPrincipal().getName())) {
       throw new ForbiddenOrganizationAccessException();
     }
     var member = request.member();
-    var membership = new OrganizationMembership(request.role());
+    var role = request.role();
+
+    if (role.equals(OrganizationRole.OWNER)) {
+      // TODO: explicit exception / validation
+      throw new WebApplicationException(422);
+    }
+
+    var membership = new OrganizationMembership(role);
     org.getMembers().put(member, membership);
     this.organizationRepository.save(org);
 
@@ -70,8 +80,15 @@ public class OrganizationService {
   public ViewOrganizationMembershipDto updateOrganizationMembership(
       UUID organizationId, UUID memberId, @Valid UpdateOrganizationMembershipDto request) {
     var org = findByIdOrThrow(organizationId);
+    // TODO: Admins?
     if (!org.getOwner().toString().equals(securityIdentity.getPrincipal().getName())) {
       throw new ForbiddenOrganizationAccessException();
+    }
+    var role = request.role();
+
+    if (role.equals(OrganizationRole.OWNER)) {
+      // TODO: explicit exception / validation
+      throw new WebApplicationException(422);
     }
 
     var membership = org.getMembers().get(memberId);
@@ -79,7 +96,7 @@ public class OrganizationService {
       throw new OrganizationMembershipNotFoundException();
     }
 
-    membership.setRole(request.role());
+    membership.setRole(role);
     org.getMembers().put(memberId, membership);
     this.organizationRepository.save(org);
 
@@ -90,6 +107,7 @@ public class OrganizationService {
   @Transactional
   public void deleteOrganizationMembership(UUID organizationId, UUID memberId) {
     var org = findByIdOrThrow(organizationId);
+    // TODO: Admins?
     if (!org.getOwner().toString().equals(securityIdentity.getPrincipal().getName())) {
       throw new ForbiddenOrganizationAccessException();
     }
@@ -100,10 +118,14 @@ public class OrganizationService {
 
   public ViewAllOrganizationMembershipsDto getOrganizationMemberships(UUID organizationId) {
     var org = findByIdOrThrow(organizationId);
+    // TODO: Admins?
     if (!org.getOwner().toString().equals(securityIdentity.getPrincipal().getName())) {
       throw new ForbiddenOrganizationAccessException();
     }
 
+    var owner =
+        new ViewOrganizationMembershipDto(
+            org.getOwner(), resolveUserName(org.getOwner()), OrganizationRole.OWNER);
     var members =
         org.getMembers().entrySet().stream()
             .map(
@@ -113,6 +135,7 @@ public class OrganizationService {
                         resolveUserName(entry.getKey()),
                         entry.getValue().getRole()))
             .collect(Collectors.toList());
+    members.add(owner);
 
     return new ViewAllOrganizationMembershipsDto(members);
   }

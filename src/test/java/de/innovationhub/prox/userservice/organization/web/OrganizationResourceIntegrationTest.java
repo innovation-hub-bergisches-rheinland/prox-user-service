@@ -220,7 +220,7 @@ public class OrganizationResourceIntegrationTest {
         .get("{id}/memberships", orgId.toString())
         .then()
         .statusCode(200)
-        .body("members", hasSize(2))
+        .body("members", hasSize(3))
         .body("members", everyItem(hasKey("memberId")))
         .body("members", everyItem(hasKey("name")))
         .body("members", everyItem(hasKey("role")))
@@ -235,6 +235,12 @@ public class OrganizationResourceIntegrationTest {
             is("Julian Braden"))
         .body(
             "members.find { it.memberId == '64788f0d-a954-4898-bfda-7498aae2b271' }.role",
-            is("ADMIN"));
+            is("ADMIN"))
+        .body(
+            "members.find { it.memberId == '856ba1b6-ae45-4722-8fa5-212c7f71f10c' }.name",
+            is("alice"))
+        .body(
+            "members.find { it.memberId == '856ba1b6-ae45-4722-8fa5-212c7f71f10c' }.role",
+            is("OWNER"));
   }
 }

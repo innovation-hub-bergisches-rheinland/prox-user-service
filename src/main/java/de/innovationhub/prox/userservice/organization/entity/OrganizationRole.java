@@ -2,7 +2,8 @@ package de.innovationhub.prox.userservice.organization.entity;
 
 public enum OrganizationRole {
   MEMBER(0),
-  ADMIN(1);
+  ADMIN(1),
+  OWNER(2);
 
   private int priority;
 
