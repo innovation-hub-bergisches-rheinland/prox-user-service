@@ -14,8 +14,9 @@ import de.innovationhub.prox.userservice.organization.exception.ForbiddenOrganiz
 import de.innovationhub.prox.userservice.organization.exception.OrganizationMembershipNotFoundException;
 import de.innovationhub.prox.userservice.organization.exception.OrganizationNotFoundException;
 import de.innovationhub.prox.userservice.organization.repository.OrganizationRepository;
+import de.innovationhub.prox.userservice.user.constraints.IsValidUserId;
 import de.innovationhub.prox.userservice.user.dto.UserResponseDto;
-import de.innovationhub.prox.userservice.user.service.UserService;
+import de.innovationhub.prox.userservice.user.service.UserIdentityService;
 import io.quarkus.security.identity.SecurityIdentity;
 import java.util.List;
 import java.util.Optional;
@@ -32,20 +33,21 @@ public class OrganizationService {
   private final OrganizationRepository organizationRepository;
   private final OrganizationMapper organizationMapper;
   private final SecurityIdentity securityIdentity;
-  private final UserService userService;
+  private final UserIdentityService userIdentityService;
 
   @Inject
   public OrganizationService(
       OrganizationRepository organizationRepository,
       OrganizationMapper organizationMapper,
       SecurityIdentity securityIdentity,
-      UserService userService) {
+      UserIdentityService userIdentityService) {
     this.organizationRepository = organizationRepository;
     this.organizationMapper = organizationMapper;
     this.securityIdentity = securityIdentity;
-    this.userService = userService;
+    this.userIdentityService = userIdentityService;
   }
 
+  @Transactional
   public ViewOrganizationDto createOrganization(@Valid CreateOrganizationDto request) {
     var userId = UUID.fromString(securityIdentity.getPrincipal().getName());
     Organization org = this.organizationMapper.createFromDto(request, userId);
@@ -150,11 +152,20 @@ public class OrganizationService {
         .collect(Collectors.toList());
   }
 
+  public List<ViewOrganizationDto> findOrganizationsWhereUserIsMember(@IsValidUserId UUID userId) {
+    return this.organizationRepository.findAllWithUserAsMember(userId).stream()
+        .map(this.organizationMapper::toDto)
+        .collect(Collectors.toList());
+  }
+
   private Organization findByIdOrThrow(UUID id) {
     return organizationRepository.findById(id).orElseThrow(OrganizationNotFoundException::new);
   }
 
   private String resolveUserName(UUID id) {
-    return this.userService.findById(id).map(UserResponseDto::getName).orElse(id.toString());
+    return this.userIdentityService
+        .findById(id)
+        .map(UserResponseDto::getName)
+        .orElse(id.toString());
   }
 }

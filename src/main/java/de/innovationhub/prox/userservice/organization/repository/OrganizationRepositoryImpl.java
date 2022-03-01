@@ -4,6 +4,7 @@ import de.innovationhub.prox.userservice.organization.entity.Organization;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
@@ -27,6 +28,18 @@ public class OrganizationRepositoryImpl implements OrganizationRepository {
   @Transactional
   public List<Organization> findAll() {
     return organizationPanacheRepository.findAll().list();
+  }
+
+  @Override
+  @Transactional
+  public List<Organization> findAllWithUserAsMember(UUID id) {
+    // TODO: For whatever reason this doesn't work - it seems to be that the "or" operator is not
+    // used correctly
+    // return organizationPanacheRepository.find("from Organization o where (o.owner = ?1 or
+    // key(o.members) = ?1)", id).stream().distinct().toList();
+    return this.findAll().stream()
+        .filter(it -> it.getOwner().equals(id) || it.getMembers().containsKey(id))
+        .collect(Collectors.toList());
   }
 
   @Override

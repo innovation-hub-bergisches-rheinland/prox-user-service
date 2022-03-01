@@ -10,5 +10,7 @@ public interface OrganizationRepository {
 
   List<Organization> findAll();
 
+  List<Organization> findAllWithUserAsMember(UUID id);
+
   void save(Organization organization);
 }

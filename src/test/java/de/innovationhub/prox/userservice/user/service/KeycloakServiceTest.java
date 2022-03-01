@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test;
 @QuarkusTest
 class KeycloakServiceTest {
 
-  @Inject KeycloakUserService keycloakService;
+  @Inject KeycloakUserIdentityService keycloakService;
 
   @Test
   void shouldFindAliceWithId() {

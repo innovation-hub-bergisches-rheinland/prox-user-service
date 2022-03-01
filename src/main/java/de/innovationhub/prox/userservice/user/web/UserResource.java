@@ -1,7 +1,7 @@
 package de.innovationhub.prox.userservice.user.web;
 
 import de.innovationhub.prox.userservice.user.dto.UserResponseDto;
-import de.innovationhub.prox.userservice.user.service.UserService;
+import de.innovationhub.prox.userservice.user.service.UserIdentityService;
 import io.quarkus.security.Authenticated;
 import java.util.UUID;
 import javax.inject.Inject;
@@ -13,24 +13,24 @@ import javax.ws.rs.WebApplicationException;
 
 @Path("users")
 public class UserResource {
-  private final UserService userService;
+  private final UserIdentityService userIdentityService;
 
   @Inject
-  public UserResource(UserService userService) {
-    this.userService = userService;
+  public UserResource(UserIdentityService userIdentityService) {
+    this.userIdentityService = userIdentityService;
   }
 
   @GET
   @Authenticated
   @Path("search")
   public Iterable<UserResponseDto> findUser(@QueryParam("q") String searchQuery) {
-    return this.userService.search(searchQuery);
+    return this.userIdentityService.search(searchQuery);
   }
 
   @GET
   @Authenticated
   @Path("{id}")
   public UserResponseDto getKeycloakService(@PathParam("id") UUID id) {
-    return userService.findById(id).orElseThrow(() -> new WebApplicationException(404));
+    return userIdentityService.findById(id).orElseThrow(() -> new WebApplicationException(404));
   }
 }

@@ -12,13 +12,13 @@ import org.keycloak.admin.client.resource.RealmResource;
 import org.keycloak.admin.client.resource.UsersResource;
 
 @ApplicationScoped
-public class KeycloakUserService implements UserService {
+public class KeycloakUserIdentityService implements UserIdentityService {
   private final RealmResource realmResource;
   private final UsersResource usersResource;
   private final UserMapper userMapper;
 
   @Inject
-  public KeycloakUserService(RealmResource realmResource, UserMapper userMapper) {
+  public KeycloakUserIdentityService(RealmResource realmResource, UserMapper userMapper) {
     this.realmResource = realmResource;
     this.usersResource = realmResource.users();
     this.userMapper = userMapper;

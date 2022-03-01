@@ -1,6 +1,6 @@
 package de.innovationhub.prox.userservice.user.constraints;
 
-import de.innovationhub.prox.userservice.user.service.UserService;
+import de.innovationhub.prox.userservice.user.service.UserIdentityService;
 import java.util.UUID;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -9,15 +9,15 @@ import javax.validation.ConstraintValidatorContext;
 
 @ApplicationScoped
 public class IsValidUserIdConstraintValidator implements ConstraintValidator<IsValidUserId, UUID> {
-  private final UserService userService;
+  private final UserIdentityService userIdentityService;
 
   @Inject
-  public IsValidUserIdConstraintValidator(UserService userService) {
-    this.userService = userService;
+  public IsValidUserIdConstraintValidator(UserIdentityService userIdentityService) {
+    this.userIdentityService = userIdentityService;
   }
 
   @Override
   public boolean isValid(UUID value, ConstraintValidatorContext context) {
-    return this.userService.existsById(value);
+    return this.userIdentityService.existsById(value);
   }
 }
