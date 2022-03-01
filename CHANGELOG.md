@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.1.0](https://github.com/innovation-hub-bergisches-rheinland/prox-user-service/compare/v1.0.8...v1.1.0) (2022-03-01)
+
+
+### Features
+
+* add api to query authenticated users organizations ([addeae6](https://github.com/innovation-hub-bergisches-rheinland/prox-user-service/commit/addeae651eb35be352bc9411da5019f488652894))
+
 ### [1.0.8](https://github.com/innovation-hub-bergisches-rheinland/prox-user-service/compare/v1.0.7...v1.0.8) (2022-02-26)
 
 
