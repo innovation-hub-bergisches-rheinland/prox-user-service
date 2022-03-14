@@ -69,6 +69,24 @@ spec:
                   {{- else }}
                   name: {{ include "prox-user-service.fullname" . }}
                   {{- end }}
+            - name: AWS_CREDENTIALS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  key: aws.credentials.access-key-id
+                  {{- if .Values.config.existingSecret }}
+                  name: {{ .Values.config.existingSecret }}
+                  {{- else }}
+                  name: {{ include "prox-user-service.fullname" . }}
+                  {{- end }}
+            - name: AWS_CREDENTIALS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  key: aws.credentials.secret-access-key
+                  {{- if .Values.config.existingSecret }}
+                  name: {{ .Values.config.existingSecret }}
+                  {{- else }}
+                  name: {{ include "prox-user-service.fullname" . }}
+                  {{- end }}
           ports:
             - name: http
               containerPort: 8080

@@ -108,3 +108,27 @@ Looks if there's an existing secret and reuse its password. If not it generates 
     {{- (randAlphaNum 40) | b64enc | quote -}}
   {{- end -}}
 {{- end -}}
+
+{{/*
+Looks if there's an existing secret and reuse its password. If not it generates a new password and uses it.
+*/}}
+{{- define "prox-user-service.aws.credentials.access-key-id" -}}
+{{- $secret := (lookup "v1" "Secret" .Release.Namespace (include "prox-user-service.fullname" .) ) -}}
+  {{- if $secret -}}
+    {{-  index $secret "data" "aws.credentials.access-key-id" -}}
+  {{- else -}}
+    {{- (randAlphaNum 40) | b64enc | quote -}}
+  {{- end -}}
+{{- end -}}
+
+{{/*
+Looks if there's an existing secret and reuse its password. If not it generates a new password and uses it.
+*/}}
+{{- define "prox-user-service.aws.credentials.secret-access-key" -}}
+{{- $secret := (lookup "v1" "Secret" .Release.Namespace (include "prox-user-service.fullname" .) ) -}}
+  {{- if $secret -}}
+    {{-  index $secret "data" "aws.credentials.secret-access-key" -}}
+  {{- else -}}
+    {{- (randAlphaNum 40) | b64enc | quote -}}
+  {{- end -}}
+{{- end -}}
