@@ -50,7 +50,8 @@ class OrganizationRepositoryTest {
     var owner = UUID.randomUUID();
     var member = UUID.randomUUID();
     var org =
-        new Organization(UUID.randomUUID(), "Musterfirma GmbH & Co. KG", owner, new HashMap<>());
+        new Organization(
+            UUID.randomUUID(), "Musterfirma GmbH & Co. KG", owner, new HashMap<>(), null);
     org.getMembers().put(member, new OrganizationMembership(OrganizationRole.MEMBER));
 
     // WHen
