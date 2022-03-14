@@ -152,7 +152,8 @@ public class OrganizationResourceIntegrationTest {
                 new Quarter("Gummersbach"),
                 Set.of(new Quarter("Abu Dhabi")),
                 Set.of(new Branch("Automotive"), new Branch("Quality Assurance")),
-                new SocialMedia("acmeLtd", "acmeLtd", "acmeLtd", "acmeLtd", "acmeLtd")));
+                new SocialMedia("acmeLtd", "acmeLtd", "acmeLtd", "acmeLtd", "acmeLtd")),
+            null);
     this.organizationRepository.save(dummyOrg);
 
     RestAssured.given()
