@@ -1,8 +1,10 @@
 package de.innovationhub.prox.userservice.organization.entity;
 
+import de.innovationhub.prox.userservice.organization.entity.profile.OrganizationProfile;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
@@ -11,6 +13,7 @@ import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.MapKeyColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import lombok.AccessLevel;
@@ -49,4 +52,7 @@ public class Organization {
   @MapKeyColumn(name = "user_id")
   @Builder.Default
   private Map<UUID, OrganizationMembership> members = new HashMap<>();
+
+  @OneToOne(cascade = CascadeType.ALL, mappedBy = "organization")
+  private OrganizationProfile profile;
 }
