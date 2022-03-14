@@ -1,5 +1,6 @@
 package de.innovationhub.prox.userservice.organization.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.innovationhub.prox.userservice.organization.entity.profile.OrganizationProfile;
 import java.util.HashMap;
 import java.util.Map;
@@ -53,4 +54,6 @@ public class Organization {
   private Map<UUID, OrganizationMembership> members = new HashMap<>();
 
   @Embedded private OrganizationProfile profile;
+
+  @Embedded @JsonIgnore private OrganizationAvatar avatar;
 }

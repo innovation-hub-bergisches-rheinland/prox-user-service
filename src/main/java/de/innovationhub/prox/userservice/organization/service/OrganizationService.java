@@ -12,6 +12,7 @@ import de.innovationhub.prox.userservice.organization.dto.response.ViewAllOrgani
 import de.innovationhub.prox.userservice.organization.dto.response.ViewOrganizationDto;
 import de.innovationhub.prox.userservice.organization.dto.response.ViewOrganizationMembershipDto;
 import de.innovationhub.prox.userservice.organization.entity.Organization;
+import de.innovationhub.prox.userservice.organization.entity.OrganizationAvatar;
 import de.innovationhub.prox.userservice.organization.entity.OrganizationMembership;
 import de.innovationhub.prox.userservice.organization.entity.OrganizationRole;
 import de.innovationhub.prox.userservice.organization.exception.ForbiddenOrganizationAccessException;
@@ -82,12 +83,19 @@ public class OrganizationService {
 
   public FileObject getOrganizationAvatar(UUID orgId) throws IOException {
     try {
-      return objectStoreRepository.getObject(AVATAR_KEY_PREFIX + "/" + orgId.toString());
+      var org = findByIdOrThrow(orgId);
+      var avatar = org.getAvatar();
+
+      if (avatar == null || avatar.getKey() == null || avatar.getKey().isBlank())
+        throw new WebApplicationException(404);
+
+      return objectStoreRepository.getObject(avatar.getKey());
     } catch (ObjectNotFoundException e) {
       throw new WebApplicationException(404);
     }
   }
 
+  @Transactional
   public void setOrganizationAvatar(UUID orgId, FormDataBody formDataBody) throws IOException {
     var org = findByIdOrThrow(orgId);
     // TODO: Admins?
@@ -102,7 +110,10 @@ public class OrganizationService {
             AVATAR_KEY_PREFIX + "/" + orgId.toString(),
             URLConnection.guessContentTypeFromStream(new ByteArrayInputStream(bytes)),
             bytes);
+
     objectStoreRepository.saveObject(fileObject);
+    org.setAvatar(new OrganizationAvatar(fileObject.getKey()));
+    organizationRepository.save(org);
   }
 
   @Transactional
