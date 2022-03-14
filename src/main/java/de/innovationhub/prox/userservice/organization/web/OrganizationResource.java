@@ -57,6 +57,7 @@ public class OrganizationResource {
   }
 
   @PUT
+  @Authenticated
   @Path("{id}")
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
@@ -65,9 +66,7 @@ public class OrganizationResource {
     if (id == null) {
       throw new WebApplicationException("Provided ID is null", 400);
     }
-    return this.organizationService
-        .findById(id)
-        .orElseThrow(() -> new WebApplicationException(404));
+    return this.organizationService.updateOrganization(id, jsonRequest);
   }
 
   @GET
