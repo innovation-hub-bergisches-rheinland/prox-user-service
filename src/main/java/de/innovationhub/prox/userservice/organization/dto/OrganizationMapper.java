@@ -11,6 +11,7 @@ import de.innovationhub.prox.userservice.organization.entity.profile.Quarter;
 import java.util.UUID;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
 
 @Mapper(
     componentModel = "cdi",
@@ -18,11 +19,13 @@ import org.mapstruct.Mapping;
 public interface OrganizationMapper {
   ViewOrganizationDto toDto(Organization organization);
 
+  void updateOrganization(@MappingTarget Organization organization, CreateOrganizationDto dto);
+
   @Mapping(target = "id", expression = "java( UUID.randomUUID() )")
   @Mapping(target = "name", source = "dto.name")
   @Mapping(target = "owner", source = "owner")
   @Mapping(target = "members", ignore = true)
-  @Mapping(target = "profile", ignore = true)
+  @Mapping(target = "profile", source = "dto.profile")
   Organization createFromDto(CreateOrganizationDto dto, UUID owner);
 
   @Mapping(target = "headquarter", source = "headquarter.location")

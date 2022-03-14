@@ -11,11 +11,11 @@ import de.innovationhub.prox.userservice.organization.entity.profile.Organizatio
 import de.innovationhub.prox.userservice.organization.entity.profile.Quarter;
 import de.innovationhub.prox.userservice.organization.entity.profile.SocialMedia;
 import de.innovationhub.prox.userservice.organization.repository.OrganizationRepository;
-import io.quarkus.test.TestTransaction;
 import io.quarkus.test.common.http.TestHTTPEndpoint;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.keycloak.client.KeycloakTestClient;
 import io.restassured.RestAssured;
+import java.util.Collections;
 import java.util.Set;
 import java.util.UUID;
 import javax.inject.Inject;
@@ -42,11 +42,8 @@ public class OrganizationResourceIntegrationTest {
   }
 
   @Test
-  @TestTransaction
   @Order(1)
   void shouldCreateOrganization() {
-    var aliceId = UUID.fromString("856ba1b6-ae45-4722-8fa5-212c7f71f10c");
-
     var orgId =
         RestAssured.given()
             .contentType("application/json")
@@ -55,31 +52,139 @@ public class OrganizationResourceIntegrationTest {
             .oauth2(keycloakTestClient.getAccessToken("alice"))
             .body(
                 """
-                {
-                  "name": "ACME Ltd."
-                }
-                """)
+                    {
+                      "name": "ACME Ltd.",
+                      "profile": {
+                         "foundingDate": "14.03.2022",
+                         "numberOfEmployees": "2022",
+                         "homepage": "https://example.org",
+                         "contactEmail": "example@example.org",
+                         "vita": "Lorem Ipsum",
+                         "headquarter": "Gummersbach",
+                         "quarters": [
+                           "Abu Dhabi"
+                         ],
+                         "branches": [
+                           "Automotive",
+                           "Quality Assurance"
+                         ],
+                         "socialMedia": {
+                           "facebookHandle": "acmeLtd",
+                           "twitterHandle": "acmeLtd",
+                           "instagramHandle": "acmeLtd",
+                           "xingHandle": "acmeLtd",
+                           "linkedInHandle": "acmeLtd"
+                         }
+                       }
+                    }
+                    """)
             .when()
             .post()
             .then()
             .statusCode(201)
             .body("id", notNullValue())
             .body("name", is("ACME Ltd."))
+            .body("profile.foundingDate", is("14.03.2022"))
+            .body("profile.numberOfEmployees", is("2022"))
+            .body("profile.homepage", is("https://example.org"))
+            .body("profile.contactEmail", is("example@example.org"))
+            .body("profile.vita", is("Lorem Ipsum"))
+            .body("profile.headquarter", is("Gummersbach"))
+            .body("profile.quarters", containsInAnyOrder("Abu Dhabi"))
+            .body("profile.branches", containsInAnyOrder("Automotive", "Quality Assurance"))
+            .body("profile.socialMedia.facebookHandle", is("acmeLtd"))
+            .body("profile.socialMedia.twitterHandle", is("acmeLtd"))
+            .body("profile.socialMedia.instagramHandle", is("acmeLtd"))
+            .body("profile.socialMedia.xingHandle", is("acmeLtd"))
+            .body("profile.socialMedia.linkedInHandle", is("acmeLtd"))
             .extract()
             .jsonPath()
             .getUUID("id");
 
     var org = this.organizationRepository.findById(orgId).get();
-    Assertions.assertThat(org.getName()).isEqualTo("ACME Ltd.");
-    Assertions.assertThat(org.getOwner()).isEqualTo(aliceId);
+    var profile = org.getProfile();
+    UUID aliceId = UUID.fromString("856ba1b6-ae45-4722-8fa5-212c7f71f10c");
+    SoftAssertions softly = new SoftAssertions();
+
+    softly.assertThat(org.getName()).isEqualTo("ACME Ltd.");
+    softly.assertThat(org.getOwner()).isEqualTo(aliceId);
+
+    softly.assertThat(profile.getFoundingDate()).isEqualTo("14.03.2022");
+    softly.assertThat(profile.getNumberOfEmployees()).isEqualTo("2022");
+    softly.assertThat(profile.getHomepage()).isEqualTo("https://example.org");
+    softly.assertThat(profile.getContactEmail()).isEqualTo("example@example.org");
+    softly.assertThat(profile.getVita()).isEqualTo("Lorem Ipsum");
+    softly.assertThat(profile.getHeadquarter().getLocation()).isEqualTo("Gummersbach");
+    softly
+        .assertThat(profile.getQuarters())
+        .extracting("location")
+        .containsExactlyInAnyOrder("Abu Dhabi");
+    softly
+        .assertThat(profile.getBranches())
+        .extracting("name")
+        .containsExactlyInAnyOrder("Automotive", "Quality Assurance");
+    softly.assertThat(profile.getSocialMedia().getFacebookHandle()).isEqualTo("acmeLtd");
+    softly.assertThat(profile.getSocialMedia().getTwitterHandle()).isEqualTo("acmeLtd");
+    softly.assertThat(profile.getSocialMedia().getInstagramHandle()).isEqualTo("acmeLtd");
+    softly.assertThat(profile.getSocialMedia().getXingHandle()).isEqualTo("acmeLtd");
+    softly.assertThat(profile.getSocialMedia().getLinkedInHandle()).isEqualTo("acmeLtd");
+
+    softly.assertAll();
+
+    orgId = org.getId();
+  }
+
+  void shouldGetOrganization() {
+    UUID aliceId = UUID.fromString("856ba1b6-ae45-4722-8fa5-212c7f71f10c");
+    UUID orgId = UUID.randomUUID();
+    var dummyOrg =
+        new Organization(
+            orgId,
+            "ACME Ltd.",
+            aliceId,
+            Collections.emptyMap(),
+            new OrganizationProfile(
+                "14.03.2022",
+                "2022",
+                "https://example.org",
+                "example@example.org",
+                "Lorem Ipsum",
+                new Quarter("Gummersbach"),
+                Set.of(new Quarter("Abu Dhabi")),
+                Set.of(new Branch("Automotive"), new Branch("Quality Assurance")),
+                new SocialMedia("acmeLtd", "acmeLtd", "acmeLtd", "acmeLtd", "acmeLtd")));
+    this.organizationRepository.save(dummyOrg);
+
+    RestAssured.given()
+        .contentType("application/json")
+        .accept("application/json")
+        .when()
+        .get("{id}", orgId.toString())
+        .then()
+        .body("id", notNullValue())
+        .body("name", is("ACME Ltd."))
+        .body("foundingDate", is("14.03.2022"))
+        .body("numberOfEmployees", is("2022"))
+        .body("homepage", is("https://example.org"))
+        .body("contactEmail", is("example@example.org"))
+        .body("vita", is("Lorem Ipsum"))
+        .body("headquarter", is("Gummersbach"))
+        .body("quarters", containsInAnyOrder("Abu Dhabi"))
+        .body("branches", containsInAnyOrder("Automotive", "Quality Assurance"))
+        .body("socialMedia.facebookHandle", is("acmeLtd"))
+        .body("socialMedia.twitterHandle", is("acmeLtd"))
+        .body("socialMedia.instagramHandle", is("acmeLtd"))
+        .body("socialMedia.xingHandle", is("acmeLtd"))
+        .body("socialMedia.linkedInHandle", is("acmeLtd"))
+        .statusCode(200);
   }
 
   @Test
-  @Order(2)
+  @Order(3)
   void shouldCreateMembership() {
     // Given
-    var aliceId = UUID.fromString("856ba1b6-ae45-4722-8fa5-212c7f71f10c");
-    var orgId = UUID.randomUUID();
+    UUID aliceId = UUID.fromString("856ba1b6-ae45-4722-8fa5-212c7f71f10c");
+    UUID orgId = UUID.randomUUID();
     var dummyOrg = Organization.builder().id(orgId).name("ACME Ltd.").owner(aliceId).build();
     this.organizationRepository.save(dummyOrg);
     var bobId = UUID.fromString("ed0b4a07-2612-4571-a9ab-27e13ce752f1");
@@ -114,12 +219,12 @@ public class OrganizationResourceIntegrationTest {
   }
 
   @Test
-  @Order(3)
+  @Order(4)
   void shouldUpdateMembership() {
     // Given
-    var aliceId = UUID.fromString("856ba1b6-ae45-4722-8fa5-212c7f71f10c");
+    UUID aliceId = UUID.fromString("856ba1b6-ae45-4722-8fa5-212c7f71f10c");
+    UUID orgId = UUID.randomUUID();
     var bobId = UUID.fromString("ed0b4a07-2612-4571-a9ab-27e13ce752f1");
-    var orgId = UUID.randomUUID();
     var dummyOrg = Organization.builder().id(orgId).name("ACME Ltd.").owner(aliceId).build();
     dummyOrg.getMembers().put(bobId, new OrganizationMembership(OrganizationRole.MEMBER));
     this.organizationRepository.save(dummyOrg);
@@ -151,12 +256,12 @@ public class OrganizationResourceIntegrationTest {
   }
 
   @Test
-  @Order(4)
+  @Order(5)
   void shouldRemoveMembership() {
     // Given
-    var aliceId = UUID.fromString("856ba1b6-ae45-4722-8fa5-212c7f71f10c");
+    UUID aliceId = UUID.fromString("856ba1b6-ae45-4722-8fa5-212c7f71f10c");
+    UUID orgId = UUID.randomUUID();
     var bobId = UUID.fromString("ed0b4a07-2612-4571-a9ab-27e13ce752f1");
-    var orgId = UUID.randomUUID();
     var dummyOrg = Organization.builder().id(orgId).name("ACME Ltd.").owner(aliceId).build();
     dummyOrg.getMembers().put(bobId, new OrganizationMembership(OrganizationRole.MEMBER));
     this.organizationRepository.save(dummyOrg);
@@ -176,11 +281,11 @@ public class OrganizationResourceIntegrationTest {
   }
 
   @Test
-  @Order(5)
+  @Order(6)
   void shouldReturn422OnInvalidMemberId() {
     // Given
-    var aliceId = UUID.fromString("856ba1b6-ae45-4722-8fa5-212c7f71f10c");
-    var orgId = UUID.randomUUID();
+    UUID aliceId = UUID.fromString("856ba1b6-ae45-4722-8fa5-212c7f71f10c");
+    UUID orgId = UUID.randomUUID();
     var dummyOrg = Organization.builder().id(orgId).name("ACME Ltd.").owner(aliceId).build();
     this.organizationRepository.save(dummyOrg);
     var randomUser = UUID.randomUUID();
@@ -205,13 +310,13 @@ public class OrganizationResourceIntegrationTest {
   }
 
   @Test
-  @Order(6)
+  @Order(7)
   void shouldGetMemberships() {
     // Given
-    var aliceId = UUID.fromString("856ba1b6-ae45-4722-8fa5-212c7f71f10c");
+    UUID aliceId = UUID.fromString("856ba1b6-ae45-4722-8fa5-212c7f71f10c");
+    UUID orgId = UUID.randomUUID();
     var bobId = UUID.fromString("ed0b4a07-2612-4571-a9ab-27e13ce752f1");
     var julianBradenId = UUID.fromString("64788f0d-a954-4898-bfda-7498aae2b271");
-    var orgId = UUID.randomUUID();
     var dummyOrg = Organization.builder().id(orgId).name("ACME Ltd.").owner(aliceId).build();
     dummyOrg.getMembers().put(bobId, new OrganizationMembership(OrganizationRole.MEMBER));
     dummyOrg.getMembers().put(julianBradenId, new OrganizationMembership(OrganizationRole.ADMIN));
@@ -250,6 +355,7 @@ public class OrganizationResourceIntegrationTest {
             is("OWNER"));
   }
 
+  /*
   @Test
   @Order(7)
   void shouldCreateProfile() {
@@ -373,5 +479,5 @@ public class OrganizationResourceIntegrationTest {
         .body("socialMedia.xingHandle", is("acmeLtd"))
         .body("socialMedia.linkedInHandle", is("acmeLtd"))
         .statusCode(200);
-  }
+  }*/
 }

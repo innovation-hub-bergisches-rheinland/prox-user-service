@@ -3,12 +3,10 @@ package de.innovationhub.prox.userservice.organization.web;
 import de.innovationhub.prox.userservice.core.Status;
 import de.innovationhub.prox.userservice.organization.dto.request.CreateOrganizationDto;
 import de.innovationhub.prox.userservice.organization.dto.request.CreateOrganizationMembershipDto;
-import de.innovationhub.prox.userservice.organization.dto.request.OrganizationProfileRequestDto;
 import de.innovationhub.prox.userservice.organization.dto.request.UpdateOrganizationMembershipDto;
 import de.innovationhub.prox.userservice.organization.dto.response.ViewAllOrganizationMembershipsDto;
 import de.innovationhub.prox.userservice.organization.dto.response.ViewOrganizationDto;
 import de.innovationhub.prox.userservice.organization.dto.response.ViewOrganizationMembershipDto;
-import de.innovationhub.prox.userservice.organization.dto.response.ViewOrganizationProfileDto;
 import de.innovationhub.prox.userservice.organization.exception.ForbiddenOrganizationAccessException;
 import de.innovationhub.prox.userservice.organization.exception.OrganizationNotFoundException;
 import de.innovationhub.prox.userservice.organization.service.OrganizationService;
@@ -58,6 +56,20 @@ public class OrganizationResource {
         .orElseThrow(() -> new WebApplicationException(404));
   }
 
+  @PUT
+  @Path("{id}")
+  @Consumes(MediaType.APPLICATION_JSON)
+  @Produces(MediaType.APPLICATION_JSON)
+  public ViewOrganizationDto updateOrganization(
+      @PathParam(value = "id") UUID id, CreateOrganizationDto jsonRequest) {
+    if (id == null) {
+      throw new WebApplicationException("Provided ID is null", 400);
+    }
+    return this.organizationService
+        .findById(id)
+        .orElseThrow(() -> new WebApplicationException(404));
+  }
+
   @GET
   @Authenticated
   @Path("{id}/memberships")
@@ -68,17 +80,6 @@ public class OrganizationResource {
       return this.organizationService.getOrganizationMemberships(organizationId);
     } catch (ForbiddenOrganizationAccessException e) {
       throw new WebApplicationException(e, 403);
-    } catch (OrganizationNotFoundException e) {
-      throw new WebApplicationException(e, 404);
-    }
-  }
-
-  @GET
-  @Path("{id}/profile")
-  @Produces(MediaType.APPLICATION_JSON)
-  public ViewOrganizationProfileDto getOrganizationProfile(@PathParam("id") UUID organizationId) {
-    try {
-      return this.organizationService.findOrganizationProfile(organizationId);
     } catch (OrganizationNotFoundException e) {
       throw new WebApplicationException(e, 404);
     }
@@ -130,24 +131,6 @@ public class OrganizationResource {
       @PathParam("id") UUID organizationId, @PathParam("memberId") UUID memberId) {
     try {
       this.organizationService.deleteOrganizationMembership(organizationId, memberId);
-    } catch (ForbiddenOrganizationAccessException e) {
-      throw new WebApplicationException(e, 403);
-    } catch (OrganizationNotFoundException e) {
-      throw new WebApplicationException(e, 404);
-    }
-  }
-
-  @PUT
-  @Authenticated
-  @Path("{id}/profile")
-  @Produces(MediaType.APPLICATION_JSON)
-  @Consumes(MediaType.APPLICATION_JSON)
-  public ViewOrganizationProfileDto updateOrganizationProfile(
-      @PathParam("id") UUID organizationId,
-      @RequestBody OrganizationProfileRequestDto organizationProfileRequestDto) {
-    try {
-      return this.organizationService.saveOrganizationProfile(
-          organizationId, organizationProfileRequestDto);
     } catch (ForbiddenOrganizationAccessException e) {
       throw new WebApplicationException(e, 403);
     } catch (OrganizationNotFoundException e) {
