@@ -71,6 +71,10 @@ public class OrganizationResource {
       response.header("Content-Disposition", "attachment;filename=" + fileObj.getKey());
       response.header("Content-Type", fileObj.getMimeType());
 
+      if (!fileObj.getMimeType().equalsIgnoreCase("image/png")
+          && !fileObj.getMimeType().equalsIgnoreCase("image/jpeg"))
+        throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
+
       return response.build();
     } catch (IOException e) {
       throw new WebApplicationException(500);

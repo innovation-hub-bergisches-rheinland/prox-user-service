@@ -35,6 +35,7 @@ import javax.inject.Inject;
 import javax.transaction.Transactional;
 import javax.validation.Valid;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response.Status;
 
 @ApplicationScoped
 public class OrganizationService {
@@ -104,12 +105,23 @@ public class OrganizationService {
     }
 
     var bytes = formDataBody.getData().readAllBytes();
+    var mimeType = URLConnection.guessContentTypeFromStream(new ByteArrayInputStream(bytes));
+
+    // TODO: We could do some more validation here. Also, we could try to store the image in
+    //  different resolutions
+
+    if (!mimeType.equalsIgnoreCase("image/png") && !mimeType.equalsIgnoreCase("image/jpeg"))
+      throw new WebApplicationException(Status.BAD_REQUEST);
+
+    String extension = "";
+
+    switch (mimeType.trim().toLowerCase()) {
+      case "image/png" -> extension = ".png";
+      case "image/jpeg" -> extension = ".jpg";
+    }
 
     var fileObject =
-        new FileObject(
-            AVATAR_KEY_PREFIX + "/" + orgId.toString(),
-            URLConnection.guessContentTypeFromStream(new ByteArrayInputStream(bytes)),
-            bytes);
+        new FileObject(AVATAR_KEY_PREFIX + "/" + orgId.toString() + extension, mimeType, bytes);
 
     objectStoreRepository.saveObject(fileObject);
     org.setAvatar(new OrganizationAvatar(fileObject.getKey()));
