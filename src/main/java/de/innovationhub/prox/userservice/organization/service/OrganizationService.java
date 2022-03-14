@@ -166,7 +166,7 @@ public class OrganizationService {
 
   @Transactional
   public ViewOrganizationProfileDto saveOrganizationProfile(
-      UUID orgId, OrganizationProfileRequestDto organizationProfileRequestDto) {
+      UUID orgId, @Valid OrganizationProfileRequestDto organizationProfileRequestDto) {
     var org = this.findByIdOrThrow(orgId);
 
     // TODO: Admins?
