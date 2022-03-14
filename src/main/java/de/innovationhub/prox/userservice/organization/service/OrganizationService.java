@@ -3,10 +3,12 @@ package de.innovationhub.prox.userservice.organization.service;
 import de.innovationhub.prox.userservice.organization.dto.OrganizationMapper;
 import de.innovationhub.prox.userservice.organization.dto.request.CreateOrganizationDto;
 import de.innovationhub.prox.userservice.organization.dto.request.CreateOrganizationMembershipDto;
+import de.innovationhub.prox.userservice.organization.dto.request.OrganizationProfileRequestDto;
 import de.innovationhub.prox.userservice.organization.dto.request.UpdateOrganizationMembershipDto;
 import de.innovationhub.prox.userservice.organization.dto.response.ViewAllOrganizationMembershipsDto;
 import de.innovationhub.prox.userservice.organization.dto.response.ViewOrganizationDto;
 import de.innovationhub.prox.userservice.organization.dto.response.ViewOrganizationMembershipDto;
+import de.innovationhub.prox.userservice.organization.dto.response.ViewOrganizationProfileDto;
 import de.innovationhub.prox.userservice.organization.entity.Organization;
 import de.innovationhub.prox.userservice.organization.entity.OrganizationMembership;
 import de.innovationhub.prox.userservice.organization.entity.OrganizationRole;
@@ -156,6 +158,26 @@ public class OrganizationService {
     return this.organizationRepository.findAllWithUserAsMember(userId).stream()
         .map(this.organizationMapper::toDto)
         .collect(Collectors.toList());
+  }
+
+  public ViewOrganizationProfileDto findOrganizationProfile(UUID id) {
+    return this.organizationMapper.toDto(this.findByIdOrThrow(id).getProfile());
+  }
+
+  @Transactional
+  public ViewOrganizationProfileDto saveOrganizationProfile(
+      UUID orgId, OrganizationProfileRequestDto organizationProfileRequestDto) {
+    var org = this.findByIdOrThrow(orgId);
+
+    // TODO: Admins?
+    if (!org.getOwner().toString().equals(securityIdentity.getPrincipal().getName())) {
+      throw new ForbiddenOrganizationAccessException();
+    }
+
+    var profile = this.organizationMapper.createFromDto(organizationProfileRequestDto);
+    org.setProfile(profile);
+    this.organizationRepository.save(org);
+    return findOrganizationProfile(orgId);
   }
 
   private Organization findByIdOrThrow(UUID id) {

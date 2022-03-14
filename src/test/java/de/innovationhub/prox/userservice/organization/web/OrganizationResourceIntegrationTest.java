@@ -6,15 +6,21 @@ import static org.hamcrest.Matchers.*;
 import de.innovationhub.prox.userservice.organization.entity.Organization;
 import de.innovationhub.prox.userservice.organization.entity.OrganizationMembership;
 import de.innovationhub.prox.userservice.organization.entity.OrganizationRole;
+import de.innovationhub.prox.userservice.organization.entity.profile.Branch;
+import de.innovationhub.prox.userservice.organization.entity.profile.OrganizationProfile;
+import de.innovationhub.prox.userservice.organization.entity.profile.Quarter;
+import de.innovationhub.prox.userservice.organization.entity.profile.SocialMedia;
 import de.innovationhub.prox.userservice.organization.repository.OrganizationRepository;
 import io.quarkus.test.TestTransaction;
 import io.quarkus.test.common.http.TestHTTPEndpoint;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.keycloak.client.KeycloakTestClient;
 import io.restassured.RestAssured;
+import java.util.Set;
 import java.util.UUID;
 import javax.inject.Inject;
 import org.assertj.core.api.Assertions;
+import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -242,5 +248,130 @@ public class OrganizationResourceIntegrationTest {
         .body(
             "members.find { it.memberId == '856ba1b6-ae45-4722-8fa5-212c7f71f10c' }.role",
             is("OWNER"));
+  }
+
+  @Test
+  @Order(7)
+  void shouldCreateProfile() {
+    // Given
+    var aliceId = UUID.fromString("856ba1b6-ae45-4722-8fa5-212c7f71f10c");
+    var orgId = UUID.randomUUID();
+    var dummyOrg = Organization.builder().id(orgId).name("ACME Ltd.").owner(aliceId).build();
+    this.organizationRepository.save(dummyOrg);
+
+    RestAssured.given()
+        .contentType("application/json")
+        .accept("application/json")
+        .auth()
+        .oauth2(keycloakTestClient.getAccessToken("alice"))
+        .body(
+            """
+                {
+                  "foundingDate": "14.03.2022",
+                  "numberOfEmployees": "2022",
+                  "homepage": "https://example.org",
+                  "contactEmail": "example@example.org",
+                  "vita": "Lorem Ipsum",
+                  "headquarter": "Gummersbach",
+                  "quarters": [
+                    "Abu Dhabi"
+                  ],
+                  "branches": [
+                    "Automotive",
+                    "Quality Assurance"
+                  ],
+                  "socialMedia": {
+                    "facebookHandle": "acmeLtd",
+                    "twitterHandle": "acmeLtd",
+                    "instagramHandle": "acmeLtd",
+                    "xingHandle": "acmeLtd",
+                    "linkedInHandle": "acmeLtd"
+                  }
+                }
+            """)
+        .when()
+        .put("{id}/profile", orgId.toString())
+        .then()
+        .body("foundingDate", is("14.03.2022"))
+        .body("numberOfEmployees", is("2022"))
+        .body("homepage", is("https://example.org"))
+        .body("contactEmail", is("example@example.org"))
+        .body("vita", is("Lorem Ipsum"))
+        .body("headquarter", is("Gummersbach"))
+        .body("quarters", containsInAnyOrder("Abu Dhabi"))
+        .body("branches", containsInAnyOrder("Automotive", "Quality Assurance"))
+        .body("socialMedia.facebookHandle", is("acmeLtd"))
+        .body("socialMedia.twitterHandle", is("acmeLtd"))
+        .body("socialMedia.instagramHandle", is("acmeLtd"))
+        .body("socialMedia.xingHandle", is("acmeLtd"))
+        .body("socialMedia.linkedInHandle", is("acmeLtd"))
+        .statusCode(200);
+
+    var profile = this.organizationRepository.findById(orgId).get().getProfile();
+    assertThat(profile).isNotNull();
+
+    SoftAssertions softly = new SoftAssertions();
+    softly.assertThat(profile.getFoundingDate()).isEqualTo("14.03.2022");
+    softly.assertThat(profile.getNumberOfEmployees()).isEqualTo("2022");
+    softly.assertThat(profile.getHomepage()).isEqualTo("https://example.org");
+    softly.assertThat(profile.getContactEmail()).isEqualTo("example@example.org");
+    softly.assertThat(profile.getVita()).isEqualTo("Lorem Ipsum");
+    softly.assertThat(profile.getHeadquarter().getLocation()).isEqualTo("Gummersbach");
+    softly
+        .assertThat(profile.getQuarters())
+        .extracting("location")
+        .containsExactlyInAnyOrder("Abu Dhabi");
+    softly
+        .assertThat(profile.getBranches())
+        .extracting("name")
+        .containsExactlyInAnyOrder("Automotive", "Quality Assurance");
+    softly.assertThat(profile.getSocialMedia().getFacebookHandle()).isEqualTo("acmeLtd");
+    softly.assertThat(profile.getSocialMedia().getTwitterHandle()).isEqualTo("acmeLtd");
+    softly.assertThat(profile.getSocialMedia().getInstagramHandle()).isEqualTo("acmeLtd");
+    softly.assertThat(profile.getSocialMedia().getXingHandle()).isEqualTo("acmeLtd");
+    softly.assertThat(profile.getSocialMedia().getLinkedInHandle()).isEqualTo("acmeLtd");
+    softly.assertAll();
+  }
+
+  @Test
+  @Order(8)
+  void shouldGetProfile() {
+    // Given
+    var aliceId = UUID.fromString("856ba1b6-ae45-4722-8fa5-212c7f71f10c");
+    var orgId = UUID.randomUUID();
+    var dummyOrg = Organization.builder().id(orgId).name("ACME Ltd.").owner(aliceId).build();
+    dummyOrg.setProfile(
+        new OrganizationProfile(
+            "14.03.2022",
+            "2022",
+            "https://example.org",
+            "example@example.org",
+            "Lorem Ipsum",
+            new Quarter("Gummersbach"),
+            Set.of(new Quarter("Abu Dhabi")),
+            Set.of(new Branch("Automotive"), new Branch("Quality Assurance")),
+            new SocialMedia("acmeLtd", "acmeLtd", "acmeLtd", "acmeLtd", "acmeLtd")));
+    this.organizationRepository.save(dummyOrg);
+
+    RestAssured.given()
+        .contentType("application/json")
+        .accept("application/json")
+        .when()
+        .get("{id}/profile", orgId.toString())
+        .then()
+        .body("foundingDate", is("14.03.2022"))
+        .body("numberOfEmployees", is("2022"))
+        .body("homepage", is("https://example.org"))
+        .body("contactEmail", is("example@example.org"))
+        .body("vita", is("Lorem Ipsum"))
+        .body("headquarter", is("Gummersbach"))
+        .body("quarters", containsInAnyOrder("Abu Dhabi"))
+        .body("branches", containsInAnyOrder("Automotive", "Quality Assurance"))
+        .body("socialMedia.facebookHandle", is("acmeLtd"))
+        .body("socialMedia.twitterHandle", is("acmeLtd"))
+        .body("socialMedia.instagramHandle", is("acmeLtd"))
+        .body("socialMedia.xingHandle", is("acmeLtd"))
+        .body("socialMedia.linkedInHandle", is("acmeLtd"))
+        .statusCode(200);
   }
 }

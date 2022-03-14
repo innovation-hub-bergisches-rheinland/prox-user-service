@@ -29,7 +29,7 @@ public interface OrganizationMapper {
   ViewOrganizationProfileDto toDto(OrganizationProfile organizationProfile);
 
   @Mapping(target = "headquarter.location", source = "headquarter")
-  OrganizationProfile createFromDto(OrganizationProfileRequestDto profileRequestDto);
+  OrganizationProfile createFromDto(OrganizationProfileRequestDto profile);
 
   default String toString(Quarter quarter) {
     return quarter.getLocation();
