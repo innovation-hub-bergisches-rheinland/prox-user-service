@@ -1,6 +1,7 @@
 package de.innovationhub.prox.userservice.organization.web;
 
 import de.innovationhub.prox.userservice.core.Status;
+import de.innovationhub.prox.userservice.core.data.FormDataBody;
 import de.innovationhub.prox.userservice.organization.dto.request.CreateOrganizationDto;
 import de.innovationhub.prox.userservice.organization.dto.request.CreateOrganizationMembershipDto;
 import de.innovationhub.prox.userservice.organization.dto.request.UpdateOrganizationMembershipDto;
@@ -11,9 +12,11 @@ import de.innovationhub.prox.userservice.organization.exception.ForbiddenOrganiz
 import de.innovationhub.prox.userservice.organization.exception.OrganizationNotFoundException;
 import de.innovationhub.prox.userservice.organization.service.OrganizationService;
 import io.quarkus.security.Authenticated;
+import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 import javax.inject.Inject;
+import javax.validation.Valid;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -24,7 +27,10 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
 import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
+import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
 
 @Path("organizations")
 public class OrganizationResource {
@@ -54,6 +60,35 @@ public class OrganizationResource {
     return this.organizationService
         .findById(id)
         .orElseThrow(() -> new WebApplicationException(404));
+  }
+
+  @GET
+  @Path("{id}/avatar")
+  public Response getOrganizationAvatar(@PathParam(value = "id") UUID id) {
+    try {
+      var fileObj = organizationService.getOrganizationAvatar(id);
+      ResponseBuilder response = Response.ok(fileObj.getData());
+      response.header("Content-Disposition", "attachment;filename=" + fileObj.getKey());
+      response.header("Content-Type", fileObj.getMimeType());
+
+      return response.build();
+    } catch (IOException e) {
+      throw new WebApplicationException(500);
+    }
+  }
+
+  @POST
+  @Authenticated
+  @Path("{id}/avatar")
+  @Consumes(MediaType.MULTIPART_FORM_DATA)
+  public Response setOrganizationAvatar(
+      @PathParam(value = "id") UUID id, @MultipartForm @Valid FormDataBody formDataBody) {
+    try {
+      organizationService.setOrganizationAvatar(id, formDataBody);
+      return Response.ok().status(Response.Status.CREATED).build();
+    } catch (IOException e) {
+      throw new WebApplicationException(500);
+    }
   }
 
   @PUT

@@ -1,5 +1,9 @@
 package de.innovationhub.prox.userservice.organization.service;
 
+import de.innovationhub.prox.userservice.core.data.FileObject;
+import de.innovationhub.prox.userservice.core.data.FormDataBody;
+import de.innovationhub.prox.userservice.core.data.ObjectNotFoundException;
+import de.innovationhub.prox.userservice.core.data.ObjectStoreRepository;
 import de.innovationhub.prox.userservice.organization.dto.OrganizationMapper;
 import de.innovationhub.prox.userservice.organization.dto.request.CreateOrganizationDto;
 import de.innovationhub.prox.userservice.organization.dto.request.CreateOrganizationMembershipDto;
@@ -18,6 +22,9 @@ import de.innovationhub.prox.userservice.user.constraints.IsValidUserId;
 import de.innovationhub.prox.userservice.user.dto.UserResponseDto;
 import de.innovationhub.prox.userservice.user.service.UserIdentityService;
 import io.quarkus.security.identity.SecurityIdentity;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.net.URLConnection;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -30,21 +37,27 @@ import javax.ws.rs.WebApplicationException;
 
 @ApplicationScoped
 public class OrganizationService {
+
+  private static final String AVATAR_KEY_PREFIX = "img/avatars/orgs";
+
   private final OrganizationRepository organizationRepository;
   private final OrganizationMapper organizationMapper;
   private final SecurityIdentity securityIdentity;
   private final UserIdentityService userIdentityService;
+  private final ObjectStoreRepository objectStoreRepository;
 
   @Inject
   public OrganizationService(
       OrganizationRepository organizationRepository,
       OrganizationMapper organizationMapper,
       SecurityIdentity securityIdentity,
-      UserIdentityService userIdentityService) {
+      UserIdentityService userIdentityService,
+      ObjectStoreRepository objectStoreRepository) {
     this.organizationRepository = organizationRepository;
     this.organizationMapper = organizationMapper;
     this.securityIdentity = securityIdentity;
     this.userIdentityService = userIdentityService;
+    this.objectStoreRepository = objectStoreRepository;
   }
 
   @Transactional
@@ -65,6 +78,31 @@ public class OrganizationService {
     organizationMapper.updateOrganization(org, request);
     organizationRepository.save(org);
     return this.organizationMapper.toDto(org);
+  }
+
+  public FileObject getOrganizationAvatar(UUID orgId) throws IOException {
+    try {
+      return objectStoreRepository.getObject(AVATAR_KEY_PREFIX + "/" + orgId.toString());
+    } catch (ObjectNotFoundException e) {
+      throw new WebApplicationException(404);
+    }
+  }
+
+  public void setOrganizationAvatar(UUID orgId, FormDataBody formDataBody) throws IOException {
+    var org = findByIdOrThrow(orgId);
+    // TODO: Admins?
+    if (!org.getOwner().toString().equals(securityIdentity.getPrincipal().getName())) {
+      throw new ForbiddenOrganizationAccessException();
+    }
+
+    var bytes = formDataBody.getData().readAllBytes();
+
+    var fileObject =
+        new FileObject(
+            AVATAR_KEY_PREFIX + "/" + orgId.toString(),
+            URLConnection.guessContentTypeFromStream(new ByteArrayInputStream(bytes)),
+            bytes);
+    objectStoreRepository.saveObject(fileObject);
   }
 
   @Transactional
