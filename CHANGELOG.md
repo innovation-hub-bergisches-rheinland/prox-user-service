@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.2.0](https://github.com/innovation-hub-bergisches-rheinland/prox-user-service/compare/v1.1.0...v1.2.0) (2022-03-14)
+
+
+### Features
+
+* add organization profile APIs ([cba5f8b](https://github.com/innovation-hub-bergisches-rheinland/prox-user-service/commit/cba5f8b8b32b1644ea7bf0597c04a97fb9a41e76))
+* implement S3 object store for avatars ([ff61fa6](https://github.com/innovation-hub-bergisches-rheinland/prox-user-service/commit/ff61fa6f906389a19db504d66850b9ad3332f1a3))
+* save object key in organization entity ([d8453da](https://github.com/innovation-hub-bergisches-rheinland/prox-user-service/commit/d8453da11367cf27b28b77b43244aede6a897555))
+
+
+### Bug Fixes
+
+* add validation to service ([fe00362](https://github.com/innovation-hub-bergisches-rheinland/prox-user-service/commit/fe0036289bf6bfa044c5e7820790cc270f6798c5))
+* update api ([1941cb8](https://github.com/innovation-hub-bergisches-rheinland/prox-user-service/commit/1941cb8f9a14951fb8c8e45e3b3b13194a5b5069))
+
 ## [1.1.0](https://github.com/innovation-hub-bergisches-rheinland/prox-user-service/compare/v1.0.8...v1.1.0) (2022-03-01)
 
 
