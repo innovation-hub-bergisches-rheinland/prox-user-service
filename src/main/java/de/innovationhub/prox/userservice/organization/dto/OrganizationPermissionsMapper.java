@@ -5,15 +5,31 @@ import de.innovationhub.prox.userservice.organization.entity.Organization;
 import io.quarkus.security.identity.SecurityIdentity;
 import java.util.UUID;
 import javax.inject.Inject;
+import lombok.extern.slf4j.Slf4j;
+import org.mapstruct.Mapper;
 
-public abstract class OrganizationPermissionsMapper implements OrganizationMapper {
+@Mapper(componentModel = "cdi")
+@Slf4j
+public abstract class OrganizationPermissionsMapper {
   @Inject SecurityIdentity securityIdentity;
 
   public OrganizationPermissionsDto map(Organization organization) {
-    var id = UUID.fromString(securityIdentity.getPrincipal().getName());
-    var membership = organization.getMembers().get(id);
-    boolean canViewMembers = membership != null || organization.getOwner().equals(id);
-    boolean canEdit = organization.getOwner().equals(id);
+    boolean canViewMembers = false;
+    boolean canEdit = false;
+    if (!securityIdentity.isAnonymous()) {
+      var principal = securityIdentity.getPrincipal().getName();
+      if (principal != null) {
+        try {
+          var id = UUID.fromString(securityIdentity.getPrincipal().getName());
+          var membership = organization.getMembers().get(id);
+
+          canViewMembers = membership != null || organization.getOwner().equals(id);
+          canEdit = organization.getOwner().equals(id);
+        } catch (IllegalArgumentException e) {
+          log.error("Principal not an uuid", e);
+        }
+      }
+    }
     return new OrganizationPermissionsDto(canEdit, canViewMembers);
   }
 }

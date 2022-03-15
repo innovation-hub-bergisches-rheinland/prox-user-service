@@ -9,15 +9,14 @@ import de.innovationhub.prox.userservice.organization.entity.profile.Branch;
 import de.innovationhub.prox.userservice.organization.entity.profile.OrganizationProfile;
 import de.innovationhub.prox.userservice.organization.entity.profile.Quarter;
 import java.util.UUID;
-import org.mapstruct.DecoratedWith;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
 @Mapper(
     componentModel = "cdi",
+    uses = OrganizationPermissionsMapper.class,
     imports = {UUID.class})
-@DecoratedWith(OrganizationPermissionsMapper.class)
 public interface OrganizationMapper {
   @Mapping(source = "organization", target = "permissions")
   ViewOrganizationDto toDto(Organization organization);
