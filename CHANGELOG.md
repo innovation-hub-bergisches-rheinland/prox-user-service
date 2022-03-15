@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.3.0](https://github.com/innovation-hub-bergisches-rheinland/prox-user-service/compare/v1.2.0...v1.3.0) (2022-03-15)
+
+
+### Features
+
+* add permissions to DTO payload ([ef29b74](https://github.com/innovation-hub-bergisches-rheinland/prox-user-service/commit/ef29b74ae2ae0266b978b4fa1036a79d0121da56))
+
 ## [1.2.0](https://github.com/innovation-hub-bergisches-rheinland/prox-user-service/compare/v1.1.0...v1.2.0) (2022-03-14)
 
 
