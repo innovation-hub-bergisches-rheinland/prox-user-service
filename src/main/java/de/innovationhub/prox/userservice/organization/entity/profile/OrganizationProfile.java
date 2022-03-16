@@ -14,7 +14,6 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.validation.Valid;
-import javax.validation.constraints.Email;
 import javax.validation.constraints.Size;
 import lombok.AccessLevel;
 import lombok.Data;
@@ -37,9 +36,16 @@ public class OrganizationProfile {
   @Size(max = 255)
   private String homepage;
 
+  /*
+   * EMail validation is disabled because it is a valid use case to specify multiple EMail addresses
+   * which we currently do not offer. Since the Email itself does not have any clear
+   * semantics at the moment we simply allow any kind of string. For the future it is thinkable to
+   * deprecate the organization-wide email address and simple list members with their EMail address
+   * as representatives
+   */
   @Column(name = "contact_email", length = 255)
   @Size(max = 255)
-  @Email
+  // @Email
   private String contactEmail;
 
   @Column(name = "vita", columnDefinition = "TEXT")
