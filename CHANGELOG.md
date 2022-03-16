@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.3.2](https://github.com/innovation-hub-bergisches-rheinland/prox-user-service/compare/v1.3.1...v1.3.2) (2022-03-16)
+
+
+### Bug Fixes
+
+* disable email validation ([fe12b71](https://github.com/innovation-hub-bergisches-rheinland/prox-user-service/commit/fe12b71da4ac2825967edd6dcf96c6d65e69e90a))
+
 ### [1.3.1](https://github.com/innovation-hub-bergisches-rheinland/prox-user-service/compare/v1.3.0...v1.3.1) (2022-03-15)
 
 
