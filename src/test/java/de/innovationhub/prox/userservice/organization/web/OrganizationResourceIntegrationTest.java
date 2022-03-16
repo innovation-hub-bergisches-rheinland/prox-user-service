@@ -73,7 +73,8 @@ public class OrganizationResourceIntegrationTest {
                            "twitterHandle": "acmeLtd",
                            "instagramHandle": "acmeLtd",
                            "xingHandle": "acmeLtd",
-                           "linkedInHandle": "acmeLtd"
+                           "linkedInHandle": "acmeLtd",
+                           "youtubeHandle": "acmeLtd"
                          }
                        }
                     }
@@ -97,6 +98,7 @@ public class OrganizationResourceIntegrationTest {
             .body("profile.socialMedia.instagramHandle", is("acmeLtd"))
             .body("profile.socialMedia.xingHandle", is("acmeLtd"))
             .body("profile.socialMedia.linkedInHandle", is("acmeLtd"))
+            .body("profile.socialMedia.youtubeHandle", is("acmeLtd"))
             .extract()
             .jsonPath()
             .getUUID("id");
@@ -154,7 +156,7 @@ public class OrganizationResourceIntegrationTest {
                 new Quarter("Gummersbach"),
                 Set.of(new Quarter("Abu Dhabi")),
                 Set.of(new Branch("Automotive"), new Branch("Quality Assurance")),
-                new SocialMedia("acmeLtd", "acmeLtd", "acmeLtd", "acmeLtd", "acmeLtd")),
+                new SocialMedia("acmeLtd", "acmeLtd", "acmeLtd", "acmeLtd", "acmeLtd", "acmeLtd")),
             null);
     this.organizationRepository.save(dummyOrg);
 
@@ -179,6 +181,7 @@ public class OrganizationResourceIntegrationTest {
         .body("profile.socialMedia.instagramHandle", is("acmeLtd"))
         .body("profile.socialMedia.xingHandle", is("acmeLtd"))
         .body("profile.socialMedia.linkedInHandle", is("acmeLtd"))
+        .body("profile.socialMedia.youtubeHandle", is("acmeLtd"))
         .body("permissions.canEdit", is(false))
         .body("permissions.canViewMembers", is(false))
         .statusCode(200);

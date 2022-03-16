@@ -42,4 +42,9 @@ public class SocialMedia {
   @Pattern(regexp = "^\\s*[-a-zA-Z0-9()_\\+.]*\\s*$")
   @Column(name = "linkedin_handle", length = 255)
   private String linkedInHandle;
+
+  @Size(max = 255)
+  @Pattern(regexp = "^\\s*[-a-zA-Z0-9()_\\+.]*\\s*$")
+  @Column(name = "youtube_handle", length = 255)
+  private String youtubeHandle;
 }

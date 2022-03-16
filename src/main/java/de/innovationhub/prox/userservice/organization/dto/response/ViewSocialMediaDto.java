@@ -5,4 +5,5 @@ public record ViewSocialMediaDto(
     String twitterHandle,
     String instagramHandle,
     String xingHandle,
-    String linkedInHandle) {}
+    String linkedInHandle,
+    String youtubeHandle) {}
