@@ -9,6 +9,6 @@ public record ViewOrganizationProfileDto(
     String contactEmail,
     String vita,
     String headquarter,
-    Set<String> quarters,
+    String quarters,
     Set<String> branches,
     ViewSocialMediaDto socialMedia) {}

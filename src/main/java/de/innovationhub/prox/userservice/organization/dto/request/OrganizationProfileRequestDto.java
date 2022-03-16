@@ -9,6 +9,6 @@ public record OrganizationProfileRequestDto(
     String contactEmail,
     String vita,
     String headquarter,
-    Set<String> quarters,
+    String quarters,
     Set<String> branches,
     SocialMediaRequestDto socialMedia) {}

@@ -59,12 +59,12 @@ public class OrganizationProfile {
   })
   private Quarter headquarter;
 
-  @ElementCollection(fetch = FetchType.EAGER)
-  @JsonInclude(Include.ALWAYS)
-  @CollectionTable(
-      name = "organization_profile_quarters",
-      joinColumns = @JoinColumn(name = "organization_id"))
-  private Set<Quarter> quarters;
+  @Embedded
+  @Valid
+  @AttributeOverrides({
+    @AttributeOverride(name = "location", column = @Column(name = "quarter_location"))
+  })
+  private Quarter quarters;
 
   @ElementCollection(fetch = FetchType.EAGER)
   @JsonInclude(Include.ALWAYS)
@@ -82,7 +82,7 @@ public class OrganizationProfile {
       String contactEmail,
       String vita,
       Quarter headquarter,
-      Set<Quarter> quarters,
+      Quarter quarters,
       Set<Branch> branches,
       SocialMedia socialMedia) {
     this.foundingDate = foundingDate;
