@@ -31,20 +31,22 @@ public interface OrganizationMapper {
   Organization createFromDto(CreateOrganizationDto dto, UUID owner);
 
   @Mapping(target = "headquarter", source = "headquarter.location")
+  @Mapping(target = "quarters", source = "quarters.location")
   ViewOrganizationProfileDto toDto(OrganizationProfile organizationProfile);
 
   @Mapping(target = "headquarter.location", source = "headquarter")
+  @Mapping(target = "quarters.location", source = "quarters")
   OrganizationProfile createFromDto(OrganizationProfileRequestDto profile);
 
   default String toString(Quarter quarter) {
-    return quarter.getLocation();
+    return quarter == null ? null : quarter.getLocation();
   }
 
   @Mapping(target = "location", source = "s")
   Quarter createQuarterFromString(String s);
 
   default String toString(Branch branch) {
-    return branch.getName();
+    return branch == null ? null : branch.getName();
   }
 
   @Mapping(target = "name", source = "s")
