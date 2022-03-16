@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.3.4](https://github.com/innovation-hub-bergisches-rheinland/prox-user-service/compare/v1.3.3...v1.3.4) (2022-03-16)
+
+
+### Bug Fixes
+
+* allow null values for mapping branches/quarters ([004b1b7](https://github.com/innovation-hub-bergisches-rheinland/prox-user-service/commit/004b1b7b4e74ad4b5248ff8a9b526e051aea192c))
+
 ### [1.3.3](https://github.com/innovation-hub-bergisches-rheinland/prox-user-service/compare/v1.3.2...v1.3.3) (2022-03-16)
 
 
