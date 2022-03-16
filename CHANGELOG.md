@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.3.5](https://github.com/innovation-hub-bergisches-rheinland/prox-user-service/compare/v1.3.4...v1.3.5) (2022-03-16)
+
+
+### Bug Fixes
+
+* regex for social media handles ([9efff99](https://github.com/innovation-hub-bergisches-rheinland/prox-user-service/commit/9efff99296b9ef9ad100d011257d4b3734cc10a6))
+
 ### [1.3.4](https://github.com/innovation-hub-bergisches-rheinland/prox-user-service/compare/v1.3.3...v1.3.4) (2022-03-16)
 
 
