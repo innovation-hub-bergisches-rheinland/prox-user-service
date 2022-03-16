@@ -19,32 +19,32 @@ import lombok.ToString;
 @ToString
 public class SocialMedia {
   @Size(max = 255)
-  @Pattern(regexp = "^\\s*[-a-zA-Z0-9()_\\+.]*\\s*$")
+  @Pattern(regexp = "^[^/.]*$")
   @Column(name = "facebook_handle", length = 255)
   private String facebookHandle;
 
   @Size(max = 255)
-  @Pattern(regexp = "^\\s*[-a-zA-Z0-9()_\\+.]*\\s*$")
+  @Pattern(regexp = "^[^/.]*$")
   @Column(name = "twitter_handle", length = 255)
   private String twitterHandle;
 
   @Size(max = 255)
-  @Pattern(regexp = "^\\s*[-a-zA-Z0-9()_\\+.]*\\s*$")
+  @Pattern(regexp = "^[^/.]*$")
   @Column(name = "instagram_handle", length = 255)
   private String instagramHandle;
 
   @Size(max = 255)
-  @Pattern(regexp = "^\\s*[-a-zA-Z0-9()_\\+.]*\\s*$")
+  @Pattern(regexp = "^[^/.]*$")
   @Column(name = "xing_handle", length = 255)
   private String xingHandle;
 
   @Size(max = 255)
-  @Pattern(regexp = "^\\s*[-a-zA-Z0-9()_\\+.]*\\s*$")
+  @Pattern(regexp = "^[^/.]*$")
   @Column(name = "linkedin_handle", length = 255)
   private String linkedInHandle;
 
   @Size(max = 255)
-  @Pattern(regexp = "^\\s*[-a-zA-Z0-9()_\\+.]*\\s*$")
+  @Pattern(regexp = "^[^/.]*$")
   @Column(name = "youtube_handle", length = 255)
   private String youtubeHandle;
 }
