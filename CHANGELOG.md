@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.3.7](https://github.com/innovation-hub-bergisches-rheinland/prox-user-service/compare/v1.3.6...v1.3.7) (2022-03-17)
+
+
+### Bug Fixes
+
+* remove validation from quarter ([55bc733](https://github.com/innovation-hub-bergisches-rheinland/prox-user-service/commit/55bc73377f3e8e2749ad86c7035b65f8c9e43c6f))
+
 ### [1.3.6](https://github.com/innovation-hub-bergisches-rheinland/prox-user-service/compare/v1.3.5...v1.3.6) (2022-03-16)
 
 
