@@ -1,7 +1,7 @@
 package de.innovationhub.prox.userservice.organization.entity.profile;
 
+import io.smallrye.common.constraint.Nullable;
 import javax.persistence.Embeddable;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import lombok.AccessLevel;
 import lombok.Data;
@@ -13,8 +13,8 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Quarter {
-  @NotBlank
   @Size(max = 255)
+  @Nullable
   private String location;
 
   public Quarter(String location) {

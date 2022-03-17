@@ -53,14 +53,12 @@ public class OrganizationProfile {
   private String vita;
 
   @Embedded
-  @Valid
   @AttributeOverrides({
     @AttributeOverride(name = "location", column = @Column(name = "headquarter_location"))
   })
   private Quarter headquarter;
 
   @Embedded
-  @Valid
   @AttributeOverrides({
     @AttributeOverride(name = "location", column = @Column(name = "quarter_location"))
   })
