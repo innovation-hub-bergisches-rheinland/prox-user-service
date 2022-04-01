@@ -2,6 +2,7 @@ package de.innovationhub.prox.userservice.organization.dto;
 
 import de.innovationhub.prox.userservice.organization.dto.response.OrganizationPermissionsDto;
 import de.innovationhub.prox.userservice.organization.entity.Organization;
+import de.innovationhub.prox.userservice.organization.entity.OrganizationRole;
 import io.quarkus.security.identity.SecurityIdentity;
 import java.util.UUID;
 import javax.inject.Inject;
@@ -23,8 +24,8 @@ public abstract class OrganizationPermissionsMapper {
           var id = UUID.fromString(securityIdentity.getPrincipal().getName());
           var membership = organization.getMembers().get(id);
 
-          canViewMembers = membership != null || organization.getOwner().equals(id);
-          canEdit = organization.getOwner().equals(id);
+          canViewMembers = membership != null;
+          canEdit = membership.getRole() == OrganizationRole.ADMIN;
         } catch (IllegalArgumentException e) {
           log.error("Principal not an uuid", e);
         }

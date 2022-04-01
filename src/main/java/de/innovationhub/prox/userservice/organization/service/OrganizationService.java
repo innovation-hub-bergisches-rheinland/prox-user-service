@@ -65,7 +65,9 @@ public class OrganizationService {
   @Transactional
   public ViewOrganizationDto createOrganization(@Valid CreateOrganizationDto request) {
     var userId = UUID.fromString(securityIdentity.getPrincipal().getName());
-    Organization org = this.organizationMapper.createFromDto(request, userId);
+    Organization org = this.organizationMapper.createFromDto(request);
+    var membership = new OrganizationMembership(OrganizationRole.ADMIN);
+    org.getMembers().put(userId, membership);
     organizationRepository.save(org);
     return this.organizationMapper.toDto(org);
   }
@@ -73,8 +75,8 @@ public class OrganizationService {
   @Transactional
   public ViewOrganizationDto updateOrganization(UUID orgId, @Valid CreateOrganizationDto request) {
     var org = findByIdOrThrow(orgId);
-    // TODO: Admins?
-    if (!org.getOwner().toString().equals(securityIdentity.getPrincipal().getName())) {
+    var member = org.getMembers().get(securityIdentity.getPrincipal().getName());
+    if (member == null || member.getRole() != OrganizationRole.ADMIN) {
       throw new ForbiddenOrganizationAccessException();
     }
     organizationMapper.updateOrganization(org, request);
@@ -99,8 +101,8 @@ public class OrganizationService {
   @Transactional
   public void setOrganizationAvatar(UUID orgId, FormDataBody formDataBody) throws IOException {
     var org = findByIdOrThrow(orgId);
-    // TODO: Admins?
-    if (!org.getOwner().toString().equals(securityIdentity.getPrincipal().getName())) {
+    var member = org.getMembers().get(UUID.fromString(securityIdentity.getPrincipal().getName()));
+    if (member == null || member.getRole() != OrganizationRole.ADMIN) {
       throw new ForbiddenOrganizationAccessException();
     }
 
@@ -132,43 +134,45 @@ public class OrganizationService {
   public ViewOrganizationMembershipDto createOrganizationMembership(
       UUID organizationId, @Valid CreateOrganizationMembershipDto request) {
     var org = findByIdOrThrow(organizationId);
-    // TODO: Admins?
-    if (!org.getOwner().toString().equals(securityIdentity.getPrincipal().getName())) {
+    var member = org.getMembers().get(UUID.fromString(securityIdentity.getPrincipal().getName()));
+    if (member == null || member.getRole() != OrganizationRole.ADMIN) {
       throw new ForbiddenOrganizationAccessException();
     }
-    var member = request.member();
+    var memberToAdd = request.member();
     var role = request.role();
 
-    if (role.equals(OrganizationRole.OWNER)) {
-      // TODO: explicit exception / validation
-      throw new WebApplicationException(422);
-    }
-
     var membership = new OrganizationMembership(role);
-    org.getMembers().put(member, membership);
+    org.getMembers().put(memberToAdd, membership);
     this.organizationRepository.save(org);
 
-    return new ViewOrganizationMembershipDto(member, resolveUserName(member), membership.getRole());
+    return new ViewOrganizationMembershipDto(
+        memberToAdd, resolveUserName(memberToAdd), membership.getRole());
   }
 
   @Transactional
   public ViewOrganizationMembershipDto updateOrganizationMembership(
       UUID organizationId, UUID memberId, @Valid UpdateOrganizationMembershipDto request) {
     var org = findByIdOrThrow(organizationId);
-    // TODO: Admins?
-    if (!org.getOwner().toString().equals(securityIdentity.getPrincipal().getName())) {
+    var member = org.getMembers().get(UUID.fromString(securityIdentity.getPrincipal().getName()));
+    if (member == null || member.getRole() != OrganizationRole.ADMIN) {
       throw new ForbiddenOrganizationAccessException();
     }
     var role = request.role();
 
-    if (role.equals(OrganizationRole.OWNER)) {
-      // TODO: explicit exception / validation
-      throw new WebApplicationException(422);
-    }
-
     var membership = org.getMembers().get(memberId);
     if (membership == null) {
       throw new OrganizationMembershipNotFoundException();
+    }
+
+    if (membership.getRole() == OrganizationRole.ADMIN
+        && request.role() != OrganizationRole.ADMIN) {
+      boolean hasMoreAdmins =
+          org.getMembers().entrySet().stream()
+              .filter(m -> !m.getKey().equals(memberId))
+              .anyMatch(m -> m.getValue().getRole() == OrganizationRole.ADMIN);
+      if (!hasMoreAdmins) {
+        throw new WebApplicationException("Can't remove the last admin", 422);
+      }
     }
 
     membership.setRole(role);
@@ -182,9 +186,24 @@ public class OrganizationService {
   @Transactional
   public void deleteOrganizationMembership(UUID organizationId, UUID memberId) {
     var org = findByIdOrThrow(organizationId);
-    // TODO: Admins?
-    if (!org.getOwner().toString().equals(securityIdentity.getPrincipal().getName())) {
+    var member = org.getMembers().get(UUID.fromString(securityIdentity.getPrincipal().getName()));
+    if (member == null || member.getRole() != OrganizationRole.ADMIN) {
       throw new ForbiddenOrganizationAccessException();
+    }
+
+    var membership = org.getMembers().get(memberId);
+    if (membership == null) {
+      throw new OrganizationMembershipNotFoundException();
+    }
+
+    if (membership.getRole() == OrganizationRole.ADMIN) {
+      boolean hasMoreAdmins =
+          org.getMembers().entrySet().stream()
+              .filter(m -> !m.getKey().equals(memberId))
+              .anyMatch(m -> m.getValue().getRole() == OrganizationRole.ADMIN);
+      if (!hasMoreAdmins) {
+        throw new WebApplicationException("Can't remove the last admin", 422);
+      }
     }
 
     org.getMembers().remove(memberId);
@@ -193,14 +212,11 @@ public class OrganizationService {
 
   public ViewAllOrganizationMembershipsDto getOrganizationMemberships(UUID organizationId) {
     var org = findByIdOrThrow(organizationId);
-    // TODO: Admins?
-    if (!org.getOwner().toString().equals(securityIdentity.getPrincipal().getName())) {
+    var member = org.getMembers().get(UUID.fromString(securityIdentity.getPrincipal().getName()));
+    if (member == null || member.getRole() != OrganizationRole.ADMIN) {
       throw new ForbiddenOrganizationAccessException();
     }
 
-    var owner =
-        new ViewOrganizationMembershipDto(
-            org.getOwner(), resolveUserName(org.getOwner()), OrganizationRole.OWNER);
     var members =
         org.getMembers().entrySet().stream()
             .map(
@@ -210,7 +226,6 @@ public class OrganizationService {
                         resolveUserName(entry.getKey()),
                         entry.getValue().getRole()))
             .collect(Collectors.toList());
-    members.add(owner);
 
     return new ViewAllOrganizationMembershipsDto(members);
   }

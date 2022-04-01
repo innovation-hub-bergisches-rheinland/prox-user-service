@@ -38,7 +38,7 @@ public class OrganizationRepositoryImpl implements OrganizationRepository {
     // return organizationPanacheRepository.find("from Organization o where (o.owner = ?1 or
     // key(o.members) = ?1)", id).stream().distinct().toList();
     return this.findAll().stream()
-        .filter(it -> it.getOwner().equals(id) || it.getMembers().containsKey(id))
+        .filter(it -> it.getMembers().containsKey(id))
         .collect(Collectors.toList());
   }
 

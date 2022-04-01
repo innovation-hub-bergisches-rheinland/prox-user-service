@@ -15,7 +15,7 @@ import io.quarkus.test.common.http.TestHTTPEndpoint;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.keycloak.client.KeycloakTestClient;
 import io.restassured.RestAssured;
-import java.util.Collections;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import javax.inject.Inject;
@@ -107,7 +107,9 @@ public class OrganizationResourceIntegrationTest {
     SoftAssertions softly = new SoftAssertions();
 
     softly.assertThat(org.getName()).isEqualTo("ACME Ltd.");
-    softly.assertThat(org.getOwner()).isEqualTo(aliceId);
+    softly
+        .assertThat(org.getMembers().get(aliceId))
+        .isEqualTo(new OrganizationMembership(OrganizationRole.ADMIN));
 
     softly.assertThat(profile.getFoundingDate()).isEqualTo("14.03.2022");
     softly.assertThat(profile.getNumberOfEmployees()).isEqualTo("2022");
@@ -140,8 +142,7 @@ public class OrganizationResourceIntegrationTest {
         new Organization(
             orgId,
             "ACME Ltd.",
-            aliceId,
-            Collections.emptyMap(),
+            Map.of(aliceId, new OrganizationMembership(OrganizationRole.ADMIN)),
             new OrganizationProfile(
                 "14.03.2022",
                 "2022",
@@ -188,7 +189,8 @@ public class OrganizationResourceIntegrationTest {
     // Given
     UUID aliceId = UUID.fromString("856ba1b6-ae45-4722-8fa5-212c7f71f10c");
     UUID orgId = UUID.randomUUID();
-    var dummyOrg = Organization.builder().id(orgId).name("ACME Ltd.").owner(aliceId).build();
+    var dummyOrg = Organization.builder().id(orgId).name("ACME Ltd.").build();
+    dummyOrg.getMembers().put(aliceId, new OrganizationMembership(OrganizationRole.ADMIN));
     this.organizationRepository.save(dummyOrg);
     var bobId = UUID.fromString("ed0b4a07-2612-4571-a9ab-27e13ce752f1");
 
@@ -214,7 +216,7 @@ public class OrganizationResourceIntegrationTest {
         .statusCode(201);
 
     var org = this.organizationRepository.findById(orgId).get();
-    Assertions.assertThat(org.getMembers()).hasSize(1);
+    Assertions.assertThat(org.getMembers()).hasSize(2);
     assertThat(org.getMembers())
         .extractingByKey(bobId)
         .extracting("role")
@@ -228,7 +230,10 @@ public class OrganizationResourceIntegrationTest {
     UUID aliceId = UUID.fromString("856ba1b6-ae45-4722-8fa5-212c7f71f10c");
     UUID orgId = UUID.randomUUID();
     var bobId = UUID.fromString("ed0b4a07-2612-4571-a9ab-27e13ce752f1");
-    var dummyOrg = Organization.builder().id(orgId).name("ACME Ltd.").owner(aliceId).build();
+
+    var dummyOrg = Organization.builder().id(orgId).name("ACME Ltd.").build();
+
+    dummyOrg.getMembers().put(aliceId, new OrganizationMembership(OrganizationRole.ADMIN));
     dummyOrg.getMembers().put(bobId, new OrganizationMembership(OrganizationRole.MEMBER));
     this.organizationRepository.save(dummyOrg);
 
@@ -251,7 +256,7 @@ public class OrganizationResourceIntegrationTest {
         .statusCode(200);
 
     var org = this.organizationRepository.findById(orgId).get();
-    Assertions.assertThat(org.getMembers()).hasSize(1);
+    Assertions.assertThat(org.getMembers()).hasSize(2);
     assertThat(org.getMembers())
         .extractingByKey(bobId)
         .extracting("role")
@@ -265,7 +270,10 @@ public class OrganizationResourceIntegrationTest {
     UUID aliceId = UUID.fromString("856ba1b6-ae45-4722-8fa5-212c7f71f10c");
     UUID orgId = UUID.randomUUID();
     var bobId = UUID.fromString("ed0b4a07-2612-4571-a9ab-27e13ce752f1");
-    var dummyOrg = Organization.builder().id(orgId).name("ACME Ltd.").owner(aliceId).build();
+
+    var dummyOrg = Organization.builder().id(orgId).name("ACME Ltd.").build();
+
+    dummyOrg.getMembers().put(aliceId, new OrganizationMembership(OrganizationRole.ADMIN));
     dummyOrg.getMembers().put(bobId, new OrganizationMembership(OrganizationRole.MEMBER));
     this.organizationRepository.save(dummyOrg);
 
@@ -280,7 +288,7 @@ public class OrganizationResourceIntegrationTest {
         .statusCode(204);
 
     var org = this.organizationRepository.findById(orgId).get();
-    Assertions.assertThat(org.getMembers()).hasSize(0);
+    Assertions.assertThat(org.getMembers()).hasSize(1);
   }
 
   @Test
@@ -289,7 +297,10 @@ public class OrganizationResourceIntegrationTest {
     // Given
     UUID aliceId = UUID.fromString("856ba1b6-ae45-4722-8fa5-212c7f71f10c");
     UUID orgId = UUID.randomUUID();
-    var dummyOrg = Organization.builder().id(orgId).name("ACME Ltd.").owner(aliceId).build();
+
+    var dummyOrg = Organization.builder().id(orgId).name("ACME Ltd.").build();
+    dummyOrg.getMembers().put(aliceId, new OrganizationMembership(OrganizationRole.ADMIN));
+
     this.organizationRepository.save(dummyOrg);
     var randomUser = UUID.randomUUID();
 
@@ -320,9 +331,12 @@ public class OrganizationResourceIntegrationTest {
     UUID orgId = UUID.randomUUID();
     var bobId = UUID.fromString("ed0b4a07-2612-4571-a9ab-27e13ce752f1");
     var julianBradenId = UUID.fromString("64788f0d-a954-4898-bfda-7498aae2b271");
-    var dummyOrg = Organization.builder().id(orgId).name("ACME Ltd.").owner(aliceId).build();
+    var dummyOrg = Organization.builder().id(orgId).name("ACME Ltd.").build();
+
+    dummyOrg.getMembers().put(aliceId, new OrganizationMembership(OrganizationRole.ADMIN));
     dummyOrg.getMembers().put(bobId, new OrganizationMembership(OrganizationRole.MEMBER));
     dummyOrg.getMembers().put(julianBradenId, new OrganizationMembership(OrganizationRole.ADMIN));
+
     this.organizationRepository.save(dummyOrg);
 
     RestAssured.given()
@@ -355,6 +369,6 @@ public class OrganizationResourceIntegrationTest {
             is("alice"))
         .body(
             "members.find { it.memberId == '856ba1b6-ae45-4722-8fa5-212c7f71f10c' }.role",
-            is("OWNER"));
+            is("ADMIN"));
   }
 }

@@ -41,9 +41,6 @@ public class Organization {
   @Column(name = "name", nullable = false)
   private String name;
 
-  @Column(name = "owner_id", updatable = false, nullable = false)
-  private UUID owner;
-
   @ElementCollection(fetch = FetchType.EAGER)
   @CollectionTable(
       name = "organization_memberships",

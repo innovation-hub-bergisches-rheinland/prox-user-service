@@ -39,7 +39,6 @@ class OrganizationRepositoryTest {
     // TODO: Well isn't this more a mapping test?
     assertThat(foundOrg.getId()).isEqualTo(UUID.fromString("00000000-0000-0000-0000-00000000"));
     assertThat(foundOrg.getName()).isEqualTo("Musterfirma GmbH & Co. KG");
-    assertThat(foundOrg.getOwner()).isEqualTo(UUID.fromString("00000000-0000-0000-0000-00000000"));
     assertThat(foundOrg.getMembers()).hasSize(1);
   }
 
@@ -51,7 +50,8 @@ class OrganizationRepositoryTest {
     var member = UUID.randomUUID();
     var org =
         new Organization(
-            UUID.randomUUID(), "Musterfirma GmbH & Co. KG", owner, new HashMap<>(), null, null);
+            UUID.randomUUID(), "Musterfirma GmbH & Co. KG", new HashMap<>(), null, null);
+    org.getMembers().put(owner, new OrganizationMembership(OrganizationRole.ADMIN));
     org.getMembers().put(member, new OrganizationMembership(OrganizationRole.MEMBER));
 
     // WHen
@@ -71,18 +71,12 @@ class OrganizationRepositoryTest {
         Organization.builder()
             .id(UUID.randomUUID())
             .name("Test Org 1")
-            .owner(UUID.randomUUID())
             .members(
                 Map.of(
                     userId, OrganizationMembership.builder().role(OrganizationRole.MEMBER).build()))
             .build();
     // Org 2 - User does not have any relation to
-    var org2 =
-        Organization.builder()
-            .id(UUID.randomUUID())
-            .name("Test Org 2")
-            .owner(UUID.randomUUID())
-            .build();
+    var org2 = Organization.builder().id(UUID.randomUUID()).name("Test Org 2").build();
     this.organizationPanacheRepository.persist(org1, org2);
 
     // When
@@ -97,16 +91,11 @@ class OrganizationRepositoryTest {
   void shouldReturnOrgsWhereUserIsOwner() {
     // Given
     var userId = UUID.randomUUID();
-    // Org 1 - User is owner
-    var org1 =
-        Organization.builder().id(UUID.randomUUID()).name("Test Org 1").owner(userId).build();
+    // Org 1 - User is admin
+    var org1 = Organization.builder().id(UUID.randomUUID()).name("Test Org 1").build();
+    org1.getMembers().put(userId, new OrganizationMembership(OrganizationRole.ADMIN));
     // Org 2 - User does not have any relation to
-    var org2 =
-        Organization.builder()
-            .id(UUID.randomUUID())
-            .name("Test Org 2")
-            .owner(UUID.randomUUID())
-            .build();
+    var org2 = Organization.builder().id(UUID.randomUUID()).name("Test Org 2").build();
     this.organizationPanacheRepository.persist(org1, org2);
 
     var all = this.organizationRepository.findAll();
