@@ -25,7 +25,7 @@ public abstract class OrganizationPermissionsMapper {
           var membership = organization.getMembers().get(id);
 
           canViewMembers = membership != null;
-          canEdit = membership.getRole() == OrganizationRole.ADMIN;
+          canEdit = membership != null && membership.getRole() == OrganizationRole.ADMIN;
         } catch (IllegalArgumentException e) {
           log.error("Principal not an uuid", e);
         }
