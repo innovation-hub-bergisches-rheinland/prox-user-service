@@ -3,8 +3,10 @@ package de.innovationhub.prox.userservice.organization.dto;
 import de.innovationhub.prox.userservice.organization.dto.request.CreateOrganizationDto;
 import de.innovationhub.prox.userservice.organization.dto.request.OrganizationProfileRequestDto;
 import de.innovationhub.prox.userservice.organization.dto.response.ViewOrganizationDto;
+import de.innovationhub.prox.userservice.organization.dto.response.ViewOrganizationMembershipDto;
 import de.innovationhub.prox.userservice.organization.dto.response.ViewOrganizationProfileDto;
 import de.innovationhub.prox.userservice.organization.entity.Organization;
+import de.innovationhub.prox.userservice.organization.entity.OrganizationMembership;
 import de.innovationhub.prox.userservice.organization.entity.profile.Branch;
 import de.innovationhub.prox.userservice.organization.entity.profile.OrganizationProfile;
 import de.innovationhub.prox.userservice.organization.entity.profile.Quarter;
@@ -36,6 +38,11 @@ public interface OrganizationMapper {
   @Mapping(target = "headquarter", source = "headquarter")
   @Mapping(target = "quarters", source = "quarters")
   OrganizationProfile createFromDto(OrganizationProfileRequestDto profile);
+
+  @Mapping(target = "memberId", source = "id")
+  @Mapping(target = "name", source = "name")
+  @Mapping(target = "role", source = "membership.role")
+  ViewOrganizationMembershipDto toDto(UUID id, String name, OrganizationMembership membership);
 
   default String toString(Quarter quarter) {
     return quarter == null ? null : quarter.getLocation();

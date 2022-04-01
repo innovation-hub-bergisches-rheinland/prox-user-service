@@ -21,11 +21,11 @@ import de.innovationhub.prox.userservice.user.constraints.IsValidUserId;
 import de.innovationhub.prox.userservice.user.entity.User;
 import de.innovationhub.prox.userservice.user.repository.UserRepository;
 import io.quarkus.security.identity.SecurityIdentity;
+import io.smallrye.common.constraint.Nullable;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
@@ -71,12 +71,13 @@ public class OrganizationService {
   @Transactional
   public ViewOrganizationDto updateOrganization(UUID orgId, @Valid CreateOrganizationDto request) {
     var org = findByIdOrThrow(orgId);
-    var member = org.getMembers().get(UUID.fromString(securityIdentity.getPrincipal().getName()));
-    if (member == null || member.getRole() != OrganizationRole.ADMIN) {
+    if (!authenticatedUserHasRole(org, OrganizationRole.ADMIN)) {
       throw new ForbiddenOrganizationAccessException();
     }
+
     organizationMapper.updateOrganization(org, request);
     organizationRepository.save(org);
+
     return this.organizationMapper.toDto(org);
   }
 
@@ -94,8 +95,7 @@ public class OrganizationService {
   @Transactional
   public void setOrganizationAvatar(UUID orgId, FormDataBody formDataBody) throws IOException {
     var org = findByIdOrThrow(orgId);
-    var member = org.getMembers().get(UUID.fromString(securityIdentity.getPrincipal().getName()));
-    if (member == null || member.getRole() != OrganizationRole.ADMIN) {
+    if (!authenticatedUserHasRole(org, OrganizationRole.ADMIN)) {
       throw new ForbiddenOrganizationAccessException();
     }
 
@@ -110,10 +110,10 @@ public class OrganizationService {
   public ViewOrganizationMembershipDto createOrganizationMembership(
       UUID organizationId, @Valid CreateOrganizationMembershipDto request) {
     var org = findByIdOrThrow(organizationId);
-    var member = org.getMembers().get(UUID.fromString(securityIdentity.getPrincipal().getName()));
-    if (member == null || member.getRole() != OrganizationRole.ADMIN) {
+    if (!authenticatedUserHasRole(org, OrganizationRole.ADMIN)) {
       throw new ForbiddenOrganizationAccessException();
     }
+
     var memberToAdd = request.member();
     var role = request.role();
 
@@ -129,10 +129,10 @@ public class OrganizationService {
   public ViewOrganizationMembershipDto updateOrganizationMembership(
       UUID organizationId, UUID memberId, @Valid UpdateOrganizationMembershipDto request) {
     var org = findByIdOrThrow(organizationId);
-    var member = org.getMembers().get(UUID.fromString(securityIdentity.getPrincipal().getName()));
-    if (member == null || member.getRole() != OrganizationRole.ADMIN) {
+    if (!authenticatedUserHasRole(org, OrganizationRole.ADMIN)) {
       throw new ForbiddenOrganizationAccessException();
     }
+
     var role = request.role();
 
     var membership = org.getMembers().get(memberId);
@@ -162,8 +162,7 @@ public class OrganizationService {
   @Transactional
   public void deleteOrganizationMembership(UUID organizationId, UUID memberId) {
     var org = findByIdOrThrow(organizationId);
-    var member = org.getMembers().get(UUID.fromString(securityIdentity.getPrincipal().getName()));
-    if (member == null || member.getRole() != OrganizationRole.ADMIN) {
+    if (!authenticatedUserHasRole(org, OrganizationRole.ADMIN)) {
       throw new ForbiddenOrganizationAccessException();
     }
 
@@ -188,8 +187,7 @@ public class OrganizationService {
 
   public ViewAllOrganizationMembershipsDto getOrganizationMemberships(UUID organizationId) {
     var org = findByIdOrThrow(organizationId);
-    var member = org.getMembers().get(UUID.fromString(securityIdentity.getPrincipal().getName()));
-    if (member == null) {
+    if (!authenticatedUserIsMember(org)) {
       throw new ForbiddenOrganizationAccessException();
     }
 
@@ -197,11 +195,9 @@ public class OrganizationService {
         org.getMembers().entrySet().stream()
             .map(
                 entry ->
-                    new ViewOrganizationMembershipDto(
-                        entry.getKey(),
-                        resolveUserName(entry.getKey()),
-                        entry.getValue().getRole()))
-            .collect(Collectors.toList());
+                    organizationMapper.toDto(
+                        entry.getKey(), resolveUserName(entry.getKey()), entry.getValue()))
+            .toList();
 
     return new ViewAllOrganizationMembershipsDto(members);
   }
@@ -211,15 +207,13 @@ public class OrganizationService {
   }
 
   public List<ViewOrganizationDto> findAll() {
-    return organizationRepository.findAll().stream()
-        .map(this.organizationMapper::toDto)
-        .collect(Collectors.toList());
+    return organizationRepository.findAll().stream().map(this.organizationMapper::toDto).toList();
   }
 
   public List<ViewOrganizationDto> findOrganizationsWhereUserIsMember(@IsValidUserId UUID userId) {
     return this.organizationRepository.findAllWithUserAsMember(userId).stream()
         .map(this.organizationMapper::toDto)
-        .collect(Collectors.toList());
+        .toList();
   }
 
   private Organization findByIdOrThrow(UUID id) {
@@ -228,5 +222,18 @@ public class OrganizationService {
 
   private String resolveUserName(UUID id) {
     return this.userRepository.findById(id).map(User::name).orElse(id.toString());
+  }
+
+  private boolean authenticatedUserIsMember(Organization org) {
+    return getMembershipOfAuthenticatedUser(org) != null;
+  }
+
+  private boolean authenticatedUserHasRole(Organization org, OrganizationRole role) {
+    var membership = getMembershipOfAuthenticatedUser(org).getRole();
+    return membership != null && membership == role;
+  }
+
+  private @Nullable OrganizationMembership getMembershipOfAuthenticatedUser(Organization org) {
+    return org.getMembers().get(UUID.fromString(securityIdentity.getPrincipal().getName()));
   }
 }
