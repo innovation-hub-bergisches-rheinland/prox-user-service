@@ -213,7 +213,7 @@ public class OrganizationService {
   public ViewAllOrganizationMembershipsDto getOrganizationMemberships(UUID organizationId) {
     var org = findByIdOrThrow(organizationId);
     var member = org.getMembers().get(UUID.fromString(securityIdentity.getPrincipal().getName()));
-    if (member == null || member.getRole() != OrganizationRole.ADMIN) {
+    if (member == null) {
       throw new ForbiddenOrganizationAccessException();
     }
 
