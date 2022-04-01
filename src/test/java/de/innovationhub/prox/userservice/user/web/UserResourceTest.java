@@ -1,4 +1,4 @@
-package de.innovationhub.prox.userservice.representative.web;
+package de.innovationhub.prox.userservice.user.web;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -7,7 +7,6 @@ import static org.mockito.Mockito.when;
 
 import de.innovationhub.prox.userservice.user.dto.UserResponseDto;
 import de.innovationhub.prox.userservice.user.service.UserIdentityService;
-import de.innovationhub.prox.userservice.user.web.UserResource;
 import io.quarkus.test.common.http.TestHTTPEndpoint;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.mockito.InjectMock;

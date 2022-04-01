@@ -1,10 +1,9 @@
-package de.innovationhub.prox.userservice.representative.web;
+package de.innovationhub.prox.userservice.user.web;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
 
 import de.innovationhub.prox.userservice.user.dto.UserResponseDto;
-import de.innovationhub.prox.userservice.user.web.UserResource;
 import io.quarkus.test.common.http.TestHTTPEndpoint;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.keycloak.client.KeycloakTestClient;
