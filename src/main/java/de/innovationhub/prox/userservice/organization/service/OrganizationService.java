@@ -36,6 +36,7 @@ import javax.ws.rs.core.Response;
 @ApplicationScoped
 public class OrganizationService {
 
+  // TODO: Make this configurable
   private static final String AVATAR_KEY_PREFIX = "img/avatars/orgs";
 
   private final OrganizationRepository organizationRepository;
