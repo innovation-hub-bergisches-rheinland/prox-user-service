@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.4.2](https://github.com/innovation-hub-bergisches-rheinland/prox-user-service/compare/v1.4.1...v1.4.2) (2022-04-01)
+
+
+### Bug Fixes
+
+* allow null/blank values for quarters ([960af04](https://github.com/innovation-hub-bergisches-rheinland/prox-user-service/commit/960af04491c8da06365995e41ead7b9c2965929d))
+* members can view memberships now ([9db31bf](https://github.com/innovation-hub-bergisches-rheinland/prox-user-service/commit/9db31bf66fdcb94e2d57f474a00df239de474d8f))
+
 ### [1.4.1](https://github.com/innovation-hub-bergisches-rheinland/prox-user-service/compare/v1.4.0...v1.4.1) (2022-04-01)
 
 
