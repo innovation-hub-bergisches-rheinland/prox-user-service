@@ -71,7 +71,7 @@ public class OrganizationService {
   @Transactional
   public ViewOrganizationDto updateOrganization(UUID orgId, @Valid CreateOrganizationDto request) {
     var org = findByIdOrThrow(orgId);
-    var member = org.getMembers().get(securityIdentity.getPrincipal().getName());
+    var member = org.getMembers().get(UUID.fromString(securityIdentity.getPrincipal().getName()));
     if (member == null || member.getRole() != OrganizationRole.ADMIN) {
       throw new ForbiddenOrganizationAccessException();
     }
