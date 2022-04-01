@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.4.0](https://github.com/innovation-hub-bergisches-rheinland/prox-user-service/compare/v1.3.7...v1.4.0) (2022-04-01)
+
+
+### Features
+
+* refactor organization roles and remove owner ([7489aa6](https://github.com/innovation-hub-bergisches-rheinland/prox-user-service/commit/7489aa66ebe72ba7d9af36de7efbc1c0484e6b2a))
+
 ### [1.3.7](https://github.com/innovation-hub-bergisches-rheinland/prox-user-service/compare/v1.3.6...v1.3.7) (2022-03-17)
 
 
