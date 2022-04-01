@@ -61,7 +61,7 @@ public class OrganizationResourceIntegrationTest {
                          "contactEmail": "example@example.org",
                          "vita": "Lorem Ipsum",
                          "headquarter": "Gummersbach",
-                         "quarters": "Abu Dhabi, Köln",
+                         "quarters": "",
                          "branches": [
                            "Automotive",
                            "Quality Assurance"
@@ -89,7 +89,7 @@ public class OrganizationResourceIntegrationTest {
             .body("profile.contactEmail", is("example@example.org"))
             .body("profile.vita", is("Lorem Ipsum"))
             .body("profile.headquarter", is("Gummersbach"))
-            .body("profile.quarters", is("Abu Dhabi, Köln"))
+            .body("profile.quarters", nullValue())
             .body("profile.branches", containsInAnyOrder("Automotive", "Quality Assurance"))
             .body("profile.socialMedia.facebookHandle", is("acmeLtd"))
             .body("profile.socialMedia.twitterHandle", is("acmeLtd"))
@@ -117,7 +117,7 @@ public class OrganizationResourceIntegrationTest {
     softly.assertThat(profile.getContactEmail()).isEqualTo("example@example.org");
     softly.assertThat(profile.getVita()).isEqualTo("Lorem Ipsum");
     softly.assertThat(profile.getHeadquarter().getLocation()).isEqualTo("Gummersbach");
-    softly.assertThat(profile.getQuarters()).extracting("location").isEqualTo("Abu Dhabi, Köln");
+    softly.assertThat(profile.getQuarters()).isNull();
     softly
         .assertThat(profile.getBranches())
         .extracting("name")

@@ -34,7 +34,7 @@ public interface OrganizationMapper {
   ViewOrganizationProfileDto toDto(OrganizationProfile organizationProfile);
 
   @Mapping(target = "headquarter.location", source = "headquarter")
-  @Mapping(target = "quarters.location", source = "quarters")
+  @Mapping(target = "quarters", source = "quarters")
   OrganizationProfile createFromDto(OrganizationProfileRequestDto profile);
 
   default String toString(Quarter quarter) {
@@ -42,12 +42,22 @@ public interface OrganizationMapper {
   }
 
   @Mapping(target = "location", source = "s")
-  Quarter createQuarterFromString(String s);
+  default Quarter createQuarterFromString(String s) {
+    if (s != null && !s.isBlank()) {
+      return new Quarter(s);
+    }
+    return null;
+  }
 
   default String toString(Branch branch) {
     return branch == null ? null : branch.getName();
   }
 
   @Mapping(target = "name", source = "s")
-  Branch createBranchFromString(String s);
+  default Branch createBranchFromString(String s) {
+    if (s != null && !s.isBlank()) {
+      return new Branch(s);
+    }
+    return null;
+  }
 }
