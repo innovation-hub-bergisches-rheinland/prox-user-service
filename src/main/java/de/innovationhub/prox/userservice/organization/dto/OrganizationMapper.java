@@ -33,7 +33,7 @@ public interface OrganizationMapper {
   @Mapping(target = "quarters", source = "quarters.location")
   ViewOrganizationProfileDto toDto(OrganizationProfile organizationProfile);
 
-  @Mapping(target = "headquarter.location", source = "headquarter")
+  @Mapping(target = "headquarter", source = "headquarter")
   @Mapping(target = "quarters", source = "quarters")
   OrganizationProfile createFromDto(OrganizationProfileRequestDto profile);
 
