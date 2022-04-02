@@ -3,14 +3,10 @@ package de.innovationhub.prox.userservice.core.data;
 import io.quarkus.test.common.QuarkusTestResourceLifecycleManager;
 import java.util.HashMap;
 import java.util.Map;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.testcontainers.containers.GenericContainer;
 
 public class LocalStackS3Resource implements QuarkusTestResourceLifecycleManager {
   private GenericContainer<?> localstack;
-
-  @ConfigProperty(name = "bucket.name")
-  String bucket;
 
   @Override
   public Map<String, String> start() {
