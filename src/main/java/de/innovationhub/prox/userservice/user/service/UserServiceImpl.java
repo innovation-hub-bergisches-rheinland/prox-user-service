@@ -76,7 +76,9 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public Optional<UserProfileResponseDto> findProfileByUserId(UUID id) {
-    return userProfileRepository.findProfileByUserId(id).map(userMapper::toDto);
+    var profile = userProfileRepository.findProfileByUserId(id);
+    if (profile.isPresent()) return profile.map(userMapper::toDto);
+    return userRepository.findById(id).map(userMapper::userToProfile);
   }
 
   @Transactional

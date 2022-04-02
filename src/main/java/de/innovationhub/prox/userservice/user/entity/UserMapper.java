@@ -50,6 +50,8 @@ public interface UserMapper {
   @Mapping(target = "subjects", source = "researchSubjects")
   UserProfileResponseDto toDto(UserProfile userProfile);
 
+  UserProfileResponseDto userToProfile(User user);
+
   default @Nullable String toString(@Nullable ResearchSubject researchSubject) {
     return researchSubject == null ? null : researchSubject.getSubject();
   }
