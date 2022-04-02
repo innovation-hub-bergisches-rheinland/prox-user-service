@@ -47,6 +47,7 @@ public interface UserMapper {
     return (firstName == null ? "" : firstName) + " " + (lastName == null ? "" : lastName);
   }
 
+  @Mapping(target = "subjects", source = "researchSubjects")
   UserProfileResponseDto toDto(UserProfile userProfile);
 
   default @Nullable String toString(@Nullable ResearchSubject researchSubject) {
@@ -75,5 +76,6 @@ public interface UserMapper {
 
   @Mapping(target = "userId", source = "userId")
   @Mapping(target = ".", source = "request")
+  @Mapping(target = "researchSubjects", source = "request.subjects")
   UserProfile toEntity(UUID userId, UserProfileRequestDto request);
 }

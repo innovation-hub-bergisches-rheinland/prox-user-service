@@ -19,10 +19,14 @@ import java.util.UUID;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
+import javax.validation.ConstraintViolationException;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
+import lombok.extern.slf4j.Slf4j;
 
 @ApplicationScoped
+@Slf4j
 public class UserServiceImpl implements UserService {
   private static final String AVATAR_KEY_PREFIX = "img/avatars/users";
 
@@ -83,7 +87,12 @@ public class UserServiceImpl implements UserService {
     if (!this.userRepository.existsById(id)) throw new WebApplicationException(404);
 
     var entity = userMapper.toEntity(id, requestDto);
-    this.userProfileRepository.save(entity);
+    try {
+      this.userProfileRepository.save(entity);
+    } catch (ConstraintViolationException e) {
+      log.error("Could not save profile", e);
+      throw new WebApplicationException(Status.BAD_REQUEST);
+    }
 
     return findProfileByUserId(id).orElseThrow(() -> new WebApplicationException(500));
   }
@@ -93,12 +102,12 @@ public class UserServiceImpl implements UserService {
       var userProfile =
           this.userProfileRepository
               .findProfileByUserId(userId)
-              .orElseThrow(() -> new WebApplicationException(404));
+              .orElseThrow(ObjectNotFoundException::new);
       var avatar = userProfile.getAvatar();
 
       return avatarService.buildAvatarResponse(avatar);
     } catch (ObjectNotFoundException e) {
-      throw new WebApplicationException(404);
+      return Response.status(404).build();
     }
   }
 

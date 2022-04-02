@@ -9,7 +9,6 @@ import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 import javax.inject.Inject;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.core.sync.RequestBody;
@@ -28,9 +27,6 @@ class S3ObjectStoreTest {
 
   @Inject S3ObjectStore s3ObjectStore;
 
-  @ConfigProperty(name = "bucket.name")
-  String bucket;
-
   @Test
   void shouldNotFindFile() {
     assertThatThrownBy(() -> s3ObjectStore.getObject(UUID.randomUUID().toString()))
@@ -39,7 +35,6 @@ class S3ObjectStoreTest {
 
   @BeforeEach
   void setUp() {
-
     try {
       s3Client.headBucket(HeadBucketRequest.builder().bucket(bucket).build());
     } catch (NoSuchBucketException e) {

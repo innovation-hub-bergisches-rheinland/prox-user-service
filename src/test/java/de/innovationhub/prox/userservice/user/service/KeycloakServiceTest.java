@@ -63,13 +63,25 @@ class KeycloakServiceTest {
     var searchQuery = "julianbbraden@cuvox.de";
 
     // When
-    var result = keycloakService.search(searchQuery);
+    var result = keycloakService.searchByMail(searchQuery);
 
     // Then
     Assertions.assertThat(result)
         .isNotEmpty()
         .extracting("id", "username", "firstName", "lastName")
         .contains(tuple("64788f0d-a954-4898-bfda-7498aae2b271", "forgisell", "Julian", "Braden"));
+  }
+
+  @Test
+  void shouldNotFindByPartialEmail() {
+    // Given
+    var searchQuery = "julianbbraden";
+
+    // When
+    var result = keycloakService.searchByMail(searchQuery);
+
+    // Then
+    assertThat(result).isEmpty();
   }
 
   @Test
