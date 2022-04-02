@@ -45,5 +45,8 @@ public class UserProfile {
   @CollectionTable(name = "user_publications", joinColumns = @JoinColumn(name = "user_id"))
   private List<Publication> publications;
 
+  @Column(name = "vita", columnDefinition = "TEXT")
+  private String vita;
+
   @Embedded @JsonIgnore private Avatar avatar;
 }

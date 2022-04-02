@@ -8,7 +8,8 @@ public record UserProfileResponseDto(
     String mainSubject,
     ContactInformationResponseDto contactInformation,
     Set<String> subjects,
-    Set<String> publications) {
+    Set<String> publications,
+    String vita) {
   public record ContactInformationResponseDto(
       String room,
       String consultationHour,

@@ -142,6 +142,7 @@ public class UserResourceIntegrationTest {
             "homepage": "abc",
             "collegePage": "abc"
           },
+          "vita": "Lorem Ipsum",
           "subjects": [
             "a",
             "b",
@@ -175,7 +176,8 @@ public class UserResourceIntegrationTest {
         .body("contactInformation.homepage", is("abc"))
         .body("contactInformation.collegePage", is("abc"))
         .body("subjects", containsInAnyOrder("a", "b", "c"))
-        .body("publications", containsInAnyOrder("a", "b", "c"));
+        .body("publications", containsInAnyOrder("a", "b", "c"))
+        .body("vita", is("Lorem Ipsum"));
   }
 
   @Test
@@ -204,7 +206,8 @@ public class UserResourceIntegrationTest {
         .body("contactInformation.homepage", is("abc"))
         .body("contactInformation.collegePage", is("abc"))
         .body("subjects", containsInAnyOrder("a", "b", "c"))
-        .body("publications", containsInAnyOrder("a", "b", "c"));
+        .body("publications", containsInAnyOrder("a", "b", "c"))
+        .body("vita", is("Lorem Ipsum"));
   }
 
   @Test
@@ -258,6 +261,7 @@ public class UserResourceIntegrationTest {
         new ContactInformation("abc", "abc", "abc", "abc", "abc", "abc"),
         Stream.of("a", "b", "c").map(ResearchSubject::new).toList(),
         Stream.of("a", "b", "c").map(Publication::new).toList(),
+        "Lorem Ipsum",
         null);
   }
 
