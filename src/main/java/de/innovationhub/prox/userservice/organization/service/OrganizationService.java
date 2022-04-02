@@ -1,9 +1,7 @@
 package de.innovationhub.prox.userservice.organization.service;
 
-import de.innovationhub.prox.userservice.core.data.FileObject;
 import de.innovationhub.prox.userservice.core.data.FormDataBody;
 import de.innovationhub.prox.userservice.core.data.ObjectNotFoundException;
-import de.innovationhub.prox.userservice.core.data.ObjectStoreRepository;
 import de.innovationhub.prox.userservice.organization.dto.OrganizationMapper;
 import de.innovationhub.prox.userservice.organization.dto.request.CreateOrganizationDto;
 import de.innovationhub.prox.userservice.organization.dto.request.CreateOrganizationMembershipDto;
@@ -18,14 +16,12 @@ import de.innovationhub.prox.userservice.organization.exception.ForbiddenOrganiz
 import de.innovationhub.prox.userservice.organization.exception.OrganizationMembershipNotFoundException;
 import de.innovationhub.prox.userservice.organization.exception.OrganizationNotFoundException;
 import de.innovationhub.prox.userservice.organization.repository.OrganizationRepository;
-import de.innovationhub.prox.userservice.shared.avatar.entity.Avatar;
+import de.innovationhub.prox.userservice.shared.avatar.service.AvatarService;
 import de.innovationhub.prox.userservice.user.constraints.IsValidUserId;
 import de.innovationhub.prox.userservice.user.entity.User;
 import de.innovationhub.prox.userservice.user.repository.UserRepository;
 import io.quarkus.security.identity.SecurityIdentity;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.net.URLConnection;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -35,7 +31,7 @@ import javax.inject.Inject;
 import javax.transaction.Transactional;
 import javax.validation.Valid;
 import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.Response.Status;
+import javax.ws.rs.core.Response;
 
 @ApplicationScoped
 public class OrganizationService {
@@ -46,7 +42,7 @@ public class OrganizationService {
   private final OrganizationMapper organizationMapper;
   private final SecurityIdentity securityIdentity;
   private final UserRepository userRepository;
-  private final ObjectStoreRepository objectStoreRepository;
+  private final AvatarService avatarService;
 
   @Inject
   public OrganizationService(
@@ -54,12 +50,12 @@ public class OrganizationService {
       OrganizationMapper organizationMapper,
       SecurityIdentity securityIdentity,
       UserRepository userRepository,
-      ObjectStoreRepository objectStoreRepository) {
+      AvatarService avatarService) {
     this.organizationRepository = organizationRepository;
     this.organizationMapper = organizationMapper;
     this.securityIdentity = securityIdentity;
     this.userRepository = userRepository;
-    this.objectStoreRepository = objectStoreRepository;
+    this.avatarService = avatarService;
   }
 
   @Transactional
@@ -84,15 +80,12 @@ public class OrganizationService {
     return this.organizationMapper.toDto(org);
   }
 
-  public FileObject getOrganizationAvatar(UUID orgId) throws IOException {
+  public Response getOrganizationAvatar(UUID orgId) throws IOException {
     try {
       var org = findByIdOrThrow(orgId);
       var avatar = org.getAvatar();
 
-      if (avatar == null || avatar.getKey() == null || avatar.getKey().isBlank())
-        throw new WebApplicationException(404);
-
-      return objectStoreRepository.getObject(avatar.getKey());
+      return avatarService.buildAvatarResponse(avatar);
     } catch (ObjectNotFoundException e) {
       throw new WebApplicationException(404);
     }
@@ -106,27 +99,10 @@ public class OrganizationService {
       throw new ForbiddenOrganizationAccessException();
     }
 
-    var bytes = formDataBody.getData().readAllBytes();
-    var mimeType = URLConnection.guessContentTypeFromStream(new ByteArrayInputStream(bytes));
+    var avatar =
+        avatarService.createAvatarFromFormBody(AVATAR_KEY_PREFIX + "/" + orgId, formDataBody);
+    org.setAvatar(avatar);
 
-    // TODO: We could do some more validation here. Also, we could try to store the image in
-    //  different resolutions
-
-    if (!mimeType.equalsIgnoreCase("image/png") && !mimeType.equalsIgnoreCase("image/jpeg"))
-      throw new WebApplicationException(Status.BAD_REQUEST);
-
-    String extension = "";
-
-    switch (mimeType.trim().toLowerCase()) {
-      case "image/png" -> extension = ".png";
-      case "image/jpeg" -> extension = ".jpg";
-    }
-
-    var fileObject =
-        new FileObject(AVATAR_KEY_PREFIX + "/" + orgId.toString() + extension, mimeType, bytes);
-
-    objectStoreRepository.saveObject(fileObject);
-    org.setAvatar(new Avatar(fileObject.getKey()));
     organizationRepository.save(org);
   }
 

@@ -1,6 +1,5 @@
 package de.innovationhub.prox.userservice.user.service;
 
-import de.innovationhub.prox.userservice.core.data.FileObject;
 import de.innovationhub.prox.userservice.core.data.FormDataBody;
 import de.innovationhub.prox.userservice.organization.dto.response.ViewOrganizationDto;
 import de.innovationhub.prox.userservice.user.dto.UserProfileRequestDto;
@@ -10,6 +9,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import javax.ws.rs.core.Response;
 
 public interface UserService {
   Optional<UserSearchResponseDto> findById(UUID id);
@@ -26,5 +26,5 @@ public interface UserService {
 
   void setAvatar(UUID userId, FormDataBody formDataBody) throws IOException;
 
-  FileObject getAvatar(UUID userId) throws IOException;
+  Response getAvatar(UUID userId) throws IOException;
 }

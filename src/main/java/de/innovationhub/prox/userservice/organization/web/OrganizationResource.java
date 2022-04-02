@@ -65,8 +65,7 @@ public class OrganizationResource {
   @Path("{id}/avatar")
   public Response getOrganizationAvatar(@PathParam(value = "id") UUID id) {
     try {
-      var fileObj = organizationService.getOrganizationAvatar(id);
-      return fileObj.createResponse();
+      return organizationService.getOrganizationAvatar(id);
     } catch (IOException e) {
       throw new WebApplicationException(500);
     }

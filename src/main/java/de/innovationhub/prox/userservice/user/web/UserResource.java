@@ -66,8 +66,7 @@ public class UserResource {
   @Path("{id}/profile/avatar")
   public Response getAvatar(@PathParam(value = "id") UUID id) {
     try {
-      var fileObj = userService.getAvatar(id);
-      return fileObj.createResponse();
+      return userService.getAvatar(id);
     } catch (IOException e) {
       throw new WebApplicationException(500);
     }
