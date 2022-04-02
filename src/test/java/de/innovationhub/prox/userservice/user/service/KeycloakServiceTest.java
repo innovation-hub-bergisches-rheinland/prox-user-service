@@ -26,8 +26,8 @@ class KeycloakServiceTest {
     Assertions.assertThat(alice)
         .isNotEmpty()
         .get()
-        .extracting("id", "name")
-        .containsExactly(aliceId, "alice");
+        .extracting("id", "username")
+        .containsExactly(aliceId.toString(), "alice");
   }
 
   @Test
@@ -53,8 +53,8 @@ class KeycloakServiceTest {
     // Then
     Assertions.assertThat(result)
         .isNotEmpty()
-        .extracting("id", "name")
-        .contains(tuple(UUID.fromString("ed0b4a07-2612-4571-a9ab-27e13ce752f1"), "bob"));
+        .extracting("id", "username")
+        .contains(tuple("ed0b4a07-2612-4571-a9ab-27e13ce752f1", "bob"));
   }
 
   @Test
@@ -68,8 +68,8 @@ class KeycloakServiceTest {
     // Then
     Assertions.assertThat(result)
         .isNotEmpty()
-        .extracting("id", "name")
-        .contains(tuple(UUID.fromString("64788f0d-a954-4898-bfda-7498aae2b271"), "Julian Braden"));
+        .extracting("id", "username", "firstName", "lastName")
+        .contains(tuple("64788f0d-a954-4898-bfda-7498aae2b271", "forgisell", "Julian", "Braden"));
   }
 
   @Test
@@ -83,8 +83,8 @@ class KeycloakServiceTest {
     // Then
     Assertions.assertThat(result)
         .isNotEmpty()
-        .extracting("id", "name")
-        .contains(tuple(UUID.fromString("64788f0d-a954-4898-bfda-7498aae2b271"), "Julian Braden"));
+        .extracting("id", "username", "firstName", "lastName")
+        .contains(tuple("64788f0d-a954-4898-bfda-7498aae2b271", "forgisell", "Julian", "Braden"));
   }
 
   @Test
@@ -98,8 +98,8 @@ class KeycloakServiceTest {
     // Then
     Assertions.assertThat(result)
         .isNotEmpty()
-        .extracting("id", "name")
-        .contains(tuple(UUID.fromString("64788f0d-a954-4898-bfda-7498aae2b271"), "Julian Braden"));
+        .extracting("id", "username", "firstName", "lastName")
+        .contains(tuple("64788f0d-a954-4898-bfda-7498aae2b271", "forgisell", "Julian", "Braden"));
   }
 
   @Test
@@ -113,7 +113,7 @@ class KeycloakServiceTest {
     // Then
     Assertions.assertThat(result)
         .isNotEmpty()
-        .extracting("id", "name")
-        .contains(tuple(UUID.fromString("64788f0d-a954-4898-bfda-7498aae2b271"), "Julian Braden"));
+        .extracting("id", "username", "firstName", "lastName")
+        .contains(tuple("64788f0d-a954-4898-bfda-7498aae2b271", "forgisell", "Julian", "Braden"));
   }
 }

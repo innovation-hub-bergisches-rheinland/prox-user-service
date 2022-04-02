@@ -1,5 +1,6 @@
-package de.innovationhub.prox.userservice.user.dto;
+package de.innovationhub.prox.userservice.user.entity;
 
+import de.innovationhub.prox.userservice.user.dto.UserSearchResponseDto;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Stream;
@@ -9,15 +10,22 @@ import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
 
-@Mapper(componentModel = "cdi", imports = UUID.class)
+@Mapper(
+    componentModel = "cdi",
+    imports = {UUID.class})
 public interface UserMapper {
   UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
 
-  @Mapping(target = "id", expression = "java( UUID.fromString(representation.getId()) )")
-  @Mapping(target = "name", source = "representation", qualifiedByName = "parseName")
-  UserSearchResponseDto toDto(UserRepresentation representation);
+  @Mapping(target = "id", expression = "java( UUID.fromString( representation.getId()) )")
+  @Mapping(target = "email", source = "email")
+  @Mapping(target = "name", source = ".", qualifiedByName = "parseName")
+  User toEntity(UserRepresentation representation);
 
-  Set<UserSearchResponseDto> toDtoSet(Stream<UserRepresentation> users);
+  @Mapping(target = "id")
+  @Mapping(target = "name")
+  UserSearchResponseDto toDto(User user);
+
+  Set<UserSearchResponseDto> toDtoSet(Stream<User> users);
 
   @Named("parseName")
   default String parseName(UserRepresentation representation) {

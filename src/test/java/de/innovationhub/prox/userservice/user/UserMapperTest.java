@@ -1,6 +1,6 @@
 package de.innovationhub.prox.userservice.user;
 
-import de.innovationhub.prox.userservice.user.dto.UserMapper;
+import de.innovationhub.prox.userservice.user.entity.UserMapper;
 import org.assertj.core.api.Assertions;
 import org.jeasy.random.EasyRandom;
 import org.junit.jupiter.api.Test;

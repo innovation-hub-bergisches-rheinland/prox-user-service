@@ -20,8 +20,8 @@ import de.innovationhub.prox.userservice.organization.exception.OrganizationMemb
 import de.innovationhub.prox.userservice.organization.exception.OrganizationNotFoundException;
 import de.innovationhub.prox.userservice.organization.repository.OrganizationRepository;
 import de.innovationhub.prox.userservice.user.constraints.IsValidUserId;
-import de.innovationhub.prox.userservice.user.dto.UserSearchResponseDto;
-import de.innovationhub.prox.userservice.user.service.UserIdentityService;
+import de.innovationhub.prox.userservice.user.entity.User;
+import de.innovationhub.prox.userservice.user.repository.UserRepository;
 import io.quarkus.security.identity.SecurityIdentity;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -45,7 +45,7 @@ public class OrganizationService {
   private final OrganizationRepository organizationRepository;
   private final OrganizationMapper organizationMapper;
   private final SecurityIdentity securityIdentity;
-  private final UserIdentityService userIdentityService;
+  private final UserRepository userRepository;
   private final ObjectStoreRepository objectStoreRepository;
 
   @Inject
@@ -53,12 +53,12 @@ public class OrganizationService {
       OrganizationRepository organizationRepository,
       OrganizationMapper organizationMapper,
       SecurityIdentity securityIdentity,
-      UserIdentityService userIdentityService,
+      UserRepository userRepository,
       ObjectStoreRepository objectStoreRepository) {
     this.organizationRepository = organizationRepository;
     this.organizationMapper = organizationMapper;
     this.securityIdentity = securityIdentity;
-    this.userIdentityService = userIdentityService;
+    this.userRepository = userRepository;
     this.objectStoreRepository = objectStoreRepository;
   }
 
@@ -251,9 +251,6 @@ public class OrganizationService {
   }
 
   private String resolveUserName(UUID id) {
-    return this.userIdentityService
-        .findById(id)
-        .map(UserSearchResponseDto::getName)
-        .orElse(id.toString());
+    return this.userRepository.findById(id).map(User::name).orElse(id.toString());
   }
 }
