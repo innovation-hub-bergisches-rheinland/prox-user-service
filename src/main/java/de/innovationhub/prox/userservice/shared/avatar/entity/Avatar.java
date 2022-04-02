@@ -1,4 +1,4 @@
-package de.innovationhub.prox.userservice.organization.entity;
+package de.innovationhub.prox.userservice.shared.avatar.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
@@ -15,7 +15,7 @@ import lombok.Setter;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @EqualsAndHashCode
-public class OrganizationAvatar {
+public class Avatar {
   @Column(name = "avatar_object_key")
   private String key;
 }

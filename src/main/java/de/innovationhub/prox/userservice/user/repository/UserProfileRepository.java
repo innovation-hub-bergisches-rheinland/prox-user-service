@@ -1,6 +1,6 @@
 package de.innovationhub.prox.userservice.user.repository;
 
-import de.innovationhub.prox.userservice.user.entity.UserProfile;
+import de.innovationhub.prox.userservice.user.entity.profile.UserProfile;
 import java.util.Optional;
 import java.util.UUID;
 

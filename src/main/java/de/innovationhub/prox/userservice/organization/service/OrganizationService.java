@@ -12,13 +12,13 @@ import de.innovationhub.prox.userservice.organization.dto.response.ViewAllOrgani
 import de.innovationhub.prox.userservice.organization.dto.response.ViewOrganizationDto;
 import de.innovationhub.prox.userservice.organization.dto.response.ViewOrganizationMembershipDto;
 import de.innovationhub.prox.userservice.organization.entity.Organization;
-import de.innovationhub.prox.userservice.organization.entity.OrganizationAvatar;
 import de.innovationhub.prox.userservice.organization.entity.OrganizationMembership;
 import de.innovationhub.prox.userservice.organization.entity.OrganizationRole;
 import de.innovationhub.prox.userservice.organization.exception.ForbiddenOrganizationAccessException;
 import de.innovationhub.prox.userservice.organization.exception.OrganizationMembershipNotFoundException;
 import de.innovationhub.prox.userservice.organization.exception.OrganizationNotFoundException;
 import de.innovationhub.prox.userservice.organization.repository.OrganizationRepository;
+import de.innovationhub.prox.userservice.shared.avatar.entity.Avatar;
 import de.innovationhub.prox.userservice.user.constraints.IsValidUserId;
 import de.innovationhub.prox.userservice.user.entity.User;
 import de.innovationhub.prox.userservice.user.repository.UserRepository;
@@ -126,7 +126,7 @@ public class OrganizationService {
         new FileObject(AVATAR_KEY_PREFIX + "/" + orgId.toString() + extension, mimeType, bytes);
 
     objectStoreRepository.saveObject(fileObject);
-    org.setAvatar(new OrganizationAvatar(fileObject.getKey()));
+    org.setAvatar(new Avatar(fileObject.getKey()));
     organizationRepository.save(org);
   }
 
