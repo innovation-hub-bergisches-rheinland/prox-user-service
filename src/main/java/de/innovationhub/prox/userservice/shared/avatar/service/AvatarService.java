@@ -27,10 +27,10 @@ public class AvatarService {
 
   public Response buildAvatarResponse(@Nullable Avatar avatar) throws IOException {
     if (avatar == null || avatar.getKey() == null || avatar.getKey().isBlank())
-      throw new WebApplicationException(404);
+      return Response.status(404).build();
 
     var fileObj = objectStoreRepository.getObject(avatar.getKey());
-    if (fileObj == null) throw new WebApplicationException(404);
+    if (fileObj == null) return Response.status(404).build();
 
     ResponseBuilder response = Response.ok(fileObj.getData());
     response.header("Content-Disposition", "attachment;filename=" + fileObj.getKey());
@@ -38,7 +38,7 @@ public class AvatarService {
 
     if (!fileObj.getMimeType().equalsIgnoreCase("image/png")
         && !fileObj.getMimeType().equalsIgnoreCase("image/jpeg"))
-      throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
+      return Response.status(500).build();
 
     return response.build();
   }
@@ -51,15 +51,17 @@ public class AvatarService {
     // TODO: We could do some more validation here. Also, we could try to store the image in
     //  different resolutions
 
-    if (!mimeType.equalsIgnoreCase("image/png") && !mimeType.equalsIgnoreCase("image/jpeg"))
+    // TODO: We should not throw a web application exception at this point
+    if (mimeType == null
+        || !mimeType.equalsIgnoreCase("image/png") && !mimeType.equalsIgnoreCase("image/jpeg"))
       throw new WebApplicationException(Status.BAD_REQUEST);
 
-    String extension = "";
-
-    switch (mimeType.trim().toLowerCase()) {
-      case "image/png" -> extension = ".png";
-      case "image/jpeg" -> extension = ".jpg";
-    }
+    String extension =
+        switch (mimeType.trim().toLowerCase()) {
+          case "image/png" -> ".png";
+          case "image/jpeg" -> ".jpg";
+          default -> "";
+        };
 
     FileObject fileObject;
     if (key.endsWith(extension)) {
