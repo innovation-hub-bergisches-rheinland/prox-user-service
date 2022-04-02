@@ -28,7 +28,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.ResponseBuilder;
 import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
 import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
 
@@ -66,16 +65,7 @@ public class OrganizationResource {
   @Path("{id}/avatar")
   public Response getOrganizationAvatar(@PathParam(value = "id") UUID id) {
     try {
-      var fileObj = organizationService.getOrganizationAvatar(id);
-      ResponseBuilder response = Response.ok(fileObj.getData());
-      response.header("Content-Disposition", "attachment;filename=" + fileObj.getKey());
-      response.header("Content-Type", fileObj.getMimeType());
-
-      if (!fileObj.getMimeType().equalsIgnoreCase("image/png")
-          && !fileObj.getMimeType().equalsIgnoreCase("image/jpeg"))
-        throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
-
-      return response.build();
+      return organizationService.getOrganizationAvatar(id);
     } catch (IOException e) {
       throw new WebApplicationException(500);
     }

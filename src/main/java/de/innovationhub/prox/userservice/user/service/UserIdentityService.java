@@ -1,13 +1,12 @@
 package de.innovationhub.prox.userservice.user.service;
 
-import de.innovationhub.prox.userservice.user.dto.UserResponseDto;
 import java.util.Optional;
 import java.util.UUID;
 
-public interface UserIdentityService {
-  Optional<UserResponseDto> findById(UUID id);
+public interface UserIdentityService<T> {
+  Optional<T> findById(UUID id);
 
   boolean existsById(UUID id);
 
-  Iterable<UserResponseDto> search(String query);
+  Iterable<T> search(String query);
 }

@@ -2,6 +2,7 @@ package de.innovationhub.prox.userservice.organization.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.innovationhub.prox.userservice.organization.entity.profile.OrganizationProfile;
+import de.innovationhub.prox.userservice.shared.avatar.entity.Avatar;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -52,5 +53,5 @@ public class Organization {
 
   @Embedded private OrganizationProfile profile;
 
-  @Embedded @JsonIgnore private OrganizationAvatar avatar;
+  @Embedded @JsonIgnore private Avatar avatar;
 }

@@ -39,7 +39,6 @@ class S3ObjectStoreTest {
 
   @BeforeEach
   void setUp() {
-
     try {
       s3Client.headBucket(HeadBucketRequest.builder().bucket(bucket).build());
     } catch (NoSuchBucketException e) {
