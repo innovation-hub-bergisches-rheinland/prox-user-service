@@ -4,7 +4,7 @@ import java.util.UUID;
 import lombok.Value;
 
 @Value
-public class UserResponseDto {
+public class UserSearchResponseDto {
   UUID id;
   String name;
 }

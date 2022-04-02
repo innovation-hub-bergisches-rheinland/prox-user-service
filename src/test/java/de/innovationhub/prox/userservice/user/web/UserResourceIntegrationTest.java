@@ -3,7 +3,7 @@ package de.innovationhub.prox.userservice.user.web;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
 
-import de.innovationhub.prox.userservice.user.dto.UserResponseDto;
+import de.innovationhub.prox.userservice.user.dto.UserSearchResponseDto;
 import io.quarkus.test.common.http.TestHTTPEndpoint;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.keycloak.client.KeycloakTestClient;
@@ -31,7 +31,7 @@ public class UserResourceIntegrationTest {
     var searchResult = performSearch(searchQuery);
 
     assertThat(searchResult)
-        .extracting(UserResponseDto::getId, UserResponseDto::getName)
+        .extracting(UserSearchResponseDto::getId, UserSearchResponseDto::getName)
         .contains(tuple(UUID.fromString("64788f0d-a954-4898-bfda-7498aae2b271"), "Julian Braden"));
   }
 
@@ -42,7 +42,7 @@ public class UserResourceIntegrationTest {
     var searchResult = performSearch(searchQuery);
 
     assertThat(searchResult)
-        .extracting(UserResponseDto::getId, UserResponseDto::getName)
+        .extracting(UserSearchResponseDto::getId, UserSearchResponseDto::getName)
         .contains(tuple(UUID.fromString("64788f0d-a954-4898-bfda-7498aae2b271"), "Julian Braden"));
   }
 
@@ -53,7 +53,7 @@ public class UserResourceIntegrationTest {
     var searchResult = performSearch(searchQuery);
 
     assertThat(searchResult)
-        .extracting(UserResponseDto::getId, UserResponseDto::getName)
+        .extracting(UserSearchResponseDto::getId, UserSearchResponseDto::getName)
         .contains(tuple(UUID.fromString("64788f0d-a954-4898-bfda-7498aae2b271"), "Julian Braden"));
   }
 
@@ -64,7 +64,7 @@ public class UserResourceIntegrationTest {
     var searchResult = performSearch(searchQuery);
 
     assertThat(searchResult)
-        .extracting(UserResponseDto::getId, UserResponseDto::getName)
+        .extracting(UserSearchResponseDto::getId, UserSearchResponseDto::getName)
         .contains(tuple(UUID.fromString("64788f0d-a954-4898-bfda-7498aae2b271"), "Julian Braden"));
   }
 
@@ -75,11 +75,11 @@ public class UserResourceIntegrationTest {
     var searchResult = performSearch(searchQuery);
 
     assertThat(searchResult)
-        .extracting(UserResponseDto::getId, UserResponseDto::getName)
+        .extracting(UserSearchResponseDto::getId, UserSearchResponseDto::getName)
         .contains(tuple(UUID.fromString("64788f0d-a954-4898-bfda-7498aae2b271"), "Julian Braden"));
   }
 
-  private List<UserResponseDto> performSearch(String searchQuery) {
+  private List<UserSearchResponseDto> performSearch(String searchQuery) {
     return RestAssured.given()
         .auth()
         .oauth2(keycloakTestClient.getAccessToken("alice"))
@@ -92,6 +92,6 @@ public class UserResourceIntegrationTest {
         .statusCode(200)
         .extract()
         .jsonPath()
-        .getList(".", UserResponseDto.class);
+        .getList(".", UserSearchResponseDto.class);
   }
 }

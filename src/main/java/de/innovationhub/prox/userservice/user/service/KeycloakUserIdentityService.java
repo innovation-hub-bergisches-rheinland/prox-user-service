@@ -1,7 +1,7 @@
 package de.innovationhub.prox.userservice.user.service;
 
 import de.innovationhub.prox.userservice.user.dto.UserMapper;
-import de.innovationhub.prox.userservice.user.dto.UserResponseDto;
+import de.innovationhub.prox.userservice.user.dto.UserSearchResponseDto;
 import io.quarkus.cache.CacheResult;
 import java.util.Optional;
 import java.util.UUID;
@@ -25,7 +25,7 @@ public class KeycloakUserIdentityService implements UserIdentityService {
   }
 
   @CacheResult(cacheName = "keycloak-user-cache")
-  public Optional<UserResponseDto> findById(UUID id) {
+  public Optional<UserSearchResponseDto> findById(UUID id) {
     try {
       var result = this.usersResource.get(id.toString()).toRepresentation();
       return Optional.of(this.userMapper.toDto(result));
@@ -39,7 +39,7 @@ public class KeycloakUserIdentityService implements UserIdentityService {
   }
 
   @CacheResult(cacheName = "keycloak-users-search-cache")
-  public Iterable<UserResponseDto> search(String query) {
+  public Iterable<UserSearchResponseDto> search(String query) {
     var searchResult = this.realmResource.users().search(query, 0, 100, true);
     return this.userMapper.toDtoSet(searchResult.stream());
   }

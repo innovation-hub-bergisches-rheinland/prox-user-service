@@ -5,7 +5,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import de.innovationhub.prox.userservice.user.dto.UserResponseDto;
+import de.innovationhub.prox.userservice.user.dto.UserSearchResponseDto;
 import de.innovationhub.prox.userservice.user.service.UserIdentityService;
 import io.quarkus.test.common.http.TestHTTPEndpoint;
 import io.quarkus.test.junit.QuarkusTest;
@@ -32,7 +32,7 @@ class UserResourceTest {
     // Given
     var easyRandom = new EasyRandom();
     var userId = UUID.randomUUID();
-    var randomUser = easyRandom.nextObject(UserResponseDto.class);
+    var randomUser = easyRandom.nextObject(UserSearchResponseDto.class);
     when(userIdentityService.findById(eq(userId))).thenReturn(Optional.of(randomUser));
 
     var response =
@@ -44,7 +44,7 @@ class UserResourceTest {
             .statusCode(200)
             .extract()
             .jsonPath()
-            .getObject(".", UserResponseDto.class);
+            .getObject(".", UserSearchResponseDto.class);
 
     Assertions.assertThat(response).isEqualTo(randomUser);
     verify(userIdentityService).findById(eq(userId));
@@ -72,7 +72,8 @@ class UserResourceTest {
     // Given
     var searchQuery = "abcdefgh";
     var easyRandom = new EasyRandom();
-    var searchResults = easyRandom.objects(UserResponseDto.class, 5).collect(Collectors.toList());
+    var searchResults =
+        easyRandom.objects(UserSearchResponseDto.class, 5).collect(Collectors.toList());
     when(userIdentityService.search(eq(searchQuery))).thenReturn(searchResults);
 
     var response =
@@ -85,7 +86,7 @@ class UserResourceTest {
             .statusCode(200)
             .extract()
             .jsonPath()
-            .getList(".", UserResponseDto.class);
+            .getList(".", UserSearchResponseDto.class);
 
     Assertions.assertThat(response).containsExactlyInAnyOrderElementsOf(searchResults);
 
@@ -109,7 +110,7 @@ class UserResourceTest {
             .statusCode(200)
             .extract()
             .jsonPath()
-            .getList(".", UserResponseDto.class);
+            .getList(".", UserSearchResponseDto.class);
 
     Assertions.assertThat(response).isEmpty();
 

@@ -1,6 +1,6 @@
 package de.innovationhub.prox.userservice.user.web;
 
-import de.innovationhub.prox.userservice.user.dto.UserResponseDto;
+import de.innovationhub.prox.userservice.user.dto.UserSearchResponseDto;
 import de.innovationhub.prox.userservice.user.service.UserIdentityService;
 import io.quarkus.security.Authenticated;
 import java.util.UUID;
@@ -23,14 +23,14 @@ public class UserResource {
   @GET
   @Authenticated
   @Path("search")
-  public Iterable<UserResponseDto> findUser(@QueryParam("q") String searchQuery) {
+  public Iterable<UserSearchResponseDto> findUser(@QueryParam("q") String searchQuery) {
     return this.userIdentityService.search(searchQuery);
   }
 
   @GET
   @Authenticated
   @Path("{id}")
-  public UserResponseDto getKeycloakService(@PathParam("id") UUID id) {
+  public UserSearchResponseDto getKeycloakService(@PathParam("id") UUID id) {
     return userIdentityService.findById(id).orElseThrow(() -> new WebApplicationException(404));
   }
 }

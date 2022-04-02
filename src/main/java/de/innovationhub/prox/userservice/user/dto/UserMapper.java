@@ -15,9 +15,9 @@ public interface UserMapper {
 
   @Mapping(target = "id", expression = "java( UUID.fromString(representation.getId()) )")
   @Mapping(target = "name", source = "representation", qualifiedByName = "parseName")
-  UserResponseDto toDto(UserRepresentation representation);
+  UserSearchResponseDto toDto(UserRepresentation representation);
 
-  Set<UserResponseDto> toDtoSet(Stream<UserRepresentation> users);
+  Set<UserSearchResponseDto> toDtoSet(Stream<UserRepresentation> users);
 
   @Named("parseName")
   default String parseName(UserRepresentation representation) {

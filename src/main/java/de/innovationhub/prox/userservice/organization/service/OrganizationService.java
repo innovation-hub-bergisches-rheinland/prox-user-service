@@ -20,7 +20,7 @@ import de.innovationhub.prox.userservice.organization.exception.OrganizationMemb
 import de.innovationhub.prox.userservice.organization.exception.OrganizationNotFoundException;
 import de.innovationhub.prox.userservice.organization.repository.OrganizationRepository;
 import de.innovationhub.prox.userservice.user.constraints.IsValidUserId;
-import de.innovationhub.prox.userservice.user.dto.UserResponseDto;
+import de.innovationhub.prox.userservice.user.dto.UserSearchResponseDto;
 import de.innovationhub.prox.userservice.user.service.UserIdentityService;
 import io.quarkus.security.identity.SecurityIdentity;
 import java.io.ByteArrayInputStream;
@@ -253,7 +253,7 @@ public class OrganizationService {
   private String resolveUserName(UUID id) {
     return this.userIdentityService
         .findById(id)
-        .map(UserResponseDto::getName)
+        .map(UserSearchResponseDto::getName)
         .orElse(id.toString());
   }
 }

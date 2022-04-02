@@ -2,7 +2,7 @@ package de.innovationhub.prox.userservice.user.service;
 
 import de.innovationhub.prox.userservice.organization.dto.response.ViewOrganizationDto;
 import de.innovationhub.prox.userservice.organization.service.OrganizationService;
-import de.innovationhub.prox.userservice.user.dto.UserResponseDto;
+import de.innovationhub.prox.userservice.user.dto.UserSearchResponseDto;
 import io.quarkus.security.identity.SecurityIdentity;
 import java.util.List;
 import java.util.Optional;
@@ -27,7 +27,7 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public Optional<UserResponseDto> findById(UUID id) {
+  public Optional<UserSearchResponseDto> findById(UUID id) {
     return this.userIdentityService.findById(id);
   }
 
@@ -37,7 +37,7 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public Iterable<UserResponseDto> search(String query) {
+  public Iterable<UserSearchResponseDto> search(String query) {
     return this.userIdentityService.search(query);
   }
 
