@@ -82,5 +82,6 @@ public interface UserMapper {
   @Mapping(target = "researchSubjects", source = "request.subjects")
   UserProfile toEntity(UUID userId, UserProfileRequestDto request);
 
+  @Mapping(target = "researchSubjects", source = "dto.subjects")
   void updateProfile(@MappingTarget UserProfile organization, UserProfileRequestDto dto);
 }

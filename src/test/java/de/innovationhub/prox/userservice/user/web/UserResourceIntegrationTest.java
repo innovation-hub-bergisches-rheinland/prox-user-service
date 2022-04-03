@@ -30,6 +30,7 @@ import java.util.stream.Stream;
 import javax.inject.Inject;
 import javax.transaction.TransactionManager;
 import javax.transaction.Transactional;
+import org.assertj.core.api.SoftAssertions;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -178,6 +179,88 @@ public class UserResourceIntegrationTest {
         .body("subjects", containsInAnyOrder("a", "b", "c"))
         .body("publications", containsInAnyOrder("a", "b", "c"))
         .body("vita", is("Lorem Ipsum"));
+  }
+
+  @Test
+  void shouldUpdateUserProfile() throws Exception {
+    var aliceId = UUID.fromString("856ba1b6-ae45-4722-8fa5-212c7f71f10c");
+    var userProfile = dummyUserProfile(aliceId);
+    tm.begin();
+    userProfilePanacheRepository.persistAndFlush(userProfile);
+    tm.commit();
+
+    String profileRequest =
+        """
+        {
+          "name": "cba",
+          "affiliation": "cba",
+          "mainSubject": "cba",
+          "contactInformation": {
+            "room": "cba",
+            "consultationHour": "cba",
+            "email": "cba",
+            "telephone": "cba",
+            "homepage": "cba",
+            "collegePage": "cba"
+          },
+          "vita": "Ipsum Lorem",
+          "subjects": [
+            "ab",
+            "bc",
+            "cd"
+          ],
+          "publications": [
+            "ab",
+            "bc",
+            "cd"
+          ]
+        }
+        """;
+
+    requestAsAlice()
+        .contentType("application/json")
+        .accept("application/json")
+        .body(profileRequest)
+        .log()
+        .ifValidationFails()
+        .when()
+        .post("{id}/profile", aliceId.toString())
+        .then()
+        .statusCode(201)
+        .body("name", is("cba"))
+        .body("affiliation", is("cba"))
+        .body("mainSubject", is("cba"))
+        .body("contactInformation.room", is("cba"))
+        .body("contactInformation.consultationHour", is("cba"))
+        .body("contactInformation.email", is("cba"))
+        .body("contactInformation.telephone", is("cba"))
+        .body("contactInformation.homepage", is("cba"))
+        .body("contactInformation.collegePage", is("cba"))
+        .body("subjects", containsInAnyOrder("ab", "bc", "cd"))
+        .body("publications", containsInAnyOrder("ab", "bc", "cd"))
+        .body("vita", is("Ipsum Lorem"));
+
+    SoftAssertions softly = new SoftAssertions();
+    var profile = userProfilePanacheRepository.findById(aliceId);
+
+    softly.assertThat(profile.getName()).isEqualTo("cba");
+    softly.assertThat(profile.getAffiliation()).isEqualTo("cba");
+    softly
+        .assertThat(profile.getContactInformation())
+        .extracting("room", "consultationHour", "email", "telephone", "homepage", "collegePage")
+        .containsExactly("cba", "cba", "cba", "cba", "cba", "cba");
+    softly.assertThat(profile.getMainSubject()).isEqualTo("cba");
+    softly.assertThat(profile.getVita()).isEqualTo("Ipsum Lorem");
+    softly
+        .assertThat(profile.getPublications())
+        .extracting("publication")
+        .containsExactlyInAnyOrder("ab", "bc", "cd");
+    softly
+        .assertThat(profile.getResearchSubjects())
+        .extracting("subject")
+        .containsExactlyInAnyOrder("ab", "bc", "cd");
+
+    softly.assertAll();
   }
 
   @Test
