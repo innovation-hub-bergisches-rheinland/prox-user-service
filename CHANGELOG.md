@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.5.4](https://github.com/innovation-hub-bergisches-rheinland/prox-user-service/compare/v1.5.3...v1.5.4) (2022-04-03)
+
+
+### Bug Fixes
+
+* update profile ([04b1188](https://github.com/innovation-hub-bergisches-rheinland/prox-user-service/commit/04b1188d9399ef8ed3a080e345556c9ccf546bfd))
+
 ### [1.5.3](https://github.com/innovation-hub-bergisches-rheinland/prox-user-service/compare/v1.5.2...v1.5.3) (2022-04-03)
 
 
