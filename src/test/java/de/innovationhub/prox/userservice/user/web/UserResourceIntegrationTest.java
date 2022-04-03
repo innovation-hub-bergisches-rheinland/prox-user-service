@@ -269,8 +269,8 @@ public class UserResourceIntegrationTest {
   void shouldGetAllUserProfiles() throws Exception {
     var aliceId = UUID.fromString("856ba1b6-ae45-4722-8fa5-212c7f71f10c");
     UUID bobId = UUID.fromString("ed0b4a07-2612-4571-a9ab-27e13ce752f1");
-    var aliceUserProfile = dummyUserProfile(aliceId);
-    var bobUserProfile = dummyUserProfile(bobId);
+    var aliceUserProfile = dummyUserProfile(aliceId, "Alice");
+    var bobUserProfile = dummyUserProfile(bobId, "Bob");
     tm.begin();
     userProfilePanacheRepository.persistAndFlush(aliceUserProfile);
     userProfilePanacheRepository.persistAndFlush(bobUserProfile);
@@ -285,14 +285,12 @@ public class UserResourceIntegrationTest {
         .then()
         .statusCode(200)
         .body("profiles", hasSize(2))
-        .body("profiles.find { it.id == 'ed0b4a07-2612-4571-a9ab-27e13ce752f1' }.name", is("abc"))
-        .body(
-            "profiles.find { it.id == 'ed0b4a07-2612-4571-a9ab-27e13ce752f1' }.mainSubject",
-            is("abc"))
-        .body("profiles.find { it.id == '856ba1b6-ae45-4722-8fa5-212c7f71f10c' }.name", is("abc"))
-        .body(
-            "profiles.find { it.id == '856ba1b6-ae45-4722-8fa5-212c7f71f10c' }.mainSubject",
-            is("abc"));
+        .body("profiles[0].id", is("856ba1b6-ae45-4722-8fa5-212c7f71f10c"))
+        .body("profiles[0].name", is("Alice"))
+        .body("profiles[0].mainSubject", is("abc"))
+        .body("profiles[1].id", is("ed0b4a07-2612-4571-a9ab-27e13ce752f1"))
+        .body("profiles[1].name", is("Bob"))
+        .body("profiles[1].mainSubject", is("abc"));
   }
 
   @Test
@@ -368,9 +366,13 @@ public class UserResourceIntegrationTest {
   }
 
   private UserProfile dummyUserProfile(UUID id) {
+    return dummyUserProfile(id, "abc");
+  }
+
+  private UserProfile dummyUserProfile(UUID id, String name) {
     return new UserProfile(
         id,
-        "abc",
+        name,
         "abc",
         "abc",
         new ContactInformation("abc", "abc", "abc", "abc", "abc", "abc"),

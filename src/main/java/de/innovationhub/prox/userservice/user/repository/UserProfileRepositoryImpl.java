@@ -1,6 +1,8 @@
 package de.innovationhub.prox.userservice.user.repository;
 
 import de.innovationhub.prox.userservice.user.entity.profile.UserProfile;
+import io.quarkus.panache.common.Sort;
+import io.quarkus.panache.common.Sort.Direction;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -28,6 +30,6 @@ public class UserProfileRepositoryImpl implements UserProfileRepository {
 
   @Override
   public List<UserProfile> findAll() {
-    return panacheRepository.findAll().list();
+    return panacheRepository.findAll(Sort.by("name", Direction.Ascending)).list();
   }
 }
