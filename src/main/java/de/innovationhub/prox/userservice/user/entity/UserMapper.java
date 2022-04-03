@@ -14,6 +14,7 @@ import java.util.stream.Stream;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
 import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
 
@@ -80,4 +81,6 @@ public interface UserMapper {
   @Mapping(target = ".", source = "request")
   @Mapping(target = "researchSubjects", source = "request.subjects")
   UserProfile toEntity(UUID userId, UserProfileRequestDto request);
+
+  void updateProfile(@MappingTarget UserProfile organization, UserProfileRequestDto dto);
 }

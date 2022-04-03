@@ -88,7 +88,15 @@ public class UserServiceImpl implements UserService {
       throw new WebApplicationException(403);
     if (!this.userRepository.existsById(id)) throw new WebApplicationException(404);
 
-    var entity = userMapper.toEntity(id, requestDto);
+    var entity =
+        this.userProfileRepository
+            .findProfileByUserId(id)
+            .map(
+                userProfile -> {
+                  userMapper.updateProfile(userProfile, requestDto);
+                  return userProfile;
+                })
+            .orElse(userMapper.toEntity(id, requestDto));
     try {
       this.userProfileRepository.save(entity);
     } catch (ConstraintViolationException e) {
