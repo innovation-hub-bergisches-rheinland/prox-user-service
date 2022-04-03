@@ -29,7 +29,6 @@ import java.util.UUID;
 import java.util.stream.Stream;
 import javax.inject.Inject;
 import javax.transaction.TransactionManager;
-import javax.transaction.Transactional;
 import org.assertj.core.api.SoftAssertions;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.junit.jupiter.api.AfterEach;
@@ -67,9 +66,11 @@ public class UserResourceIntegrationTest {
   }
 
   @AfterEach
-  @Transactional
-  void tearDown() {
-    userProfilePanacheRepository.deleteAll();
+  void tearDown() throws Exception {
+    tm.begin();
+    userProfilePanacheRepository.findAll().stream()
+        .forEach(up -> userProfilePanacheRepository.delete(up));
+    tm.commit();
   }
 
   @Test
