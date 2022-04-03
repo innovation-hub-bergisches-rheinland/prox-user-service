@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.6.0](https://github.com/innovation-hub-bergisches-rheinland/prox-user-service/compare/v1.5.4...v1.6.0) (2022-04-03)
+
+
+### Features
+
+* add collectional resource ([02e9917](https://github.com/innovation-hub-bergisches-rheinland/prox-user-service/commit/02e9917b6bdd74e1712c9b9f6a3cb7788e2d9534))
+
 ### [1.5.4](https://github.com/innovation-hub-bergisches-rheinland/prox-user-service/compare/v1.5.3...v1.5.4) (2022-04-03)
 
 
