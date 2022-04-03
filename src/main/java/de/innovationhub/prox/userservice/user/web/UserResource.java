@@ -2,6 +2,7 @@ package de.innovationhub.prox.userservice.user.web;
 
 import de.innovationhub.prox.userservice.core.Status;
 import de.innovationhub.prox.userservice.core.data.FormDataBody;
+import de.innovationhub.prox.userservice.user.dto.UserProfileBriefCollectionResponseDto;
 import de.innovationhub.prox.userservice.user.dto.UserProfileRequestDto;
 import de.innovationhub.prox.userservice.user.dto.UserProfileResponseDto;
 import de.innovationhub.prox.userservice.user.dto.UserSearchResponseDto;
@@ -43,6 +44,12 @@ public class UserResource {
   @Path("{id}")
   public UserSearchResponseDto getKeycloakService(@PathParam("id") UUID id) {
     return this.userService.findById(id).orElseThrow(() -> new WebApplicationException(404));
+  }
+
+  @GET
+  @Path("profiles")
+  public UserProfileBriefCollectionResponseDto getAllProfiles() {
+    return this.userService.findAll();
   }
 
   @GET

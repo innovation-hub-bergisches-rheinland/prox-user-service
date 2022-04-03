@@ -5,6 +5,7 @@ import de.innovationhub.prox.userservice.core.data.ObjectNotFoundException;
 import de.innovationhub.prox.userservice.organization.dto.response.ViewOrganizationDto;
 import de.innovationhub.prox.userservice.organization.service.OrganizationService;
 import de.innovationhub.prox.userservice.shared.avatar.service.AvatarService;
+import de.innovationhub.prox.userservice.user.dto.UserProfileBriefCollectionResponseDto;
 import de.innovationhub.prox.userservice.user.dto.UserProfileRequestDto;
 import de.innovationhub.prox.userservice.user.dto.UserProfileResponseDto;
 import de.innovationhub.prox.userservice.user.dto.UserSearchResponseDto;
@@ -56,6 +57,12 @@ public class UserServiceImpl implements UserService {
   @Override
   public Optional<UserSearchResponseDto> findById(UUID id) {
     return this.userRepository.findById(id).map(userMapper::toDto);
+  }
+
+  @Override
+  public UserProfileBriefCollectionResponseDto findAll() {
+    return new UserProfileBriefCollectionResponseDto(
+        this.userProfileRepository.findAll().stream().map(userMapper::toBriefDto).toList());
   }
 
   @Override

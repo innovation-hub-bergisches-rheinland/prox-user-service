@@ -1,5 +1,6 @@
 package de.innovationhub.prox.userservice.user.entity;
 
+import de.innovationhub.prox.userservice.user.dto.UserProfileBriefResponseDto;
 import de.innovationhub.prox.userservice.user.dto.UserProfileRequestDto;
 import de.innovationhub.prox.userservice.user.dto.UserProfileResponseDto;
 import de.innovationhub.prox.userservice.user.dto.UserSearchResponseDto;
@@ -50,6 +51,9 @@ public interface UserMapper {
 
   @Mapping(target = "subjects", source = "researchSubjects")
   UserProfileResponseDto toDto(UserProfile userProfile);
+
+  @Mapping(target = "id", source = "userId")
+  UserProfileBriefResponseDto toBriefDto(UserProfile userProfile);
 
   UserProfileResponseDto userToProfile(User user);
 

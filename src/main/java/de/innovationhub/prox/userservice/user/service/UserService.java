@@ -2,6 +2,7 @@ package de.innovationhub.prox.userservice.user.service;
 
 import de.innovationhub.prox.userservice.core.data.FormDataBody;
 import de.innovationhub.prox.userservice.organization.dto.response.ViewOrganizationDto;
+import de.innovationhub.prox.userservice.user.dto.UserProfileBriefCollectionResponseDto;
 import de.innovationhub.prox.userservice.user.dto.UserProfileRequestDto;
 import de.innovationhub.prox.userservice.user.dto.UserProfileResponseDto;
 import de.innovationhub.prox.userservice.user.dto.UserSearchResponseDto;
@@ -13,6 +14,8 @@ import javax.ws.rs.core.Response;
 
 public interface UserService {
   Optional<UserSearchResponseDto> findById(UUID id);
+
+  UserProfileBriefCollectionResponseDto findAll();
 
   boolean existsById(UUID id);
 

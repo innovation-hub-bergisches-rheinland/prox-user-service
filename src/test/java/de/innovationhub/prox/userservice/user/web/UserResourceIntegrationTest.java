@@ -3,6 +3,7 @@ package de.innovationhub.prox.userservice.user.web;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
 import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 
 import de.innovationhub.prox.userservice.core.data.FileObject;
@@ -262,6 +263,36 @@ public class UserResourceIntegrationTest {
         .containsExactlyInAnyOrder("ab", "bc", "cd");
 
     softly.assertAll();
+  }
+
+  @Test
+  void shouldGetAllUserProfiles() throws Exception {
+    var aliceId = UUID.fromString("856ba1b6-ae45-4722-8fa5-212c7f71f10c");
+    UUID bobId = UUID.fromString("ed0b4a07-2612-4571-a9ab-27e13ce752f1");
+    var aliceUserProfile = dummyUserProfile(aliceId);
+    var bobUserProfile = dummyUserProfile(bobId);
+    tm.begin();
+    userProfilePanacheRepository.persistAndFlush(aliceUserProfile);
+    userProfilePanacheRepository.persistAndFlush(bobUserProfile);
+    tm.commit();
+
+    requestAsAlice()
+        .accept("application/json")
+        .log()
+        .ifValidationFails()
+        .when()
+        .get("profiles")
+        .then()
+        .statusCode(200)
+        .body("profiles", hasSize(2))
+        .body("profiles.find { it.id == 'ed0b4a07-2612-4571-a9ab-27e13ce752f1' }.name", is("abc"))
+        .body(
+            "profiles.find { it.id == 'ed0b4a07-2612-4571-a9ab-27e13ce752f1' }.mainSubject",
+            is("abc"))
+        .body("profiles.find { it.id == '856ba1b6-ae45-4722-8fa5-212c7f71f10c' }.name", is("abc"))
+        .body(
+            "profiles.find { it.id == '856ba1b6-ae45-4722-8fa5-212c7f71f10c' }.mainSubject",
+            is("abc"));
   }
 
   @Test

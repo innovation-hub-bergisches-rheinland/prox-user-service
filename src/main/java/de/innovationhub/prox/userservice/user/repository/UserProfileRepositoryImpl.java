@@ -1,6 +1,7 @@
 package de.innovationhub.prox.userservice.user.repository;
 
 import de.innovationhub.prox.userservice.user.entity.profile.UserProfile;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import javax.enterprise.context.ApplicationScoped;
@@ -23,5 +24,10 @@ public class UserProfileRepositoryImpl implements UserProfileRepository {
   @Override
   public void save(UserProfile userProfile) {
     panacheRepository.persist(userProfile);
+  }
+
+  @Override
+  public List<UserProfile> findAll() {
+    return panacheRepository.findAll().list();
   }
 }
