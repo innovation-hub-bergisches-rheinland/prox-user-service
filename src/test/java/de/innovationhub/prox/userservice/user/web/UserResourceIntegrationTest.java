@@ -81,7 +81,7 @@ public class UserResourceIntegrationTest {
     var searchResult = performSearch(searchQuery);
 
     assertThat(searchResult)
-        .extracting(UserSearchResponseDto::getId, UserSearchResponseDto::getName)
+        .extracting(UserSearchResponseDto::id, UserSearchResponseDto::name)
         .contains(tuple(UUID.fromString("64788f0d-a954-4898-bfda-7498aae2b271"), "Julian Braden"));
   }
 
@@ -92,7 +92,7 @@ public class UserResourceIntegrationTest {
     var searchResult = performSearch(searchQuery);
 
     assertThat(searchResult)
-        .extracting(UserSearchResponseDto::getId, UserSearchResponseDto::getName)
+        .extracting(UserSearchResponseDto::id, UserSearchResponseDto::name)
         .contains(tuple(UUID.fromString("64788f0d-a954-4898-bfda-7498aae2b271"), "Julian Braden"));
   }
 
@@ -103,7 +103,7 @@ public class UserResourceIntegrationTest {
     var searchResult = performSearch(searchQuery);
 
     assertThat(searchResult)
-        .extracting(UserSearchResponseDto::getId, UserSearchResponseDto::getName)
+        .extracting(UserSearchResponseDto::id, UserSearchResponseDto::name)
         .contains(tuple(UUID.fromString("64788f0d-a954-4898-bfda-7498aae2b271"), "Julian Braden"));
   }
 
@@ -114,7 +114,7 @@ public class UserResourceIntegrationTest {
     var searchResult = performSearch(searchQuery);
 
     assertThat(searchResult)
-        .extracting(UserSearchResponseDto::getId, UserSearchResponseDto::getName)
+        .extracting(UserSearchResponseDto::id, UserSearchResponseDto::name)
         .contains(tuple(UUID.fromString("64788f0d-a954-4898-bfda-7498aae2b271"), "Julian Braden"));
   }
 
@@ -125,7 +125,7 @@ public class UserResourceIntegrationTest {
     var searchResult = performSearch(searchQuery);
 
     assertThat(searchResult)
-        .extracting(UserSearchResponseDto::getId, UserSearchResponseDto::getName)
+        .extracting(UserSearchResponseDto::id, UserSearchResponseDto::name)
         .contains(tuple(UUID.fromString("64788f0d-a954-4898-bfda-7498aae2b271"), "Julian Braden"));
   }
 

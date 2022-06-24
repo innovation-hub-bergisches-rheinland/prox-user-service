@@ -5,6 +5,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import de.innovationhub.prox.userservice.user.dto.UserProfileBriefResponseDto;
 import de.innovationhub.prox.userservice.user.dto.UserSearchResponseDto;
 import de.innovationhub.prox.userservice.user.service.UserService;
 import io.quarkus.test.common.http.TestHTTPEndpoint;
@@ -13,6 +14,7 @@ import io.quarkus.test.junit.mockito.InjectMock;
 import io.quarkus.test.security.TestSecurity;
 import io.restassured.RestAssured;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -30,9 +32,9 @@ class UserResourceTest {
   @TestSecurity(authorizationEnabled = false)
   void shouldReturnUser() {
     // Given
-    var easyRandom = new EasyRandom();
     var userId = UUID.randomUUID();
-    var randomUser = easyRandom.nextObject(UserSearchResponseDto.class);
+    var randomUser = new UserSearchResponseDto(userId, "Xavier Tester", Optional.of(new UserProfileBriefResponseDto(
+        userId, "Prof. Dr. Xavier Tester", "Quality Assurance")));
     when(userService.findById(eq(userId))).thenReturn(Optional.of(randomUser));
 
     var response =
@@ -71,9 +73,10 @@ class UserResourceTest {
   void shouldReturnSearchResult() {
     // Given
     var searchQuery = "abcdefgh";
-    var easyRandom = new EasyRandom();
-    var searchResults =
-        easyRandom.objects(UserSearchResponseDto.class, 5).collect(Collectors.toList());
+    var userId = UUID.randomUUID();
+    var randomUser = new UserSearchResponseDto(
+        userId, "Xavier Tester", Optional.of(new UserProfileBriefResponseDto(userId, "Prof. Dr. Xavier Tester", "Quality Assurance")));
+    var searchResults = List.of(randomUser);
     when(userService.search(eq(searchQuery))).thenReturn(searchResults);
 
     var response =
