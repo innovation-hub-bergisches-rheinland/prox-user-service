@@ -9,6 +9,7 @@ import de.innovationhub.prox.userservice.user.entity.profile.Publication;
 import de.innovationhub.prox.userservice.user.entity.profile.ResearchSubject;
 import de.innovationhub.prox.userservice.user.entity.profile.UserProfile;
 import io.smallrye.common.constraint.Nullable;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Stream;
@@ -26,9 +27,10 @@ public interface UserMapper {
   UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
 
   @Mapping(target = "id", expression = "java( UUID.fromString( representation.getId()) )")
-  @Mapping(target = "email", source = "email")
-  @Mapping(target = "name", source = ".", qualifiedByName = "parseName")
-  User toEntity(UserRepresentation representation);
+  @Mapping(target = "email", source = "representation.email")
+  @Mapping(target = "name", source = "representation", qualifiedByName = "parseName")
+  @Mapping(target = "profile", source = "userProfile")
+  User toEntity(UserRepresentation representation, Optional<UserProfile> userProfile);
 
   @Mapping(target = "id")
   @Mapping(target = "name")

@@ -70,12 +70,12 @@ class UserServiceImplTest {
 
   @Test
   void shouldBuild404ResponseWhenAvatarNotFound() throws IOException {
-    when(userProfileRepository.findProfileByUserId(any())).thenReturn(Optional.empty());
+    when(userRepository.findById(any())).thenReturn(Optional.empty());
 
     var response = userService.getAvatar(UUID.randomUUID());
     assertThat(response.getStatus()).isEqualTo(404);
 
-    verify(userProfileRepository).findProfileByUserId(any());
+    verify(userRepository).findById(any());
   }
 
   @Test

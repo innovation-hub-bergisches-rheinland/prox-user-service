@@ -9,6 +9,7 @@ import de.innovationhub.prox.userservice.user.dto.UserProfileBriefCollectionResp
 import de.innovationhub.prox.userservice.user.dto.UserProfileRequestDto;
 import de.innovationhub.prox.userservice.user.dto.UserProfileResponseDto;
 import de.innovationhub.prox.userservice.user.dto.UserSearchResponseDto;
+import de.innovationhub.prox.userservice.user.entity.User;
 import de.innovationhub.prox.userservice.user.entity.UserMapper;
 import de.innovationhub.prox.userservice.user.repository.UserProfileRepository;
 import de.innovationhub.prox.userservice.user.repository.UserRepository;
@@ -83,7 +84,8 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public Optional<UserProfileResponseDto> findProfileByUserId(UUID id) {
-    var profile = userProfileRepository.findProfileByUserId(id);
+    var user = this.userRepository.findById(id);
+    var profile = user.flatMap(User::profile);
     if (profile.isPresent()) return profile.map(userMapper::toDto);
     return userRepository.findById(id).map(userMapper::userToProfile);
   }
@@ -116,11 +118,9 @@ public class UserServiceImpl implements UserService {
 
   public Response getAvatar(UUID userId) throws IOException {
     try {
-      var userProfile =
-          this.userProfileRepository
-              .findProfileByUserId(userId)
-              .orElseThrow(ObjectNotFoundException::new);
-      var avatar = userProfile.getAvatar();
+      var user = this.userRepository.findById(userId);
+      var profile = user.flatMap(User::profile).orElseThrow(ObjectNotFoundException::new);
+      var avatar = profile.getAvatar();
 
       return avatarService.buildAvatarResponse(avatar);
     } catch (ObjectNotFoundException e) {
@@ -134,14 +134,12 @@ public class UserServiceImpl implements UserService {
       throw new WebApplicationException(403);
     if (!this.userRepository.existsById(userId)) throw new WebApplicationException(404);
 
-    var userProfile =
-        this.userProfileRepository
-            .findProfileByUserId(userId)
-            .orElseThrow(() -> new WebApplicationException(404));
+    var user = this.userRepository.findById(userId);
+    var profile = user.flatMap(User::profile).orElseThrow(ObjectNotFoundException::new);
 
     var avatar =
         avatarService.createAvatarFromFormBody(AVATAR_KEY_PREFIX + "/" + userId, formDataBody);
-    userProfile.setAvatar(avatar);
-    userProfileRepository.save(userProfile);
+    profile.setAvatar(avatar);
+    userProfileRepository.save(profile);
   }
 }

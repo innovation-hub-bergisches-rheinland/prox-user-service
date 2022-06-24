@@ -14,16 +14,20 @@ public class KeycloakUserRepository implements UserRepository {
 
   private final KeycloakUserIdentityService userIdentityService;
   private final UserMapper userMapper;
+  private final UserProfileRepository userProfileRepository;
 
   public KeycloakUserRepository(
-      KeycloakUserIdentityService userIdentityService, UserMapper userMapper) {
+      KeycloakUserIdentityService userIdentityService, UserMapper userMapper,
+      UserProfileRepository userProfileRepository) {
     this.userIdentityService = userIdentityService;
     this.userMapper = userMapper;
+    this.userProfileRepository = userProfileRepository;
   }
 
   @Override
   public Optional<User> findById(UUID id) {
-    return userIdentityService.findById(id).map(userMapper::toEntity);
+    return userIdentityService.findById(id)
+        .map(u -> userMapper.toEntity(u, userProfileRepository.findProfileByUserId(id)));
   }
 
   @Override
@@ -34,14 +38,14 @@ public class KeycloakUserRepository implements UserRepository {
   @Override
   public List<User> search(String query) {
     return StreamSupport.stream(userIdentityService.search(query).spliterator(), false)
-        .map(userMapper::toEntity)
+        .map(u -> userMapper.toEntity(u, userProfileRepository.findProfileByUserId(UUID.fromString(u.getId()))))
         .toList();
   }
 
   @Override
   public List<User> searchByEmail(String email) {
     return StreamSupport.stream(userIdentityService.searchByMail(email).spliterator(), false)
-        .map(userMapper::toEntity)
+        .map(u -> userMapper.toEntity(u, userProfileRepository.findProfileByUserId(UUID.fromString(u.getId()))))
         .toList();
   }
 }
