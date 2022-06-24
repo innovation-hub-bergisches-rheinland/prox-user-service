@@ -17,9 +17,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 import org.assertj.core.api.Assertions;
-import org.jeasy.random.EasyRandom;
 import org.junit.jupiter.api.Test;
 
 @QuarkusTest
@@ -33,8 +31,13 @@ class UserResourceTest {
   void shouldReturnUser() {
     // Given
     var userId = UUID.randomUUID();
-    var randomUser = new UserSearchResponseDto(userId, "Xavier Tester", Optional.of(new UserProfileBriefResponseDto(
-        userId, "Prof. Dr. Xavier Tester", "Quality Assurance")));
+    var randomUser =
+        new UserSearchResponseDto(
+            userId,
+            "Xavier Tester",
+            Optional.of(
+                new UserProfileBriefResponseDto(
+                    userId, "Prof. Dr. Xavier Tester", "Quality Assurance")));
     when(userService.findById(eq(userId))).thenReturn(Optional.of(randomUser));
 
     var response =
@@ -74,8 +77,13 @@ class UserResourceTest {
     // Given
     var searchQuery = "abcdefgh";
     var userId = UUID.randomUUID();
-    var randomUser = new UserSearchResponseDto(
-        userId, "Xavier Tester", Optional.of(new UserProfileBriefResponseDto(userId, "Prof. Dr. Xavier Tester", "Quality Assurance")));
+    var randomUser =
+        new UserSearchResponseDto(
+            userId,
+            "Xavier Tester",
+            Optional.of(
+                new UserProfileBriefResponseDto(
+                    userId, "Prof. Dr. Xavier Tester", "Quality Assurance")));
     var searchResults = List.of(randomUser);
     when(userService.search(eq(searchQuery))).thenReturn(searchResults);
 

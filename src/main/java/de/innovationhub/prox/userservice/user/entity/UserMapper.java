@@ -56,6 +56,7 @@ public interface UserMapper {
 
   @Mapping(target = "id", source = "userId")
   UserProfileBriefResponseDto toBriefDto(UserProfile userProfile);
+
   default Optional<UserProfileBriefResponseDto> map(Optional<UserProfile> value) {
     return value.map(this::toBriefDto);
   }
