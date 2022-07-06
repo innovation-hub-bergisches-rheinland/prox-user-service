@@ -130,6 +130,71 @@ public class UserResourceIntegrationTest {
   }
 
   @Test
+  void shouldFindByProfileName() throws Exception {
+    var aliceId = UUID.fromString("856ba1b6-ae45-4722-8fa5-212c7f71f10c");
+    var searchQuery = "Prof. Dr. Alice";
+    var userProfile = dummyUserProfile(aliceId, "Prof. Dr. Alice");
+
+    var searchResult = findByProfileName(userProfile, searchQuery);
+
+    assertThat(searchResult)
+        .extracting(UserSearchResponseDto::id, UserSearchResponseDto::name)
+        .contains(tuple(aliceId, "alice"));
+  }
+
+  @Test
+  void shouldFindByProfileNameCaseInsensitive() throws Exception {
+    var aliceId = UUID.fromString("856ba1b6-ae45-4722-8fa5-212c7f71f10c");
+    var searchQuery = "prof. dr. alice";
+    var userProfile = dummyUserProfile(aliceId, "Prof. Dr. Alice");
+
+    var searchResult = findByProfileName(userProfile, searchQuery);
+
+    assertThat(searchResult)
+        .extracting(UserSearchResponseDto::id, UserSearchResponseDto::name)
+        .contains(tuple(aliceId, "alice"));
+  }
+
+  @Test
+  void shouldFindByProfileNamePartial() throws Exception {
+    var aliceId = UUID.fromString("856ba1b6-ae45-4722-8fa5-212c7f71f10c");
+    var searchQuery = "Dr. Alice";
+    var userProfile = dummyUserProfile(aliceId, "Prof. Dr. Alice");
+
+    var searchResult = findByProfileName(userProfile, searchQuery);
+
+    assertThat(searchResult)
+        .extracting(UserSearchResponseDto::id, UserSearchResponseDto::name)
+        .contains(tuple(aliceId, "alice"));
+  }
+
+  private List<UserSearchResponseDto> findByProfileName(UserProfile userProfile, String searchQuery)
+      throws Exception {
+    tm.begin();
+    userProfilePanacheRepository.persistAndFlush(userProfile);
+    tm.commit();
+
+    return performSearch(searchQuery);
+  }
+
+  @Test
+  void shouldNotFindDuplicatesIfProfileNameAndUsernameMatch() throws Exception {
+    var julianId = UUID.fromString("64788f0d-a954-4898-bfda-7498aae2b271");
+    var searchQuery = "Julian Braden";
+    var userProfile = dummyUserProfile(julianId, "Julian Braden");
+
+    tm.begin();
+    userProfilePanacheRepository.persistAndFlush(userProfile);
+    tm.commit();
+
+    var searchResult = performSearch(searchQuery);
+
+    assertThat(searchResult)
+        .extracting(UserSearchResponseDto::id, UserSearchResponseDto::name)
+        .hasSize(1);
+  }
+
+  @Test
   void shouldCreateUserProfile() {
     String profileRequest =
         """

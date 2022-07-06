@@ -11,4 +11,6 @@ public interface UserProfileRepository {
   List<UserProfile> findAll();
 
   void save(UserProfile userProfile);
+
+  List<UserProfile> search(String query);
 }

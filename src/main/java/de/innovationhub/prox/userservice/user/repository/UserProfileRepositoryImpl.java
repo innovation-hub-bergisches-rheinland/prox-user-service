@@ -32,4 +32,9 @@ public class UserProfileRepositoryImpl implements UserProfileRepository {
   public List<UserProfile> findAll() {
     return panacheRepository.findAll(Sort.by("name", Direction.Ascending)).list();
   }
+
+  @Override
+  public List<UserProfile> search(String query) {
+    return panacheRepository.find("lower(name) like concat ('%', lower(?1), '%')", query).list();
+  }
 }
