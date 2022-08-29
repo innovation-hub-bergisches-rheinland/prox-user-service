@@ -49,6 +49,8 @@ dependencies {
 	implementation("io.quarkus:quarkus-cache")
 	implementation("io.quarkus:quarkus-kubernetes-config")
 	implementation("io.quarkus:quarkus-smallrye-health")
+  implementation("io.quarkus:quarkus-smallrye-reactive-messaging")
+  implementation("io.quarkus:quarkus-smallrye-reactive-messaging-kafka")
 	implementation("software.amazon.awssdk:url-connection-client:2.17.148")
 	implementation("io.quarkiverse.amazonservices:quarkus-amazon-s3:1.0.4")
 
@@ -59,6 +61,7 @@ dependencies {
 	testImplementation("io.quarkus:quarkus-test-security-oidc")
 	testImplementation("io.quarkus:quarkus-test-keycloak-server")
 	testImplementation("io.quarkus:quarkus-junit5-mockito")
+  testImplementation("io.quarkus:quarkus-test-kafka-companion")
 
 	// Others
 	implementation("org.apache.commons:commons-lang3:${apacheCommonsVersion}")
