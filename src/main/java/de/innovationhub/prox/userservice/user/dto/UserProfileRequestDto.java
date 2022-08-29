@@ -7,7 +7,6 @@ public record UserProfileRequestDto(
     String affiliation,
     String mainSubject,
     ContactInformationRequestDto contactInformation,
-    Set<String> subjects,
     Set<String> publications,
     String vita) {
   public record ContactInformationRequestDto(

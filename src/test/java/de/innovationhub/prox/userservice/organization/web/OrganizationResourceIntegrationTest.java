@@ -6,7 +6,6 @@ import static org.hamcrest.Matchers.*;
 import de.innovationhub.prox.userservice.organization.entity.Organization;
 import de.innovationhub.prox.userservice.organization.entity.OrganizationMembership;
 import de.innovationhub.prox.userservice.organization.entity.OrganizationRole;
-import de.innovationhub.prox.userservice.organization.entity.profile.Branch;
 import de.innovationhub.prox.userservice.organization.entity.profile.OrganizationProfile;
 import de.innovationhub.prox.userservice.organization.entity.profile.Quarter;
 import de.innovationhub.prox.userservice.organization.entity.profile.SocialMedia;
@@ -16,7 +15,6 @@ import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.keycloak.client.KeycloakTestClient;
 import io.restassured.RestAssured;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 import javax.inject.Inject;
 import org.assertj.core.api.Assertions;
@@ -90,7 +88,6 @@ public class OrganizationResourceIntegrationTest {
             .body("profile.vita", is("Lorem Ipsum"))
             .body("profile.headquarter", is("Gummersbach"))
             .body("profile.quarters", nullValue())
-            .body("profile.branches", containsInAnyOrder("Automotive", "Quality Assurance"))
             .body("profile.socialMedia.facebookHandle", is("acmeLtd"))
             .body("profile.socialMedia.twitterHandle", is("acmeLtd"))
             .body("profile.socialMedia.instagramHandle", is("acmeLtd"))
@@ -118,10 +115,6 @@ public class OrganizationResourceIntegrationTest {
     softly.assertThat(profile.getVita()).isEqualTo("Lorem Ipsum");
     softly.assertThat(profile.getHeadquarter().getLocation()).isEqualTo("Gummersbach");
     softly.assertThat(profile.getQuarters()).isNull();
-    softly
-        .assertThat(profile.getBranches())
-        .extracting("name")
-        .containsExactlyInAnyOrder("Automotive", "Quality Assurance");
     softly.assertThat(profile.getSocialMedia().getFacebookHandle()).isEqualTo("acmeLtd");
     softly.assertThat(profile.getSocialMedia().getTwitterHandle()).isEqualTo("acmeLtd");
     softly.assertThat(profile.getSocialMedia().getInstagramHandle()).isEqualTo("acmeLtd");
@@ -151,7 +144,6 @@ public class OrganizationResourceIntegrationTest {
                 "Lorem Ipsum",
                 new Quarter("Gummersbach"),
                 new Quarter("Abu Dhabi, Köln"),
-                Set.of(new Branch("Automotive"), new Branch("Quality Assurance")),
                 new SocialMedia("acmeLtd", "acmeLtd", "acmeLtd", "acmeLtd", "acmeLtd", "acmeLtd")),
             null);
     this.organizationRepository.save(dummyOrg);
@@ -171,7 +163,6 @@ public class OrganizationResourceIntegrationTest {
         .body("profile.vita", is("Lorem Ipsum"))
         .body("profile.headquarter", is("Gummersbach"))
         .body("profile.quarters", is("Abu Dhabi, Köln"))
-        .body("profile.branches", containsInAnyOrder("Automotive", "Quality Assurance"))
         .body("profile.socialMedia.facebookHandle", is("acmeLtd"))
         .body("profile.socialMedia.twitterHandle", is("acmeLtd"))
         .body("profile.socialMedia.instagramHandle", is("acmeLtd"))

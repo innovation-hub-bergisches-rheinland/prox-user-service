@@ -38,10 +38,6 @@ public class UserProfile {
   @Embedded private ContactInformation contactInformation;
 
   @ElementCollection
-  @CollectionTable(name = "user_research_subjects", joinColumns = @JoinColumn(name = "user_id"))
-  private List<ResearchSubject> researchSubjects;
-
-  @ElementCollection
   @CollectionTable(name = "user_publications", joinColumns = @JoinColumn(name = "user_id"))
   private List<Publication> publications;
 

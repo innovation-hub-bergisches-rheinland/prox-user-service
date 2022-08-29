@@ -7,7 +7,6 @@ import de.innovationhub.prox.userservice.organization.dto.response.ViewOrganizat
 import de.innovationhub.prox.userservice.organization.dto.response.ViewOrganizationProfileDto;
 import de.innovationhub.prox.userservice.organization.entity.Organization;
 import de.innovationhub.prox.userservice.organization.entity.OrganizationMembership;
-import de.innovationhub.prox.userservice.organization.entity.profile.Branch;
 import de.innovationhub.prox.userservice.organization.entity.profile.OrganizationProfile;
 import de.innovationhub.prox.userservice.organization.entity.profile.Quarter;
 import java.util.UUID;
@@ -52,18 +51,6 @@ public interface OrganizationMapper {
   default Quarter createQuarterFromString(String s) {
     if (s != null && !s.isBlank()) {
       return new Quarter(s);
-    }
-    return null;
-  }
-
-  default String toString(Branch branch) {
-    return branch == null ? null : branch.getName();
-  }
-
-  @Mapping(target = "name", source = "s")
-  default Branch createBranchFromString(String s) {
-    if (s != null && !s.isBlank()) {
-      return new Branch(s);
     }
     return null;
   }

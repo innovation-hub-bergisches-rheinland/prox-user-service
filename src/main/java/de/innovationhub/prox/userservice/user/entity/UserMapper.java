@@ -6,7 +6,6 @@ import de.innovationhub.prox.userservice.user.dto.UserProfileResponseDto;
 import de.innovationhub.prox.userservice.user.dto.UserSearchResponseDto;
 import de.innovationhub.prox.userservice.user.entity.profile.ContactInformation;
 import de.innovationhub.prox.userservice.user.entity.profile.Publication;
-import de.innovationhub.prox.userservice.user.entity.profile.ResearchSubject;
 import de.innovationhub.prox.userservice.user.entity.profile.UserProfile;
 import io.smallrye.common.constraint.Nullable;
 import java.util.Optional;
@@ -51,7 +50,6 @@ public interface UserMapper {
     return (firstName == null ? "" : firstName) + " " + (lastName == null ? "" : lastName);
   }
 
-  @Mapping(target = "subjects", source = "researchSubjects")
   UserProfileResponseDto toDto(UserProfile userProfile);
 
   @Mapping(target = "id", source = "userId")
@@ -62,17 +60,6 @@ public interface UserMapper {
   }
 
   UserProfileResponseDto userToProfile(User user);
-
-  default @Nullable String toString(@Nullable ResearchSubject researchSubject) {
-    return researchSubject == null ? null : researchSubject.getSubject();
-  }
-
-  default @Nullable ResearchSubject createResearchSubjectFroMString(@Nullable String s) {
-    if (s != null && !s.isBlank()) {
-      return new ResearchSubject(s);
-    }
-    return null;
-  }
 
   default @Nullable String toString(@Nullable Publication publication) {
     return publication == null ? null : publication.getPublication();
@@ -89,9 +76,7 @@ public interface UserMapper {
 
   @Mapping(target = "userId", source = "userId")
   @Mapping(target = ".", source = "request")
-  @Mapping(target = "researchSubjects", source = "request.subjects")
   UserProfile toEntity(UUID userId, UserProfileRequestDto request);
 
-  @Mapping(target = "researchSubjects", source = "dto.subjects")
   void updateProfile(@MappingTarget UserProfile organization, UserProfileRequestDto dto);
 }

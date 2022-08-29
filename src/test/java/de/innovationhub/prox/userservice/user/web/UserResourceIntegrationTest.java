@@ -13,7 +13,6 @@ import de.innovationhub.prox.userservice.shared.avatar.entity.Avatar;
 import de.innovationhub.prox.userservice.user.dto.UserSearchResponseDto;
 import de.innovationhub.prox.userservice.user.entity.profile.ContactInformation;
 import de.innovationhub.prox.userservice.user.entity.profile.Publication;
-import de.innovationhub.prox.userservice.user.entity.profile.ResearchSubject;
 import de.innovationhub.prox.userservice.user.entity.profile.UserProfile;
 import de.innovationhub.prox.userservice.user.repository.UserProfilePanacheRepository;
 import io.quarkus.test.common.QuarkusTestResource;
@@ -243,7 +242,6 @@ public class UserResourceIntegrationTest {
         .body("contactInformation.telephone", is("abc"))
         .body("contactInformation.homepage", is("abc"))
         .body("contactInformation.collegePage", is("abc"))
-        .body("subjects", containsInAnyOrder("a", "b", "c"))
         .body("publications", containsInAnyOrder("a", "b", "c"))
         .body("vita", is("Lorem Ipsum"));
   }
@@ -303,7 +301,6 @@ public class UserResourceIntegrationTest {
         .body("contactInformation.telephone", is("cba"))
         .body("contactInformation.homepage", is("cba"))
         .body("contactInformation.collegePage", is("cba"))
-        .body("subjects", containsInAnyOrder("ab", "bc", "cd"))
         .body("publications", containsInAnyOrder("ab", "bc", "cd"))
         .body("vita", is("Ipsum Lorem"));
 
@@ -321,10 +318,6 @@ public class UserResourceIntegrationTest {
     softly
         .assertThat(profile.getPublications())
         .extracting("publication")
-        .containsExactlyInAnyOrder("ab", "bc", "cd");
-    softly
-        .assertThat(profile.getResearchSubjects())
-        .extracting("subject")
         .containsExactlyInAnyOrder("ab", "bc", "cd");
 
     softly.assertAll();
@@ -383,7 +376,6 @@ public class UserResourceIntegrationTest {
         .body("contactInformation.telephone", is("abc"))
         .body("contactInformation.homepage", is("abc"))
         .body("contactInformation.collegePage", is("abc"))
-        .body("subjects", containsInAnyOrder("a", "b", "c"))
         .body("publications", containsInAnyOrder("a", "b", "c"))
         .body("vita", is("Lorem Ipsum"));
   }
@@ -441,7 +433,6 @@ public class UserResourceIntegrationTest {
         "abc",
         "abc",
         new ContactInformation("abc", "abc", "abc", "abc", "abc", "abc"),
-        Stream.of("a", "b", "c").map(ResearchSubject::new).toList(),
         Stream.of("a", "b", "c").map(Publication::new).toList(),
         "Lorem Ipsum",
         null);

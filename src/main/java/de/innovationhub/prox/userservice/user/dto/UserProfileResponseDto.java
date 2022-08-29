@@ -7,7 +7,6 @@ public record UserProfileResponseDto(
     String affiliation,
     String mainSubject,
     ContactInformationResponseDto contactInformation,
-    Set<String> subjects,
     Set<String> publications,
     String vita) {
   public record ContactInformationResponseDto(

@@ -1,17 +1,10 @@
 package de.innovationhub.prox.userservice.organization.entity.profile;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import java.util.Set;
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
-import javax.persistence.CollectionTable;
 import javax.persistence.Column;
-import javax.persistence.ElementCollection;
 import javax.persistence.Embeddable;
 import javax.persistence.Embedded;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.validation.Valid;
 import javax.validation.constraints.Size;
@@ -64,13 +57,6 @@ public class OrganizationProfile {
   })
   private Quarter quarters;
 
-  @ElementCollection(fetch = FetchType.EAGER)
-  @JsonInclude(Include.ALWAYS)
-  @CollectionTable(
-      name = "organization_profile_branches",
-      joinColumns = @JoinColumn(name = "organization_id"))
-  private Set<Branch> branches;
-
   @Embedded @Valid private SocialMedia socialMedia;
 
   public OrganizationProfile(
@@ -81,7 +67,6 @@ public class OrganizationProfile {
       String vita,
       Quarter headquarter,
       Quarter quarters,
-      Set<Branch> branches,
       SocialMedia socialMedia) {
     this.foundingDate = foundingDate;
     this.numberOfEmployees = numberOfEmployees;
@@ -90,7 +75,6 @@ public class OrganizationProfile {
     this.vita = vita;
     this.headquarter = headquarter;
     this.quarters = quarters;
-    this.branches = branches;
     this.socialMedia = socialMedia;
   }
 }
