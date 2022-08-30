@@ -402,7 +402,7 @@ public class UserResourceIntegrationTest {
     var userProfile = dummyUserProfile(aliceId);
     var fileObj =
         new FileObject("test/img/users/" + aliceId + ".png", "image/png", readPixelImage());
-    objectStore.saveObject(fileObj);
+    objectStore.saveObject(fileObj.getKey(), fileObj);
     userProfile.setAvatar(new Avatar(fileObj.getKey()));
 
     tm.begin();

@@ -8,5 +8,5 @@ public interface ObjectStoreRepository {
 
   URL getObjectUrl(String key) throws IOException;
 
-  void saveObject(FileObject obj) throws IOException;
+  void saveObject(String key, FileObject obj) throws IOException;
 }

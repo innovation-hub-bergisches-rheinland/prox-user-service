@@ -70,7 +70,7 @@ public class AvatarService {
       fileObject = new FileObject(key + extension, mimeType, bytes);
     }
 
-    objectStoreRepository.saveObject(fileObject);
+    objectStoreRepository.saveObject(fileObject.getKey(), fileObject);
     return new Avatar(fileObject.getKey());
   }
 }

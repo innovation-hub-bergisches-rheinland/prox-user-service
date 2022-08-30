@@ -69,6 +69,7 @@ class S3ObjectStoreTest {
   @Test
   void shouldSaveFile() throws Exception {
     s3ObjectStore.saveObject(
+        "test-text",
         new FileObject(
             "test-text", "text/plain", "Test test 123".getBytes(StandardCharsets.UTF_8)));
 
@@ -91,6 +92,7 @@ class S3ObjectStoreTest {
         RequestBody.fromString("Test test 123"));
 
     s3ObjectStore.saveObject(
+        "test-text",
         new FileObject(
             "test-text", "text/plain", "Test test 456".getBytes(StandardCharsets.UTF_8)));
 
