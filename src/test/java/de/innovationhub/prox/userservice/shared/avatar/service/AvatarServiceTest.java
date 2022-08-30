@@ -93,7 +93,7 @@ class AvatarServiceTest {
     assertThat(response.getKey()).isEqualTo("batman.png");
 
     var expectedFileObject = new FileObject("batman.png", "image/png", readPixelImage());
-    verify(storeRepository).saveObject(eq(expectedFileObject));
+    verify(storeRepository).saveObject(eq("batman.png"), eq(expectedFileObject));
   }
 
   private Avatar getDummyAvatar() {

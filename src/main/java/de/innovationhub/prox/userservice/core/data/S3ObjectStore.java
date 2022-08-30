@@ -1,5 +1,7 @@
 package de.innovationhub.prox.userservice.core.data;
 
+import io.quarkus.cache.CacheInvalidate;
+import io.quarkus.cache.CacheKey;
 import io.quarkus.cache.CacheResult;
 import java.io.IOException;
 import java.net.URL;
@@ -23,6 +25,7 @@ public class S3ObjectStore implements ObjectStoreRepository {
   }
 
   @Override
+  @CacheResult(cacheName = "s3-object")
   public FileObject getObject(String key) throws IOException {
     var request = GetObjectRequest.builder().bucket(bucket).key(key).build();
 
@@ -47,7 +50,8 @@ public class S3ObjectStore implements ObjectStoreRepository {
   }
 
   @Override
-  public void saveObject(FileObject obj) throws IOException {
+  @CacheInvalidate(cacheName = "s3-object")
+  public void saveObject(@CacheKey String key, FileObject obj) {
     s3Client.putObject(
         PutObjectRequest.builder()
             .bucket(bucket)
