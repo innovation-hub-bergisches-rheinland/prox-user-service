@@ -12,4 +12,5 @@ data:
   "keycloak.server-url": https://login.aws.innovation-hub.de/auth
   "keycloak.realm": innovation-hub-bergisches-rheinland
   "keycloak.client-id": prox-user-service
+  "kafka.bootstrap-servers": redpanda:9092
   {{- end }}

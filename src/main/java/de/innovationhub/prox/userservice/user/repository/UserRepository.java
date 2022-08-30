@@ -5,6 +5,7 @@ import de.innovationhub.prox.userservice.user.entity.profile.UserProfile;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import javax.validation.Valid;
 
 public interface UserRepository {
   Optional<User> findById(UUID id);
@@ -15,7 +16,7 @@ public interface UserRepository {
 
   List<User> searchByEmail(String email);
 
-  void save(User user);
+  void save(@Valid User user);
 
   List<UserProfile> findAllProfiles();
 }
