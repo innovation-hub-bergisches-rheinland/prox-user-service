@@ -29,7 +29,7 @@ public interface UserMapper {
   @Mapping(target = "email", source = "representation.email")
   @Mapping(target = "name", source = "representation", qualifiedByName = "parseName")
   @Mapping(target = "profile", source = "userProfile")
-  User toEntity(UserRepresentation representation, Optional<UserProfile> userProfile);
+  User toEntity(UserRepresentation representation, UserProfile userProfile);
 
   @Mapping(target = "id")
   @Mapping(target = "name")
@@ -55,8 +55,11 @@ public interface UserMapper {
   @Mapping(target = "id", source = "userId")
   UserProfileBriefResponseDto toBriefDto(UserProfile userProfile);
 
-  default Optional<UserProfileBriefResponseDto> map(Optional<UserProfile> value) {
-    return value.map(this::toBriefDto);
+  default Optional<UserProfileBriefResponseDto> map(UserProfile value) {
+    if (value != null) {
+      return Optional.of(toBriefDto(value));
+    }
+    return Optional.empty();
   }
 
   UserProfileResponseDto userToProfile(User user);

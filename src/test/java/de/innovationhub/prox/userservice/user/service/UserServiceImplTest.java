@@ -11,7 +11,6 @@ import static org.mockito.Mockito.when;
 import de.innovationhub.prox.userservice.organization.service.OrganizationService;
 import de.innovationhub.prox.userservice.shared.avatar.service.AvatarService;
 import de.innovationhub.prox.userservice.user.entity.UserMapper;
-import de.innovationhub.prox.userservice.user.repository.UserProfileRepository;
 import de.innovationhub.prox.userservice.user.repository.UserRepository;
 import io.quarkus.security.identity.SecurityIdentity;
 import java.io.IOException;
@@ -29,7 +28,6 @@ class UserServiceImplTest {
   @Mock OrganizationService organizationService;
   @Mock SecurityIdentity securityIdentity;
   @Mock UserRepository userRepository;
-  @Mock UserProfileRepository userProfileRepository;
   @Mock AvatarService avatarService;
   UserMapper userMapper;
 
@@ -43,12 +41,7 @@ class UserServiceImplTest {
     userMapper = UserMapper.INSTANCE;
     userService =
         new UserServiceImpl(
-            organizationService,
-            securityIdentity,
-            userRepository,
-            userMapper,
-            userProfileRepository,
-            avatarService);
+            organizationService, securityIdentity, userRepository, userMapper, avatarService);
   }
 
   @AfterEach

@@ -53,12 +53,13 @@ public class UserRepositoryImpl implements UserRepository {
             .filter(Optional::isPresent)
             .map(opt -> this.toUser(opt.get()))
             .filter(
-                profile -> matchingIdentities.stream().noneMatch(u -> u.id().equals(profile.id())))
+                profile ->
+                    matchingIdentities.stream().noneMatch(u -> u.getId().equals(profile.getId())))
             .toList();
 
     var foundUsers = new ArrayList<>(matchingIdentities);
     foundUsers.addAll(matchingProfiles);
-    foundUsers.sort(Comparator.comparing(User::name));
+    foundUsers.sort(Comparator.comparing(User::getName));
 
     return foundUsers;
   }
@@ -70,8 +71,19 @@ public class UserRepositoryImpl implements UserRepository {
         .toList();
   }
 
+  @Override
+  public void save(User user) {
+    // We only want to save the user profile as everything else is managed by Keycloak.
+    this.userProfileRepository.save(user.getProfile());
+  }
+
+  @Override
+  public List<UserProfile> findAllProfiles() {
+    return userProfileRepository.findAll();
+  }
+
   private User toUser(UserRepresentation userRepresentation, Optional<UserProfile> profile) {
-    return userMapper.toEntity(userRepresentation, profile);
+    return userMapper.toEntity(userRepresentation, profile.orElse(null));
   }
 
   private User toUser(UserRepresentation userRepresentation) {

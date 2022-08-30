@@ -222,7 +222,7 @@ public class OrganizationService {
   }
 
   private String resolveUserName(UUID id) {
-    return this.userRepository.findById(id).map(User::name).orElse(id.toString());
+    return this.userRepository.findById(id).map(User::getName).orElse(id.toString());
   }
 
   private boolean authenticatedUserIsMember(Organization org) {
