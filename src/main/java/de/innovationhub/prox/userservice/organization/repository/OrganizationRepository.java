@@ -4,6 +4,7 @@ import de.innovationhub.prox.userservice.organization.entity.Organization;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import javax.validation.Valid;
 
 public interface OrganizationRepository {
   Optional<Organization> findById(UUID id);
@@ -12,5 +13,5 @@ public interface OrganizationRepository {
 
   List<Organization> findAllWithUserAsMember(UUID id);
 
-  void save(Organization organization);
+  void save(@Valid Organization organization);
 }

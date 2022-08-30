@@ -11,7 +11,6 @@ import de.innovationhub.prox.userservice.user.dto.UserProfileResponseDto;
 import de.innovationhub.prox.userservice.user.dto.UserSearchResponseDto;
 import de.innovationhub.prox.userservice.user.entity.User;
 import de.innovationhub.prox.userservice.user.entity.UserMapper;
-import de.innovationhub.prox.userservice.user.repository.UserProfileRepository;
 import de.innovationhub.prox.userservice.user.repository.UserRepository;
 import io.quarkus.security.identity.SecurityIdentity;
 import java.io.IOException;
@@ -36,7 +35,6 @@ public class UserServiceImpl implements UserService {
   private final SecurityIdentity securityIdentity;
   private final UserRepository userRepository;
   private final UserMapper userMapper;
-  private final UserProfileRepository userProfileRepository;
   private final AvatarService avatarService;
 
   @Inject
@@ -45,13 +43,11 @@ public class UserServiceImpl implements UserService {
       SecurityIdentity securityIdentity,
       UserRepository userRepository,
       UserMapper userMapper,
-      UserProfileRepository userProfileRepository,
       AvatarService avatarService) {
     this.userRepository = userRepository;
     this.organizationService = organizationService;
     this.securityIdentity = securityIdentity;
     this.userMapper = userMapper;
-    this.userProfileRepository = userProfileRepository;
     this.avatarService = avatarService;
   }
 
@@ -63,7 +59,7 @@ public class UserServiceImpl implements UserService {
   @Override
   public UserProfileBriefCollectionResponseDto findAll() {
     return new UserProfileBriefCollectionResponseDto(
-        this.userProfileRepository.findAll().stream().map(userMapper::toBriefDto).toList());
+        this.userRepository.findAllProfiles().stream().map(userMapper::toBriefDto).toList());
   }
 
   @Override
@@ -85,7 +81,7 @@ public class UserServiceImpl implements UserService {
   @Override
   public Optional<UserProfileResponseDto> findProfileByUserId(UUID id) {
     var user = this.userRepository.findById(id);
-    var profile = user.flatMap(User::profile);
+    var profile = user.map(User::getProfile);
     if (profile.isPresent()) return profile.map(userMapper::toDto);
     return userRepository.findById(id).map(userMapper::userToProfile);
   }
@@ -95,19 +91,18 @@ public class UserServiceImpl implements UserService {
   public UserProfileResponseDto saveUserProfile(UUID id, UserProfileRequestDto requestDto) {
     if (!securityIdentity.getPrincipal().getName().equals(id.toString()))
       throw new WebApplicationException(403);
-    if (!this.userRepository.existsById(id)) throw new WebApplicationException(404);
 
-    var entity =
-        this.userProfileRepository
-            .findProfileByUserId(id)
-            .map(
-                userProfile -> {
-                  userMapper.updateProfile(userProfile, requestDto);
-                  return userProfile;
-                })
-            .orElse(userMapper.toEntity(id, requestDto));
+    var user = this.userRepository.findById(id).orElseThrow(() -> new WebApplicationException(404));
+    var profile = user.getProfile();
+    if (profile != null) {
+      userMapper.updateProfile(profile, requestDto);
+      user.setProfile(profile);
+    } else {
+      user.setProfile(userMapper.toEntity(id, requestDto));
+    }
+
     try {
-      this.userProfileRepository.save(entity);
+      this.userRepository.save(user);
     } catch (ConstraintViolationException e) {
       log.error("Could not save profile", e);
       throw new WebApplicationException(Status.BAD_REQUEST);
@@ -119,7 +114,7 @@ public class UserServiceImpl implements UserService {
   public Response getAvatar(UUID userId) throws IOException {
     try {
       var user = this.userRepository.findById(userId);
-      var profile = user.flatMap(User::profile).orElseThrow(ObjectNotFoundException::new);
+      var profile = user.map(User::getProfile).orElseThrow(ObjectNotFoundException::new);
       var avatar = profile.getAvatar();
 
       return avatarService.buildAvatarResponse(avatar);
@@ -132,14 +127,19 @@ public class UserServiceImpl implements UserService {
   public void setAvatar(UUID userId, FormDataBody formDataBody) throws IOException {
     if (!securityIdentity.getPrincipal().getName().equals(userId.toString()))
       throw new WebApplicationException(403);
-    if (!this.userRepository.existsById(userId)) throw new WebApplicationException(404);
 
-    var user = this.userRepository.findById(userId);
-    var profile = user.flatMap(User::profile).orElseThrow(ObjectNotFoundException::new);
+    var user =
+        this.userRepository.findById(userId).orElseThrow(() -> new WebApplicationException(404));
+    var profile = user.getProfile();
+    if (profile == null) {
+      throw new ObjectNotFoundException();
+    }
 
     var avatar =
         avatarService.createAvatarFromFormBody(AVATAR_KEY_PREFIX + "/" + userId, formDataBody);
     profile.setAvatar(avatar);
-    userProfileRepository.save(profile);
+
+    user.setProfile(profile);
+    userRepository.save(user);
   }
 }
