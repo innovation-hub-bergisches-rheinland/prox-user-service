@@ -6,6 +6,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;
 import java.io.ByteArrayInputStream;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 import javax.inject.Inject;
@@ -30,6 +31,9 @@ class S3ObjectStoreTest {
 
   @ConfigProperty(name = "bucket.name")
   String bucket;
+
+  @ConfigProperty(name = "s3.url")
+  String s3Url;
 
   @Test
   void shouldNotFindFile() {
@@ -96,5 +100,19 @@ class S3ObjectStoreTest {
         .hasSameContentAs(
             new ByteArrayInputStream("Test test 456".getBytes(StandardCharsets.UTF_8)));
     assertThat(response.response()).matches(r -> r.contentType().equals("text/plain"));
+  }
+
+  @Test
+  void shouldReturnUrl() throws Exception {
+    s3Client.putObject(
+        PutObjectRequest.builder()
+            .contentType("text/plain")
+            .key("test-text")
+            .bucket(bucket)
+            .build(),
+        RequestBody.fromString("Test test 123"));
+
+    assertThat(s3ObjectStore.getObjectUrl("test-text"))
+        .isEqualTo(new URL(s3Url + "/" + bucket + "/test-text"));
   }
 }
