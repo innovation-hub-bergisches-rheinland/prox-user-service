@@ -2,11 +2,16 @@ package de.innovationhub.prox.userservice.organization.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import de.innovationhub.prox.userservice.organization.entity.Organization;
 import de.innovationhub.prox.userservice.organization.entity.OrganizationMembership;
 import de.innovationhub.prox.userservice.organization.entity.OrganizationRole;
 import io.quarkus.test.TestTransaction;
+import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;
+import io.quarkus.test.kafka.InjectKafkaCompanion;
+import io.quarkus.test.kafka.KafkaCompanionResource;
+import io.smallrye.reactive.messaging.kafka.companion.KafkaCompanion;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -15,7 +20,12 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 @QuarkusTest
+@QuarkusTestResource(KafkaCompanionResource.class)
 class OrganizationRepositoryTest {
+
+  @InjectKafkaCompanion KafkaCompanion kc;
+
+  @Inject ObjectMapper objectMapper;
 
   @Inject OrganizationPanacheRepository organizationPanacheRepository;
 
@@ -59,6 +69,37 @@ class OrganizationRepositoryTest {
 
     // Then
 
+  }
+
+  @Test
+  @TestTransaction
+  void shouldPublishOnSave() throws Exception {
+    // Given
+    var owner = UUID.randomUUID();
+    var member = UUID.randomUUID();
+    var org =
+        new Organization(
+            UUID.randomUUID(), "Musterfirma GmbH & Co. KG", new HashMap<>(), null, null);
+    org.getMembers().put(owner, new OrganizationMembership(OrganizationRole.ADMIN));
+    org.getMembers().put(member, new OrganizationMembership(OrganizationRole.MEMBER));
+
+    // WHen
+    organizationRepository.save(org);
+
+    // Then
+    var records =
+        kc.consume(String.class, String.class)
+            .fromTopics("entity.organization.organization")
+            .awaitRecords(1);
+    assertThat(records).hasSize(1);
+    var record = records.getFirstRecord();
+
+    // Key assertion for log compaction
+    assertThat(record.key()).isEqualTo(org.getId().toString());
+
+    // Value assertion to ensure that the entity state is published
+    var publishedOrg = objectMapper.readValue(record.value(), Organization.class);
+    assertThat(publishedOrg).isEqualTo(org);
   }
 
   @Test
