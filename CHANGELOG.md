@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.0.0](https://github.com/innovation-hub-bergisches-rheinland/prox-user-service/compare/v1.7.1...v2.0.0) (2022-08-30)
+
+
+### ⚠ BREAKING CHANGES
+
+* migrate subjects/branches to tags
+
+### Features
+
+* add s3client method to get object url ([a172eca](https://github.com/innovation-hub-bergisches-rheinland/prox-user-service/commit/a172ecaf5191e3d2d6cdf0052ea03c6b47effbdd))
+* add s3client method to get object url ([431cd7d](https://github.com/innovation-hub-bergisches-rheinland/prox-user-service/commit/431cd7d1f0f5e16e37fa84c86b94cd552371649c))
+* cache s3 object ([524a318](https://github.com/innovation-hub-bergisches-rheinland/prox-user-service/commit/524a3181cc0d1cc0d2aa4c4aa6e71321eb617d58))
+* cache s3 object ([cd8df75](https://github.com/innovation-hub-bergisches-rheinland/prox-user-service/commit/cd8df75b0680b24f197e5743d6dbc9cace76c79a))
+* migrate subjects/branches to tags ([c4c46a0](https://github.com/innovation-hub-bergisches-rheinland/prox-user-service/commit/c4c46a018fcca225e133e30d470bf93bd1340b56))
+* publish organization entity ([9627d5d](https://github.com/innovation-hub-bergisches-rheinland/prox-user-service/commit/9627d5db8881c2c5165fff9a33977c5d6469f7a4))
+* publish user entity ([5b92319](https://github.com/innovation-hub-bergisches-rheinland/prox-user-service/commit/5b923197c8e01d33f9aee697cf80ab49b9212cf7))
+
 ### [1.7.1](https://github.com/innovation-hub-bergisches-rheinland/prox-user-service/compare/v1.7.0...v1.7.1) (2022-07-06)
 
 
