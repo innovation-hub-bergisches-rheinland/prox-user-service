@@ -217,6 +217,17 @@ public class OrganizationService {
         .toList();
   }
 
+  /**
+   * Reconciles a Organization, which means that its state will be re-distributed
+   *
+   * @param organizationId ID of the organization to reconcile
+   */
+  public void reconcile(UUID organizationId) {
+    var org = findByIdOrThrow(organizationId);
+    // Just saving is enough
+    this.organizationRepository.save(org);
+  }
+
   private Organization findByIdOrThrow(UUID id) {
     return organizationRepository.findById(id).orElseThrow(OrganizationNotFoundException::new);
   }

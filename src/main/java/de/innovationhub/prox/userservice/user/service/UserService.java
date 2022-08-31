@@ -19,6 +19,13 @@ public interface UserService {
 
   boolean existsById(UUID id);
 
+  /**
+   * Reconciles a User, which means that its state will be re-distributed
+   *
+   * @param id ID of the user to reconcile
+   */
+  void reconcile(UUID id);
+
   Iterable<UserSearchResponseDto> search(String query);
 
   List<ViewOrganizationDto> findOrganizationsOfAuthenticatedUser();

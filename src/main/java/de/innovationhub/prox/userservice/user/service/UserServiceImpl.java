@@ -68,6 +68,13 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
+  public void reconcile(UUID id) {
+    var user = this.userRepository.findById(id).orElseThrow(() -> new WebApplicationException(404));
+    // Re-save is enough
+    this.userRepository.save(user);
+  }
+
+  @Override
   public Iterable<UserSearchResponseDto> search(String query) {
     return this.userMapper.toDtoSet(this.userRepository.search(query).stream());
   }
