@@ -68,6 +68,7 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
+  @Transactional
   public void reconcile(UUID id) {
     var user = this.userRepository.findById(id).orElseThrow(() -> new WebApplicationException(404));
     // Re-save is enough

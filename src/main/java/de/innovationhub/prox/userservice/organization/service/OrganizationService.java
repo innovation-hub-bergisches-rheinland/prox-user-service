@@ -222,6 +222,7 @@ public class OrganizationService {
    *
    * @param organizationId ID of the organization to reconcile
    */
+  @Transactional
   public void reconcile(UUID organizationId) {
     var org = findByIdOrThrow(organizationId);
     // Just saving is enough
