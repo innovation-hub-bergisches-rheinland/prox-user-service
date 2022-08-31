@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.1.0](https://github.com/innovation-hub-bergisches-rheinland/prox-user-service/compare/v2.0.0...v2.1.0) (2022-08-31)
+
+
+### Features
+
+* add reconcilation endpoint ([b284c9d](https://github.com/innovation-hub-bergisches-rheinland/prox-user-service/commit/b284c9dc2dc95830b01deed6a500d343b995f546))
+
 ## [2.0.0](https://github.com/innovation-hub-bergisches-rheinland/prox-user-service/compare/v1.7.1...v2.0.0) (2022-08-30)
 
 
