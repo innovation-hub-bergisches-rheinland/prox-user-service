@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.1.1](https://github.com/innovation-hub-bergisches-rheinland/prox-user-service/compare/v2.1.0...v2.1.1) (2022-08-31)
+
+
+### Bug Fixes
+
+* add transactional annotations ([acb42da](https://github.com/innovation-hub-bergisches-rheinland/prox-user-service/commit/acb42daa64f08b510f37355f876e44dd83828ee6))
+
 ## [2.1.0](https://github.com/innovation-hub-bergisches-rheinland/prox-user-service/compare/v2.0.0...v2.1.0) (2022-08-31)
 
 
